@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { createBrowserRouter, Navigate, useLocation } from "react-router-dom";
-import { DashboardLayout } from "~/layouts/dashboard";
+import LayourClient from "~/layouts/app/LayoutClient";
+import { DashboardLayout, UserLayout } from "~/layouts/dashboard";
 import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
 import Customer from "~/pages/Admin/Customer";
@@ -9,6 +10,10 @@ import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/Statistic";
 import Tour from "~/pages/Admin/Tour";
 import Transport from "~/pages/Admin/Transport";
+import Home from "~/pages/Client/Home";
+import TourClient from "~/pages/Client/TourClient";
+import TourDetailsClient from "~/pages/Client/TourDetailsClient";
+
 import NotFound from "~/pages/Error/NotFound";
 
 export const ScrollToTop = () => {
@@ -88,7 +93,39 @@ const routes = createBrowserRouter([
         path: "customer",
         element: <Customer />
       },
+      
+      
     ],
+  },
+  {
+    path: "client",
+    element: (
+    <ProtectedRoute>
+      <PageWrapper>
+        <UserLayout/>
+      </PageWrapper>
+    </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        path: "",
+        element: <Home />
+      },
+      {
+        path: "home",
+        element: <Home />
+      },
+      {
+        path: "tourClient",
+        element: <TourClient/>
+      },
+      {
+        path: "tourDetailsClient",
+        element: <TourDetailsClient/>
+      },
+      
+    ]
   },
   {
     path: "*",
