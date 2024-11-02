@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import TourPackage from './TourPackage';
 
 const Tour = () => {
   return (
     <div>
-      this is Tour Page 
+      <TourPackage />
     </div>
-  )
-}
+  );
+};
 
-export default Tour
+export default Tour;
