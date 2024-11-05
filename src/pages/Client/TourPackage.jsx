@@ -207,22 +207,6 @@ const TourPackage = () => {
   }, [datafilter]);
   
 
-//   useEffect(() => {
-//     const fetchCity = async () => {
-//         const res = await fetch(`https://run.mocky.io/v3/d80717b0-04bd-43cb-8041-b38bbfd082f8`, {
-//             method: "GET",
-//             headers: {
-//                 'Accept': 'application/json' // Thêm tiêu đề để yêu cầu JSON
-//             },
-//         });
-
-//         const data = await res.json();
-//         setDepartureOpitions(data)
-//         setFilteredData(data)
-//     }
-//     fetchCity()
-// }, [])
-
   return (
     <Flex
       horizontal

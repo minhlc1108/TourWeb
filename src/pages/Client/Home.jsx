@@ -6,6 +6,7 @@ import FooterClient from '~/layouts/app/FooterClient'
 import { Col, Divider, Row } from 'antd';
 import { Pagination } from 'antd';
 import TourPackage from './TourPackage';
+import ProfileUser from './ProfileUser';
 
 
 
@@ -14,6 +15,7 @@ const Home = () => {
   return (
     <div>
       {/* <TourPackage/> */}
+      <ProfileUser/>
   </div>
   );
 };
