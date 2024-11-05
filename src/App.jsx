@@ -1,13 +1,7 @@
-import { ConfigProvider } from "antd";
 import { RouterProvider } from "react-router-dom";
 import routes from "~/routes/routes";
-
 function App() {
-  return (
-    <ConfigProvider>
-      <RouterProvider router={routes} />  
-    </ConfigProvider>
-  );
+  return <RouterProvider router={routes} />;
 }
 
 export default App;
