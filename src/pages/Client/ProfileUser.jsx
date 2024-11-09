@@ -1,51 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   AutoComplete,
   Button,
   Cascader,
   Checkbox,
   Col,
+  Flex,
   Form,
   Input,
   InputNumber,
   Row,
   Select,
-} from 'antd';
+  Anchor,
+  Typography,
+  Avatar,
+  Menu,
+} from "antd";
+
+import {
+  UserOutlined,
+  AppstoreOutlined,
+  MailOutlined,
+  SettingOutlined,
+  LogoutOutlined,
+  RocketOutlined,
+
+} from "@ant-design/icons";
+import DetailsProfileUser from "./DetailsProfileUser";
+import ChangePassword from "./ChangePassword";
+
+const { Text, Link } = Typography;
+
 const { Option } = Select;
-const residences = [
+
+const items = [
   {
-    value: 'zhejiang',
-    label: 'Zhejiang',
+    key: "sub1",
+    label: "Tài khoản",
+    icon: <UserOutlined />,
     children: [
       {
-        value: 'hangzhou',
-        label: 'Hangzhou',
-        children: [
-          {
-            value: 'xihu',
-            label: 'West Lake',
-          },
-        ],
+        key: "g1",
+        label: "Thông tin cá nhân",
+        type: "group",
+        
+      },
+      {
+        key: "g2",
+        label: "Đổi mật khẩu",
+        type: "group",
+       
       },
     ],
   },
   {
-    value: 'jiangsu',
-    label: 'Jiangsu',
+    key: "sub2",
+    label: "Đơn đặt chỗ",
+    icon: <RocketOutlined />,
     children: [
       {
-        value: 'nanjing',
-        label: 'Nanjing',
-        children: [
-          {
-            value: 'zhonghuamen',
-            label: 'Zhong Hua Men',
-          },
-        ],
+        key: "g1",
+        label: "DS1",
+        type: "group",
+        
+      },
+      {
+        key: "g2",
+        label: "DS2",
+        type: "group",
+       
       },
     ],
   },
+  {
+    key: "sub3",
+    label: "Logout",
+    icon: <LogoutOutlined />,
+
+    
+  },
+  
+ 
+  
 ];
+
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -76,102 +114,86 @@ const tailFormItemLayout = {
     },
   },
 };
+
+const onChange = (link) => {
+  console.log("Anchor:OnChange", link);
+};
+
 const ProfileUser = () => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    console.log("Received values of form: ", values);
   };
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
-  const suffixSelector = (
-    <Form.Item name="suffix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="USD">$</Option>
-        <Option value="CNY">¥</Option>
-      </Select>
-    </Form.Item>
-  );
+
+
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-  const onWebsiteChange = (value) => {
-    if (!value) {
-      setAutoCompleteResult([]);
-    } else {
-      setAutoCompleteResult(['.com', '.org', '.net'].map((domain) => `${value}${domain}`));
-    }
-  };
+
   const websiteOptions = autoCompleteResult.map((website) => ({
     label: website,
     value: website,
   }));
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      name="register"
-      onFinish={onFinish}
-      initialValues={{
-        residence: ['zhejiang', 'hangzhou', 'xihu'],
-        prefix: '86',
-      }}
-      style={{
-        maxWidth: 600,
-      }}
-      scrollToFirstError
-    >
-      <Form.Item
-        name="name"
-        label="Name"
-        rules={[
-          {
-            type: 'Name',
-            message: 'The input is not valid E-mail!',
-          },
-          {
-            required: true,
-            message: 'Please input your E-mail!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="email"
-        label="E-mail"
-        rules={[
-          {
-            type: 'email',
-            message: 'The input is not valid E-mail!',
-          },
-          {
-            required: true,
-            message: 'Please input your E-mail!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+    <Row gutter={[10, 0]} style={{ paddingTop: "2%" }}>
+      <Col flex={1}>
+        <Flex
+          vertical
+          justify="center"
+          align="center"
+          style={{
+            border: "2px solid rgba(5, 5, 5, 0.06)",
+            background: "white",
+            height: "100%",
+          }}
+        >
+          <Flex
+            align="center"
+            justify="center"
+            gap={"small"}
+            style={{ borderBottom: "2px solid rgba(5, 5, 5, 0.06)" }}
+          >
+            <Avatar size="large" icon={<UserOutlined />} />
+            <Flex
+              vertical
+              align="baseline"
+              justify="center"
+              // gap={'small'}
+            >
+              <Text>loz loc</Text>
+              <Text>locancut123@gmail.com</Text>
+            </Flex>
+          </Flex>
+          <Flex justify="left">
+            <Menu
+              // onClick={onClick}
+              style={{
+                width: 256,
+                borderRight: 'none'
+              }}
+              defaultSelectedKeys={["1"]}
+              defaultOpenKeys={["sub1"]}
+              mode="inline"
+              items={items}
+            />
+          </Flex>
+        </Flex>
+      </Col>
+      <Col flex={4}>
+        <DetailsProfileUser/>
+        {/* <ChangePassword/> */}
+      </Col>
+    </Row>
+  );
+};
+export default ProfileUser;
 
-      <Form.Item
+{
+  /* <Form.Item
         name="password"
         label="Password"
         rules={[
           {
             required: true,
-            message: 'Please input your password!',
+            message: "Please input your password!",
           },
         ]}
         hasFeedback
@@ -182,115 +204,25 @@ const ProfileUser = () => {
       <Form.Item
         name="confirm"
         label="Confirm Password"
-        dependencies={['password']}
+        dependencies={["password"]}
         hasFeedback
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
+            message: "Please confirm your password!",
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
+              if (!value || getFieldValue("password") === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error('The new password that you entered do not match!'));
+              return Promise.reject(
+                new Error("The new password that you entered do not match!")
+              );
             },
           }),
         ]}
       >
         <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        name="nickname"
-        label="Nickname"
-        tooltip="What do you want others to call you?"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your nickname!',
-            whitespace: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your phone number!',
-          },
-        ]}
-      >
-        <Input
-          style={{
-            width: '100%',
-          }}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="donation"
-        label="Donation"
-        rules={[
-          {
-            required: true,
-            message: 'Please input donation amount!',
-          },
-        ]}
-      >
-        <InputNumber
-          style={{
-            width: '100%',
-          }}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="website"
-        label="Website"
-        rules={[
-          {
-            required: true,
-            message: 'Please input website!',
-          },
-        ]}
-      >
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder="website">
-          <Input />
-        </AutoComplete>
-      </Form.Item>
-
-      
-      <Form.Item
-        name="gender"
-        label="Gender"
-        rules={[
-          {
-            required: true,
-            message: 'Please select gender!',
-          },
-        ]}
-      >
-        <Select placeholder="select your gender">
-          <Option value="male">Male</Option>
-          <Option value="female">Female</Option>
-          <Option value="other">Other</Option>
-        </Select>
-      </Form.Item>
-
-      
-      <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Save
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
-export default ProfileUser;
+      </Form.Item> */
+}
