@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate, useLocation } from "react-router-dom";
 import { DashboardLayout } from "~/layouts/dashboard";
 import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
+import CreateTour from "~/pages/Admin/CreateTour";
 import Customer from "~/pages/Admin/Customer";
 import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/Statistic";
@@ -66,7 +67,13 @@ const routes = createBrowserRouter([
       },
       {
         path: "tour",
-        element: <Tour />
+        element: <Tour />,
+        children: [
+          {
+            path: "create",
+            element: <CreateTour/>
+          }
+        ]
       },
       {
         path: "promotion",

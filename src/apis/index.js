@@ -7,10 +7,6 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
-    // const data = error.response.data
-    // if(data.status){
-    //     console.log(data)
-    // }
     const data = error.response.data;
     console.log(data);
     if (data?.message && typeof data?.message === "string") {
@@ -42,3 +38,9 @@ export const deleteCategoryAPI = async (id) => {
   const response = await axios.delete(`${API_ROOT}/category/${id}`);
   return response.data;
 };
+
+// Tour
+export const fetchAllTourAPI = async (params) => {
+  const response = await axios.get(`${API_ROOT}/tour`, { params });
+  return response.data;
+}

@@ -129,8 +129,8 @@ function Category() {
         }}
       />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    // onFilter: (value, record) =>
+    //   record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
@@ -258,24 +258,23 @@ function Category() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      const params = {
-        ...searchTexts,
-        sortBy: sorter.field,
-        isDecsending: sorter.order === "ascend" ? false : true,
-        pageNumber: pagination.current,
-        pageSize: pagination.pageSize,
-      };
-      const result = await fetchAllCategoryAPI(params);
-      setData(result.categories.map((data) => ({ key: data.id, ...data })));
+    setIsLoading(true);
+    const params = {
+      ...searchTexts,
+      sortBy: sorter.field,
+      isDecsending: sorter.order === "ascend" ? false : true,
+      pageNumber: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+
+    fetchAllCategoryAPI(params).then((data) => {
+      setData(data.categories.map((category) => ({ key: category.id, ...category })));
       setIsLoading(false);
       setPagination({
         ...pagination,
-        total: result.total,
+        total: data.total,
       });
-    };
-    fetchData();
+    }).catch(() => message.error("Lỗi khi gọi api"));
   }, [searchTexts, sorter, pagination.current, pagination.pageSize]);
 
   const handleTableChange = (newPagination, filters, newSorter) => {
