@@ -7,7 +7,7 @@ import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
 import Customer from "~/pages/Admin/Customer";
 import Promotion from "~/pages/Admin/Promotion";
-import Statistic from "~/pages/Admin/Statistic";
+import Statistic from "~/pages/Admin/StatisticAdmin";
 import Tour from "~/pages/Admin/Tour";
 import Transport from "~/pages/Admin/Transport";
 import Home from "~/pages/Client/Home";
@@ -98,7 +98,7 @@ const routes = createBrowserRouter([
     ],
   },
   {
-    path: "client",
+    path: "",
     element: (
     <ProtectedRoute>
       <PageWrapper>

@@ -133,8 +133,16 @@ const ProfileUser = () => {
     value: website,
   }));
   return (
-    <Row gutter={[10, 0]} style={{ paddingTop: "2%" }}>
-      <Col flex={1}>
+    <Flex
+    justify="center"
+    align="center"
+    
+    >
+    <Row gutter={[10, 0]} style={{ paddingTop: "2%" ,
+    width:'100%'
+
+    }}>
+      <Col flex={5}>
         <Flex
           vertical
           justify="center"
@@ -170,20 +178,22 @@ const ProfileUser = () => {
                 borderRight: 'none'
               }}
               defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["sub1"]}
+              defaultOpenKeys={["sub1","sub2"]}
               mode="inline"
               items={items}
             />
           </Flex>
         </Flex>
       </Col>
-      <Col flex={4}>
+      <Col flex={45}>
         <DetailsProfileUser/>
         {/* <ChangePassword/> */}
       </Col>
     </Row>
+    </Flex>
   );
 };
+
 export default ProfileUser;
 
 {

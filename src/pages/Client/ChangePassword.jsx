@@ -44,9 +44,14 @@ const ChangePassword = () => {
       style={{
         maxWidth: "100%",
         width: "100%",
+        height:'100vh',
         border: "2px solid rgba(5, 5, 5, 0.06)",
         padding: "2%",
         background: "white",
+        display:"flex",
+        justifyContent:'center',
+        flexDirection:'column',
+        
       }}
     >
       <Form.Item

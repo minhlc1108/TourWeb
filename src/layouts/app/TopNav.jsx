@@ -24,24 +24,24 @@ const getItem = (label, key,  children, type) => {
 
 const items = [
   getItem(
-    <Link to={"/client/home"}>Home</Link>,
+    <Link to={"/home"}>Home</Link>,
     "home",
   ),
   getItem(
-    <Link to={"/client/home"}>About</Link>,
+    <Link to={"/home"}>About</Link>,
     "About",
   ),
  
   getItem(
-    <Link to={"/client/tourClient"}>Tour</Link>,
+    <Link to={"/tourClient"}>Tour</Link>,
     "Tour",
   ),
   getItem(
-    <Link to={"/client/transport"}>Booking</Link>,
+    <Link to={"/transport"}>Booking</Link>,
     "Booking",
   ),
   getItem(
-    <Link to={"/client/home"}>Contact</Link>,
+    <Link to={"/home"}>Contact</Link>,
     "Contact",
   ),
 

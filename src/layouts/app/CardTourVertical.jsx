@@ -15,18 +15,20 @@ const CardTourVertical = ({...props}) => {
   return (
     <Card
 
-    style={{ width: 300,
-     }}
+    style={{
+      width: '100%', // Điều chỉnh để chiếm toàn bộ chiều rộng của Col
+      maxWidth: 300, // Giới hạn chiều rộng tối đa của Card để tránh việc bị tràn
+    }}
     cover={
       <img
         alt="example"
-        // src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
         src = {props.imgurl}
+        style={{ height: '200px', objectFit: 'cover' }}
       />
     }
     >
     <Meta title={props.title} />
-      <div style={{ padding: '10px' ,
+      <div style={{ padding: '0' ,
         
       }}>
         <p>< CreditCardOutlined/> <strong> {props.tourCode} </strong></p>

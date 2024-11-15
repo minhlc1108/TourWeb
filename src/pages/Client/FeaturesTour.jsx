@@ -142,6 +142,38 @@ import { Pagination } from "antd";
 //   },
 // ];
 
+
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 8,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 16,
+    },
+  },
+};
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
+
 const FeaturesTour = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9; // Số lượng CardTourVertical hiển thị trên mỗi trang
@@ -150,37 +182,77 @@ const FeaturesTour = ({ data }) => {
   const startIndex = (currentPage - 1) * pageSize;
   const currentData = data.slice(startIndex, startIndex + pageSize);
 
-  // Hàm xử lý khi thay đổi trang
-  const onPageChange = (page) => {
-    setCurrentPage(page);
-  };
-  const onChange = (value) => {
-    console.log(`selected ${value}`);
-  };
-  const onSearch = (value) => {
-    console.log("search:", value);
-  };
+  // // Hàm xử lý khi thay đổi trang
+  // const onPageChange = (page) => {
+  //   setCurrentPage(page);
+  // };
+  // const onChange = (value) => {
+  //   console.log(`selected ${value}`);
+  // };
+  // const onSearch = (value) => {
+  //   console.log("search:", value);
+  // };
 
   return (
-    <>
-      <div
-        style={{
-          width: "100%",
-          margin: "2%",
-          padding: "2%",
-          borderRadius: "5px",
-          background: "white",
+      // <Flex
+      // vertical
+      //   style={{
+      //     // width: "100%",
+      //     margin: "2%",
+      //     padding: "2%",
+      //     borderRadius: "5px",
+      //     background: "white",
 
-          // position: "fixed", // Giữ cố định form khi cuộn
-          boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+      //     // position: "fixed", // Giữ cố định form khi cuộn
+      //     boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+      //   }}
+      // >
+       
+      //     <Row 
+      //     gutter={[16, 16]}
+      //   // style={{justifyContent:'center'}}
+      //   >
+       
+      //     {currentData.length === 0 ? (
+      //       <Result
+      //         title="Your operation has been executed"
+              
+      //       />
+      //     ) : (
+      //       currentData.map((item, index) => (
+      //         <Col key={index} xs={24} sm={12} md={8} lg={8}>
+      //           <CardTourVertical {...item} />
+      //         </Col>
+      //       ))
+      //     )}
+      //   </Row>
+
+      //   {/* Component phân trang */}
+      //   <Pagination
+      //     current={currentPage}
+      //     pageSize={pageSize}
+      //     total={data.length}
+      //     onChange={onPageChange}
+      //     style={{
+      //       marginTop: "16px",
+      //       textAlign: "center",
+      //       display: "flex",
+      //       justifyContent: "center",
+      //     }} // Canh giữa pagination
+      //   />
+      // </Flex>2
+      
+
+      
+          <Row 
+          gutter={[4, 4]}
+        style={{
+          justifyContent:'center',
+          width:"100%",
+          height:'100%'
         }}
-      >
-        {/* Hiển thị các CardTourVertical trong một hàng */}
-        <Row gutter={[46, 26]}
-        style={{justifyContent:'center'}}
         >
-          {" "}
-          {/* Adjust gutter for spacing as needed */}
+       
           {currentData.length === 0 ? (
             <Result
               title="Your operation has been executed"
@@ -195,21 +267,6 @@ const FeaturesTour = ({ data }) => {
           )}
         </Row>
 
-        {/* Component phân trang */}
-        <Pagination
-          current={currentPage}
-          pageSize={pageSize}
-          total={data.length}
-          onChange={onPageChange}
-          style={{
-            marginTop: "16px",
-            textAlign: "center",
-            display: "flex",
-            justifyContent: "center",
-          }} // Canh giữa pagination
-        />
-      </div>
-    </>
   );
 };
 
