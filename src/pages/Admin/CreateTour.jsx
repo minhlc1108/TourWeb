@@ -1,9 +1,18 @@
-import { Button, Card, Form, Image, Input, Select, Upload } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Image,
+  Input,
+  Select,
+  Upload,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { fetchAllCategoryAPI } from "~/apis";
-
+import { CreateNewTourAPI, fetchAllCategoryAPI } from "~/apis";
+import { API_ROOT } from "~/utils/constants";
+import { message } from "~/components/EscapeAntd";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -17,32 +26,8 @@ function CreateTour() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [categories, SetCategories] = useState([]);
-  const [fileList, setFileList] = useState([
-    { 
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-    {
-      uid: "-2",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-    {
-      uid: "-3",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-    {
-      uid: "-4",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ]);
+  const [fileList, setFileList] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -50,7 +35,17 @@ function CreateTour() {
     setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
   };
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+
+  const handleChange = ({ fileList: newFileList, file }) => {
+    console.log(newFileList);
+    if (file.status === "done") {
+      const updatedFileList = newFileList.map((file) => ({
+        url: file.response?.secure_url || file.url,
+      }));
+      setFileList(updatedFileList);
+    } else setFileList(newFileList);
+  };
+
   const uploadButton = (
     <button
       style={{
@@ -76,6 +71,16 @@ function CreateTour() {
     });
   }, []);
 
+  const handleSubmit = async (values) => {
+    setIsSubmitting(true);
+    const createdTour = await CreateNewTourAPI({ ...values, images: fileList });
+    if (createdTour) {
+      message.success("Thêm tour thành công!");
+      navigate("/admin/tour");
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <Card
       title="Thêm tour"
@@ -99,6 +104,7 @@ function CreateTour() {
         labelCol={{
           span: 3,
         }}
+        onFinish={handleSubmit}
       >
         <Form.Item
           label="Tên tour"
@@ -185,7 +191,7 @@ function CreateTour() {
         </Form.Item>
         <Form.Item
           label="Danh mục"
-          name="category"
+          name="categoryId"
           rules={[
             {
               required: true,
@@ -193,20 +199,46 @@ function CreateTour() {
             },
           ]}
         >
-          <Select showSearch placeholder="Chọn danh mục">
-            {categories &&
-              categories.map((c) => {
+          <Select
+            showSearch
+            placeholder="Chọn danh mục"
+            options={categories.map((c) => ({
+              key: c.id,
+              value: c.id,
+              label: `${c.id} - ${c.name}`,
+            }))}
+            filterOption={(input, option) =>
+              option?.label.toLowerCase().includes(input.toLowerCase())
+            }
+          >
+            {/* {categories &&
+               categories.map((c) => {
                 return (
-                  <>
-                    <Select.Option value={c.id}>{c.name}</Select.Option>;
-                  </>
-                );
-              })}
+                  <Select.Option key={c.id} value={c.id}>
+                    {c.name}
+                  </Select.Option>
+                ); */}
+            {/* })} */}
           </Select>
         </Form.Item>
-        <Form.Item label="Ảnh">
+        <Form.Item
+          name="images"
+          label="Ảnh"
+          rules={[
+            {
+              validator: () => {
+                // Kiểm tra xem có ảnh trong fileList hay không
+                if (!fileList || fileList.length === 0) {
+                  return Promise.reject("Vui lòng tải lên ít nhất một ảnh!");
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
           <Upload
-            action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+            accept=".png, .jpg, .jfif"
+            action={`${API_ROOT}/tour-image/upload`}
             listType="picture-card"
             fileList={fileList}
             onPreview={handlePreview}
@@ -216,7 +248,7 @@ function CreateTour() {
           </Upload>
         </Form.Item>
         <Form.Item>
-        {previewImage && (
+          {previewImage && (
             <Image
               wrapperStyle={{
                 display: "none",
@@ -231,7 +263,12 @@ function CreateTour() {
           )}
         </Form.Item>
         <Form.Item style={{ textAlign: "right" }}>
-          <Button type="primary" size="large">
+          <Button
+            loading={isSubmitting}
+            type="primary"
+            htmlType="submit"
+            size="large"
+          >
             Thêm
           </Button>
         </Form.Item>

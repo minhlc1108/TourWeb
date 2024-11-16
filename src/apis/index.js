@@ -44,3 +44,14 @@ export const fetchAllTourAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/tour`, { params });
   return response.data;
 }
+
+export const CreateNewTourAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/tour`,data)
+  return response.data
+}
+
+//Tour Image
+export const uploadImageAPI = async (params) => {
+  const response = await axios.get(`${API_ROOT}/tour-image/upload`, { params });
+  return response.data;
+}

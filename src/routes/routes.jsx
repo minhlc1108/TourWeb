@@ -6,6 +6,7 @@ import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
 import CreateTour from "~/pages/Admin/CreateTour";
 import Customer from "~/pages/Admin/Customer";
+import EditTour from "~/pages/Admin/EditTour";
 import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/Statistic";
 import Tour from "~/pages/Admin/Tour";
@@ -59,11 +60,11 @@ const routes = createBrowserRouter([
       {
         index: true,
         path: "",
-        element: <Statistic />
+        element: <Statistic />,
       },
       {
         path: "statistic",
-        element: <Statistic />
+        element: <Statistic />,
       },
       {
         path: "tour",
@@ -71,35 +72,39 @@ const routes = createBrowserRouter([
         children: [
           {
             path: "create",
-            element: <CreateTour/>
-          }
-        ]
+            element: <CreateTour />,
+          },
+          {
+            path: "edit",
+            element: <EditTour />,
+          },
+        ],
       },
       {
         path: "promotion",
-        element: <Promotion />
+        element: <Promotion />,
       },
       {
         path: "category",
-        element: <Category />
+        element: <Category />,
       },
       {
         path: "transport",
-        element: <Transport />
+        element: <Transport />,
       },
       {
         path: "booking",
-        element: <Booking />
+        element: <Booking />,
       },
       {
         path: "customer",
-        element: <Customer />
+        element: <Customer />,
       },
     ],
   },
   {
     path: "*",
-    element: <NotFound />
+    element: <NotFound />,
   },
 ]);
 
