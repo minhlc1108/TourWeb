@@ -13,7 +13,7 @@ import { fetchAllTourAPI } from "~/apis";
 
 function Tour() {
   const location = useLocation();
-  const isCreatingTour = location.pathname.includes("/create");
+  const isChild = location.pathname.includes("/create") ||  location.pathname.includes("/edit") ;
   const navigate = useNavigate();
   const searchInput = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -167,11 +167,11 @@ function Tour() {
     },
     {
       title: "",
-      dataIndex: "image",
-      key: "image",
-      render: (url) => {
+      dataIndex: "images",
+      key: "images",
+      render: (images) => {
         return (
-          <Image src={url ? url : defaultImage} style={{ maxHeight: 100 }} />
+          <Image src={images[0]?.url ? images[0].url : defaultImage} style={{ minWidth: 50 }} />
         );
       },
     },
@@ -198,10 +198,10 @@ function Tour() {
     },
     {
       title: "Danh mục",
-      dataIndex: "category",
-      key: "category",
+      dataIndex: "categoryName",
+      key: "categoryName",
       sorter: true,
-      ...getColumnSearchProps("category"),
+      ...getColumnSearchProps("categoryName"),
     },
     {
       title: "Số lượng (người)",
@@ -227,7 +227,7 @@ function Tour() {
             <Button
               variant="outlined"
               icon={<EditOutlined />}
-              onClick={() => {}}
+              onClick={() => {navigate(`/admin/tour/edit?id=${record.id}`)}}
             ></Button>
             <Button
               onClick={() => deleteItem(record.id)}
@@ -252,7 +252,7 @@ function Tour() {
       };
      fetchAllTourAPI(params).then((data) => {
       setIsLoading(false);
-      setData(data.tours.map((tour) => ({ key: tour.id, ...tour })));
+      setData(data.tours.map((tour) => ({ key: tour.id, ...tour})));
       setIsLoading(false);
       setPagination({
         ...pagination,
@@ -268,7 +268,7 @@ function Tour() {
 
   return (
     <>
-      {!isCreatingTour && (
+      {!isChild && (
         <Card title="Tour" padding="1.25rem 1.25rem 0">
           <Space
             style={{
