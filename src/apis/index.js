@@ -42,3 +42,5 @@ export const deleteCategoryAPI = async (id) => {
   const response = await axios.delete(`${API_ROOT}/category/${id}`);
   return response.data;
 };
+
+// tour

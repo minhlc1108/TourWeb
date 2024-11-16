@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Statistic, Select } from "antd";
 import { Line, Pie, Column } from "@ant-design/charts";
+import {
+  
+  createNewCategoryAPI,
+  deleteCategoryAPI,
+  fetchAllCategoryAPI,
+  updateCategoryAPI,
+} from "~/apis";
 
 function StatisticAdmin() {
   const bookingData = [
@@ -80,7 +87,21 @@ function StatisticAdmin() {
     }
   };
 
+
+  useEffect(()=> {
+    const fetchData = async ()=>{
+      const result = await fetchAllCategoryAPI();
+      
+
+    }
+
+
+  })
+
+
   return (
+
+
     <Card title="Thống Kê" padding="1.25rem 1.25rem 0">
       <Row gutter={16}>
         <Col span={8}>
