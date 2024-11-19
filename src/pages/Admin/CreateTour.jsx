@@ -1,16 +1,8 @@
-import {
-  Button,
-  Card,
-  Form,
-  Image,
-  Input,
-  Select,
-  Upload,
-} from "antd";
+import { Button, Card, Form, Image, Input, Select, Upload } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { CreateNewTourAPI, fetchAllCategoryAPI } from "~/apis";
+import { createNewTourAPI, fetchAllCategoryAPI } from "~/apis";
 import { API_ROOT } from "~/utils/constants";
 import { message } from "~/components/EscapeAntd";
 const getBase64 = (file) =>
@@ -28,6 +20,8 @@ function CreateTour() {
   const [categories, SetCategories] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [form] = Form.useForm();
+
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -36,14 +30,8 @@ function CreateTour() {
     setPreviewOpen(true);
   };
 
-  const handleChange = ({ fileList: newFileList, file }) => {
-    console.log(newFileList);
-    if (file.status === "done") {
-      const updatedFileList = newFileList.map((file) => ({
-        url: file.response?.secure_url || file.url,
-      }));
-      setFileList(updatedFileList);
-    } else setFileList(newFileList);
+  const handleChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
   };
 
   const uploadButton = (
@@ -73,10 +61,15 @@ function CreateTour() {
 
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
-    const createdTour = await CreateNewTourAPI({ ...values, images: fileList });
+    const createdTour = await createNewTourAPI({
+      ...values,
+      images: values.images?.fileList.map((file) => ({
+        url: file.response?.secure_url || file.url,
+      })),
+    });
     if (createdTour) {
       message.success("Thêm tour thành công!");
-      navigate("/admin/tour");
+      navigate(`/admin/tour/edit?id=${createdTour.id}`);
     }
     setIsSubmitting(false);
   };
@@ -105,6 +98,7 @@ function CreateTour() {
           span: 3,
         }}
         onFinish={handleSubmit}
+        form={form}
       >
         <Form.Item
           label="Tên tour"
