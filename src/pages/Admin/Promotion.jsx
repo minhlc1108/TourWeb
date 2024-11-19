@@ -4,7 +4,7 @@ import { message, modal } from "~/components/EscapeAntd";
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 import { createNewPromotionAPI, deletePromotionAPI, fetchAllPromotionAPI, updatePromotionAPI } from "~/apis";
-import moment from 'moment';
+import moment from "moment";
 
 function Promotion() {
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -66,16 +66,22 @@ function Promotion() {
           >
             Reset
           </Button>
-          <Button type="link" size="small" onClick={() => { confirm({ closeDropdown: false }); }}>
+          <Button type="link" size="small" onClick={() => confirm({ closeDropdown: false })}>
             Filter
           </Button>
-          <Button type="link" size="small" onClick={() => { close(); }}>close</Button>
+          <Button type="link" size="small" onClick={() => close()}>
+            close
+          </Button>
         </Space>
       </div>
     ),
     filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />,
     onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => { if (visible) { setTimeout(() => searchInput.current?.select(), 100); }},
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
   });
 
   const deleteItem = async (id) => {
@@ -115,32 +121,34 @@ function Promotion() {
     if (record) {
       setTitle("Sửa khuyến mãi");
       setItemSelected(record);
-  
-      // Chuyển đổi startDate và endDate thành đối tượng moment nếu có giá trị
+
       form.setFieldsValue({
         name: record.name,
-        startDate: record.startDate ? moment(record.startDate, "YYYY-MM-DD") : null,
-        endDate: record.endDate ? moment(record.endDate, "YYYY-MM-DD") : null,
+        dateRange: [
+          record.startDate ? moment(record.startDate, "YYYY-MM-DD") : null,
+          record.endDate ? moment(record.endDate, "YYYY-MM-DD") : null,
+        ],
         percentage: record.percentage,
       });
     } else {
       setItemSelected(null);
       setTitle("Thêm khuyến mãi");
-      form.resetFields(); // Xóa trắng form khi thêm mới
+      form.resetFields();
     }
     setVisible(true);
   };
-  
+
   const handleSubmit = async (values) => {
     setConfirmLoading(true);
-  
-    // Chuyển đổi startDate và endDate từ moment về chuỗi định dạng "YYYY-MM-DD"
+
+    const [startDate, endDate] = values.dateRange || [];
+
     const formattedValues = {
       ...values,
-      startDate: values.startDate ? values.startDate.format("YYYY-MM-DD") : null,
-      endDate: values.endDate ? values.endDate.format("YYYY-MM-DD") : null,
+      startDate: startDate ? startDate.format("YYYY-MM-DD") : null,
+      endDate: endDate ? endDate.format("YYYY-MM-DD") : null,
     };
-  
+
     if (itemSelected) {
       // Chỉnh sửa khuyến mãi
       await updatePromotionAPI(itemSelected.id, formattedValues)
@@ -157,7 +165,7 @@ function Promotion() {
     } else {
       // Thêm mới khuyến mãi
       const newId = data.length > 0 ? Math.max(...data.map((item) => item.id)) + 1 : 1;
-  
+
       await createNewPromotionAPI({ ...formattedValues, id: newId })
         .then((result) => {
           message.success("Thêm mới thành công", 3);
@@ -167,22 +175,20 @@ function Promotion() {
         .finally(() => setConfirmLoading(false));
     }
   };
-  
-  
 
   const handleCancel = () => {
     setVisible(false);
     setItemSelected(null);
     form.resetFields();
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       const params = {
         ...searchTexts,
         sortBy: sorter.field,
-        isDecsending: sorter.order === "ascend" ? false : true,
+        isDescending: sorter.order === "ascend" ? false : true,
         pageNumber: pagination.current,
         pageSize: pagination.pageSize,
       };
@@ -209,26 +215,62 @@ function Promotion() {
         title={title}
       >
         <Form form={form} onFinish={handleSubmit}>
-          <Form.Item label="Tên khuyến mãi" name="name" rules={[{ required: true, message: "Vui lòng nhập tên khuyến mãi" }, { max: 255, message: "Tên tối đa 255 ký tự" }]}>
+          <Form.Item
+            label="Tên khuyến mãi"
+            name="name"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên khuyến mãi" },
+              { max: 255, message: "Tên tối đa 255 ký tự" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="Ngày bắt đầu" name="startDate" rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu" }]}>
-            <DatePicker />
+          <Form.Item
+            label="Khoảng thời gian"
+            name="dateRange"
+            rules={[
+              { required: true, message: "Vui lòng chọn khoảng thời gian" },
+              {
+                validator: (_, value) => {
+                  if (!value || value.length !== 2 || value[0].isBefore(value[1], "day")) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Ngày bắt đầu phải trước ngày kết thúc"));
+                },
+              },
+            ]}
+          >
+            <DatePicker.RangePicker />
           </Form.Item>
-          <Form.Item label="Ngày kết thúc" name="endDate" rules={[{ required: true, message: "Vui lòng chọn ngày kết thúc" }]}>
-            <DatePicker />
-          </Form.Item>
-          <Form.Item label="Mức khuyến mãi (%)" name="percentage" rules={[{ required: true, message: "Vui lòng nhập mức khuyến mãi" }]}>
-            <InputNumber min={0} max={100} formatter={(value) => `${value}%`} />
+          <Form.Item
+            label="Mức khuyến mãi (%)"
+            name="percentage"
+            rules={[
+              { required: true, message: "Vui lòng nhập phần trăm khuyến mãi" },
+              { type: "number", min: 1, max: 100, message: "Giá trị từ 1 đến 100" },
+            ]}
+          >
+            <InputNumber />
           </Form.Item>
         </Form>
       </Modal>
-      <Space style={{ marginBottom: 16 }}>
-        <Button color="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
-          Thêm
-        </Button>
-      </Space>
-      <Table columns={columns} dataSource={data} pagination={pagination} onChange={handleTableChange} loading={isLoading} scroll={{ x: 800 }} />
+      <Button
+        icon={<PlusOutlined />}
+        onClick={() => showModal()}
+        style={{ margin: "10px 0", float: "left" }}
+        type="primary"
+      >
+        Thêm mới
+      </Button>
+      <Table
+        dataSource={data}
+        columns={columns}
+        pagination={pagination}
+        loading={isLoading}
+        onChange={handleTableChange}
+        size="middle"
+      />
+      
     </Card>
   );
 }
