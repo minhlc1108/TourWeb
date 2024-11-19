@@ -10,6 +10,7 @@ import Statistic from "~/pages/Admin/Statistic";
 import Tour from "~/pages/Admin/Tour";
 import Transport from "~/pages/Admin/Transport";
 import NotFound from "~/pages/Error/NotFound";
+import Home from "~/pages/Client/Home";
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -89,6 +90,11 @@ const routes = createBrowserRouter([
         element: <Customer />
       },
     ],
+  },
+   // Client route
+   {
+    path: "/client",
+    element: <Home />  // Trang chủ cho client
   },
   {
     path: "*",
