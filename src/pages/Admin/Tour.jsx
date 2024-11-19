@@ -8,12 +8,12 @@ import {
 import defaultImage from "~/assets/unnamed.png";
 import { useEffect, useRef, useState } from "react";
 import { message, modal } from "~/components/EscapeAntd";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetchAllTourAPI } from "~/apis";
 
 function Tour() {
-  const location = useLocation();
-  const isChild = location.pathname.includes("/create") ||  location.pathname.includes("/edit") ;
+  // const location = useLocation();
+  // const isChild = location.pathname.includes("/create") ||  location.pathname.includes("/edit") ;
   const navigate = useNavigate();
   const searchInput = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,23 +22,11 @@ function Tour() {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-    count: 0,
+    total: 0,
   });
 
   const [data, setData] = useState([
-    // {
-    //   key: 1,
-    //   id: 1,
-    //   image:
-    //     "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    //   name: "hihi",
-    //   departure: "TP. Hồ Chí Minh",
-    //   destination: "Hà Nội",
-    //   category: "Tour trong nước",
-    //   quantity: "5",
-    //   duration: "5N4Đ",
-    // },
-  ]);
+]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -171,7 +159,10 @@ function Tour() {
       key: "images",
       render: (images) => {
         return (
-          <Image src={images[0]?.url ? images[0].url : defaultImage} style={{ minWidth: 50 }} />
+          <Image
+            src={images[0]?.url ? images[0].url : defaultImage}
+            style={{ minWidth: 100, maxWidth: 400 }}
+          />
         );
       },
     },
@@ -227,7 +218,9 @@ function Tour() {
             <Button
               variant="outlined"
               icon={<EditOutlined />}
-              onClick={() => {navigate(`/admin/tour/edit?id=${record.id}`)}}
+              onClick={() => {
+                navigate(`/admin/tour/edit?id=${record.id}`);
+              }}
             ></Button>
             <Button
               onClick={() => deleteItem(record.id)}
@@ -243,23 +236,25 @@ function Tour() {
 
   useEffect(() => {
     setIsLoading(true);
-      const params = {
-        ...searchTexts,
-        sortBy: sorter.field,
-        isDecsending: sorter.order === "ascend" ? false : true,
-        pageNumber: pagination.current,
-        pageSize: pagination.pageSize,
-      };
-     fetchAllTourAPI(params).then((data) => {
-      setIsLoading(false);
-      setData(data.tours.map((tour) => ({ key: tour.id, ...tour})));
-      setIsLoading(false);
-      setPagination({
-        ...pagination,
-        total: data.total,
-      });
-     }).catch(() => message.error("Lỗi khi gọi api"));
-  },[searchTexts, sorter, pagination.current, pagination.pageSize]);
+    const params = {
+      ...searchTexts,
+      sortBy: sorter.field,
+      isDecsending: sorter.order === "ascend" ? false : true,
+      pageNumber: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    fetchAllTourAPI(params)
+      .then((data) => {
+        setIsLoading(false);
+        setData(data.tours.map((tour) => ({ key: tour.id, ...tour })));
+        setIsLoading(false);
+        setPagination({
+          ...pagination,
+          total: data.total,
+        });
+      })
+      .catch(() => message.error("Lỗi khi gọi api"));
+  }, [searchTexts, sorter, pagination.current, pagination.pageSize]);
 
   const handleTableChange = (newPagination, filters, newSorter) => {
     setPagination(newPagination);
@@ -268,36 +263,33 @@ function Tour() {
 
   return (
     <>
-      {!isChild && (
-        <Card title="Tour" padding="1.25rem 1.25rem 0">
-          <Space
-            style={{
-              marginBottom: 16,
+      <Card title="Tour" padding="1.25rem 1.25rem 0">
+        <Space
+          style={{
+            marginBottom: 16,
+          }}
+        >
+          <Button
+            color="primary"
+            variant="solid"
+            icon={<PlusOutlined />}
+            iconPosition={"start"}
+            onClick={() => {
+              navigate("/admin/tour/create");
             }}
           >
-            <Button
-              color="primary"
-              variant="solid"
-              icon={<PlusOutlined />}
-              iconPosition={"start"}
-              onClick={() => {
-                navigate("/admin/tour/create");
-              }}
-            >
-              Thêm
-            </Button>
-          </Space>
-          <Table
-            columns={columns}
-            dataSource={data}
-            pagination={pagination}
-            onChange={handleTableChange}
-            loading={isLoading}
-            scroll={{ x: 800 }}
-          ></Table>
-        </Card>
-      )}
-      <Outlet />
+            Thêm
+          </Button>
+        </Space>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={pagination}
+          onChange={handleTableChange}
+          loading={isLoading}
+          scroll={{ x: 800 }}
+        ></Table>
+      </Card>
     </>
   );
 }

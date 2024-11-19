@@ -69,16 +69,14 @@ const routes = createBrowserRouter([
       {
         path: "tour",
         element: <Tour />,
-        children: [
-          {
-            path: "create",
-            element: <CreateTour />,
-          },
-          {
-            path: "edit",
-            element: <EditTour />,
-          },
-        ],
+      },
+      {
+        path: "tour/create",
+        element: <CreateTour />,
+      },
+      {
+        path: "tour/edit",
+        element: <EditTour />,
       },
       {
         path: "promotion",

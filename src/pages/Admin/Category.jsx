@@ -28,7 +28,7 @@ function Category() {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-    count: 0,
+    total: 0,
   });
   const [data, setData] = useState([]);
 

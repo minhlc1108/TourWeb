@@ -62,10 +62,6 @@ const SideNav = ({ ...others }) => {
   const { pathname } = useLocation();
   const [current, setCurrent] = useState("");
 
-  const onClick = (e) => {
-    console.log("click ", e);
-  };
-
   useEffect(() => {
     const paths = pathname.split("/");
     setCurrent(paths[paths.length - 1]);
@@ -111,7 +107,6 @@ const SideNav = ({ ...others }) => {
         <Menu
           mode="inline"
           items={items}
-          onClick={onClick}
           selectedKeys={[current]}
           style={{ border: "none" }}
         />
