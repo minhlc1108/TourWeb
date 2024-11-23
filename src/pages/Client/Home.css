@@ -1,0 +1,368 @@
+/* src/pages/Client/Home.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.home-container {
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #333;
+  color: white;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.auth-buttons button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.login {
+  background-color: #666;
+  color: white;
+}
+
+.signup {
+  background-color: #ff5a5f;
+  color: white;
+}
+
+/* Banner */
+.banner {
+  background: url('/anhkhicau.jpg') no-repeat center center;
+  background-size: cover;
+  color: white;
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.banner h1 {
+  font-size: 48px;
+  margin: 0;
+}
+
+.banner p {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.search-btn {
+  background-color: #ff5a5f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Popular Tours */
+
+.tour-title {
+  color: red;
+  font-style: italic; /* Kiểu chữ nghiêng */
+  font-size: 10px; 
+  font-family: "Georgia", serif; 
+  margin-bottom: 10px;
+}
+
+.sub-title {
+  font-size: 25px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.popular-tours {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.tour-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.popular-tours {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.popular-tours h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.tour-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap; /* Nếu màn hình nhỏ, các phần tử sẽ xuống hàng */
+}
+
+.tour-card {
+  background-color: #f5f5f5;
+  padding: 20px;
+  width: 22%; /* Điều chỉnh để 4 ảnh vừa nằm trong 1 hàng */
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tour-card img {
+  width: 100%; /* Chiếm hết chiều rộng của .tour-card */
+  height: auto; /* Giữ tỉ lệ ảnh */
+  border-radius: 8px;
+}
+
+.tour-name {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Top Attractions */
+.top-attractions {
+  padding: 150px 20px;
+  text-align: center;
+  background-color:#f5f5f5;;
+}
+
+.top-attractions h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.attractions-list {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.attraction-card {
+  background-color: #f5f5f5;
+  padding: 20px;
+  width: 22%; /* Điều chỉnh để 4 ảnh vừa nằm trong 1 hàng */
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.attraction-card img {
+  width: 100%; /* Chiếm hết chiều rộng của .attraction-card */
+  height: auto; /* Giữ tỉ lệ ảnh */
+  border-radius: 8px;
+}
+
+.attraction-name {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.our-experiences {
+  padding: 150px 20px;
+   /* Căn trái tất cả nội dung bên trong */
+}
+
+.our-experiences h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  text-align: left; /* Đảm bảo tiêu đề căn trái */
+}
+
+.experience-content {
+  display: flex;
+  align-items: center; /* Căn giữa nội dung theo chiều dọc */
+  justify-content: flex-start; /* Đảm bảo các phần tử căn trái */
+  gap: 120px; /* Tạo khoảng cách giữa ảnh và văn bản */
+}
+
+.experience-content img {
+  width: 50%; /* Điều chỉnh kích thước ảnh */
+  height: auto;
+  padding-left: 15%;
+  border-radius: 20px;
+}
+
+.experience-text {
+  width: 50%; /* Chia đôi không gian với ảnh */
+}
+
+.experience-text ul {
+  list-style-type: none; /* Loại bỏ dấu chấm mặc định */
+  padding-left: 0;
+}
+
+.experience-text li {
+  position: relative; /* Để tạo vị trí cho dấu tích */
+  padding-left: 30px; /* Tạo không gian bên trái cho dấu tích */
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.experience-text li::before {
+  content: "✓"; /* Thêm dấu tích */
+  position: absolute;
+  left: 10px;
+  top: 0;
+  font-size: 1.5rem;
+  color: green; /* Màu xanh cho dấu tích */
+}
+
+.testimonials {
+  padding: 150px 30px;
+   /* Căn trái tất cả nội dung bên trong */
+   background-color: #f5f5f5;
+   
+   
+}
+
+
+.testimonials h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  text-align: center; 
+}
+
+.testimonials-content {
+  display:flex;
+  align-items: right;
+  justify-content: flex-end; 
+  gap: 50px; /* Tạo khoảng cách giữa ảnh và văn bản */
+  
+  flex-direction: row-reverse;
+  margin: 40px auto;
+  max-width: 80%; /* Để giới hạn độ rộng của phần content */
+}
+
+.testimonial-text {
+  flex: 1;
+  padding-left: 10%; 
+  text-align: center;
+}
+
+.testimonial-images {
+  padding-left: 40%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 0;
+}
+
+.testimonial-images img {
+  padding-left: 30%;
+  
+  width: 150%;
+  height: auto;
+  border-radius: 10px;
+  position: absolute;
+  transition: transform 0.5s ease;
+}
+
+/* Điều chỉnh từng ảnh theo thứ tự chồng lớp */
+.testimonial-images img:nth-child(1) {
+  top: 0;
+  width: 100%;
+  left: 0;
+  
+  transform: rotate(7deg);
+}
+
+.testimonial-images img:nth-child(2) {
+  width:120%;
+  top: 100px;
+  left: -20px;
+  transform: rotate(-5deg);
+}
+
+.testimonial-images img:nth-child(3) {
+  width: 100%;
+  top: 170px;
+  left: 30px;
+  transform: rotate(5deg);
+}
+
+/* Hiệu ứng hover khi đưa chuột vào ảnh */
+.testimonial-images img:hover {
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+
+
+.travel-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.travel-guide-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.travel-guide-item img {
+  width: 50%;
+  height: 400px;
+  border-radius: 10px;
+  margin:  0 auto;
+}
+
+.latest-travel-guide {
+  padding: 200px 20px;
+  text-align: center;
+}
+
+.latest-travel-guide h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.guide-list {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.guide-card {
+  width: 200px;
+  text-align: center;
+  
+}
+
+.guide-card img {
+height: 100px;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* Footer */
+.footer {
+
+  background-color: #333;
+  color: white;
+  padding: 0px;
+  text-align: center;
+  font-size: 14px;
+}

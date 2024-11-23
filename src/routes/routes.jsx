@@ -21,6 +21,7 @@ import TourClient from "~/pages/Client/TourClient";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
+// import Home from "~/pages/Client/Home";
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -78,16 +79,14 @@ const routes = createBrowserRouter([
       {
         path: "tour",
         element: <Tour />,
-        children: [
-          {
-            path: "create",
-            element: <CreateTour />,
-          },
-          {
-            path: "edit",
-            element: <EditTour />,
-          },
-        ],
+      },
+      {
+        path: "tour/create",
+        element: <CreateTour />,
+      },
+      {
+        path: "tour/edit",
+        element: <EditTour />,
       },
       {
         path: "promotion",
@@ -112,6 +111,11 @@ const routes = createBrowserRouter([
       
       
     ],
+  },
+   // Client route
+   {
+    path: "/client",
+    element: <Home />  // Trang chủ cho client
   },
   {
     path: "",
