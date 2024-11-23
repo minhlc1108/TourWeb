@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AutoComplete,
   Button,
@@ -26,30 +26,98 @@ import {
   RocketOutlined,
 
 } from "@ant-design/icons";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import {
+  getCustomerByIdAPI
+}from "~/apis";
 import DetailsProfileUser from "./DetailsProfileUser";
 import ChangePassword from "./ChangePassword";
+import ListBooking from "./ListBooking";
 
 const { Text, Link } = Typography;
 
 const { Option } = Select;
 
+const getItem = (label, key,  children, type) => {
+  return {
+    key,
+    children,
+    label,
+    type,
+  };
+};
+
+// const items = [
+//   {
+//     key: "sub1",
+//     label: "Tài khoản",
+//     icon: <UserOutlined />,
+//     children: [
+//       {
+//         key: "g1",
+//         label: "Thông tin cá nhân",
+//         type: "group",
+        
+//       },
+//       {
+//         key: "g2",
+//         label: "Đổi mật khẩu",
+//         type: "group",
+       
+//       },
+//     ],
+//   },
+//   {
+//     key: "sub2",
+//     label: "Đơn đặt chỗ",
+//     icon: <RocketOutlined />,
+//     children: [
+//       {
+//         key: "g1",
+//         label: "Tất cả Booking",
+//         type: "group",
+        
+//       },
+//       {
+//         key: "g2",
+//         label: "Đặt thành công",
+//         type: "group",
+       
+//       },
+//       {
+//         key: "g3",
+//         label: "Đã Hủy",
+//         type: "group",
+       
+//       },
+//     ],
+//   },
+//   {
+//     key: "sub3",
+//     label: "Logout",
+//     icon: <LogoutOutlined />,
+
+    
+//   },
+
+// ];
+
 const items = [
+
   {
     key: "sub1",
-    label: "Tài khoản",
+    label: <Link to="/User"> Tài Khoản</Link>,
     icon: <UserOutlined />,
     children: [
       {
-        key: "g1",
-        label: "Thông tin cá nhân",
-        type: "group",
-        
+        key: "/User/ThongTinCaNhan",
+        label: <Link to="/User/ThongTinCaNhan">Thông tin cá nhân</Link>,
+        path: "/User/ThongTinCaNhan",
       },
       {
-        key: "g2",
-        label: "Đổi mật khẩu",
-        type: "group",
-       
+        key: "/User/DoiMatKhau",
+        label: <Link to="/User/DoiMatKhau">Đổi mật khẩu</Link>,
+        path: "/User/DoiMatKhau",
       },
     ],
   },
@@ -59,29 +127,12 @@ const items = [
     icon: <RocketOutlined />,
     children: [
       {
-        key: "g1",
-        label: "DS1",
-        type: "group",
-        
-      },
-      {
-        key: "g2",
-        label: "DS2",
-        type: "group",
-       
+        key: "/User/DanhSachTour",
+        label: <Link to="/User/DanhSachTour">Tất cả Booking</Link>,
+        path: "/User/DanhSachTour",
       },
     ],
   },
-  {
-    key: "sub3",
-    label: "Logout",
-    icon: <LogoutOutlined />,
-
-    
-  },
-  
- 
-  
 ];
 
 const formItemLayout = {
@@ -120,12 +171,29 @@ const onChange = (link) => {
 };
 
 const ProfileUser = () => {
+
+  const [User,setUser] = useState()
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Xác định menu đang được chọn
+  const selectedKey = location.pathname;
+  
+  useEffect(()=> {
+    const fetchData = async () => {
+      const result = await getCustomerByIdAPI("22");
+      // console.log(result);
+      setUser ( result)
+    }
+    fetchData();
+    }, []);
+
   const [form] = Form.useForm();
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
-
-
+  
+  // console.log(User)
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
 
   const websiteOptions = autoCompleteResult.map((website) => ({
@@ -142,7 +210,14 @@ const ProfileUser = () => {
     width:'100%'
 
     }}>
-      <Col flex={5}>
+      <Col  flex="1 0 20%" 
+      // xs={24} sm={6} md={5} lg={4}
+
+        style={{
+          height:'100vh'
+          
+        }}
+       >
         <Flex
           vertical
           justify="center"
@@ -166,13 +241,14 @@ const ProfileUser = () => {
               justify="center"
               // gap={'small'}
             >
-              <Text>loz loc</Text>
-              <Text>locancut123@gmail.com</Text>
+              <Text>{User?.name}</Text>
+              <Text>{User?.email}</Text>
             </Flex>
           </Flex>
           <Flex justify="left">
             <Menu
-              // onClick={onClick}
+               selectedKeys={[selectedKey]} // Highlight menu item hiện tại
+               onClick={({ key }) => navigate(key)} 
               style={{
                 width: 256,
                 borderRight: 'none'
@@ -185,9 +261,13 @@ const ProfileUser = () => {
           </Flex>
         </Flex>
       </Col>
-      <Col flex={45}>
-        <DetailsProfileUser/>
+      <Col flex="3 0 75% " 
+    // xs={24} sm={6} md={5} lg={4}
+      >
+        {/* <DetailsProfileUser/> */}
         {/* <ChangePassword/> */}
+        {/* <ListBooking/> */}
+        <Outlet/> 
       </Col>
     </Row>
     </Flex>

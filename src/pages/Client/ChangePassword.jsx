@@ -1,5 +1,10 @@
-import React from "react";
+import {React, useState , useEffect} from "react";
 import { Form, Input, Button } from "antd";
+import {
+  getCustomerByIdAPI,
+  updateCustomerAPI
+}from "~/apis";
+import { message, modal } from "~/components/EscapeAntd";
 
 const formItemLayout = {
   labelCol: {
@@ -35,6 +40,51 @@ const tailFormItemLayout = {
 const ChangePassword = () => {
   const [form] = Form.useForm();
 
+  const [User, setUser] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await getCustomerByIdAPI("20");
+      // console.log(result);
+      const formattedUser = {
+        ...result,
+        birthday: new Date(result.birthday).toISOString().split('T')[0] // Định dạng lại ngày
+      };
+      setUser(formattedUser);
+      // form.setFieldsValue(formattedUser)
+    };
+    fetchData();
+
+  }, []);
+
+  // console.log("check ben details", User.id);
+
+
+
+  const handlePassword = async () => {
+    if (form.getFieldValue())
+    {
+    
+
+      if (form.getFieldValue("password") === User.password )
+      {
+        
+        const formattedUser = {
+          ...User,
+          password: form.getFieldValue("newpassword")
+        };
+        // console.log("fomat",formattedUser)
+
+        await updateCustomerAPI(User.id , formattedUser)
+        message.success("Thành công", 3);
+      }
+      else {
+        message.error("Password không chính xác");
+      }
+    }
+    
+  };
+
   return (
     <Form
       {...formItemLayout}
@@ -53,6 +103,8 @@ const ChangePassword = () => {
         flexDirection:'column',
         
       }}
+      onFinish={handlePassword}
+
     >
       <Form.Item
         name="password"
@@ -63,7 +115,7 @@ const ChangePassword = () => {
             message: "Please input your password!",
           },
         ]}
-        hasFeedback
+        // hasFeedback
       >
         <Input.Password />
       </Form.Item>
@@ -94,7 +146,7 @@ const ChangePassword = () => {
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue("password") === value) {
+              if (!value || getFieldValue("newpassword") === value) {
                 return Promise.resolve();
               }
               return Promise.reject(

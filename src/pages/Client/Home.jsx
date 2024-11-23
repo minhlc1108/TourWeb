@@ -15,8 +15,8 @@ const Home = () => {
   return (
     <div>
       {/* <TourPackage/> */}
-      <ProfileUser
-      />
+      {/* <ProfileUser
+      /> */}
   </div>
   );
 };

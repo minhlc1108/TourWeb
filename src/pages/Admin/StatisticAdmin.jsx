@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Statistic, Select } from "antd";
 import { Line, Pie, Column } from "@ant-design/charts";
 import {
-  
-  createNewCategoryAPI,
-  deleteCategoryAPI,
+  fetchAllTourAPI,
   fetchAllCategoryAPI,
-  updateCategoryAPI,
+  fetchAllCustomerAPI
 } from "~/apis";
 
 function StatisticAdmin() {
@@ -85,18 +83,54 @@ function StatisticAdmin() {
     } else if (value === "year") {
       setData(yearlyRevenue);
     }
-  };
+  }
 
 
-  useEffect(()=> {
-    const fetchData = async ()=>{
-      const result = await fetchAllCategoryAPI();
-      
-
-    }
+    const [countUserCate, setCountUserCate] = useState([]);
+    const [countUser, setCountUser] = useState(0);
+    const [countTour, setCountTour] = useState(0);
 
 
-  })
+    useEffect(() => {
+      const fetchData = async () => {
+        const result = await fetchAllCustomerAPI();
+        const Tour = await fetchAllTourAPI();
+        // console.log (Tour)
+        setCountTour(Tour.total);
+        setCountUser (result.total)
+        // Giả sử fetchAllCategoriesAPI trả về danh sách các danh mục
+        const response  = await fetchAllCategoryAPI();
+        const counts = [];
+        // console.log("API Response:", categories);
+        const categories = response.categories;
+        // Duyệt qua tất cả các danh mục
+        // for (const category of categories) {
+        //   let userCount = 0;
+        //   console.log("Category:", categories); 
+        //   // Duyệt qua tất cả các tour của danh mục
+        //   for (const tour of category.tours) {
+        //     console.log("  Tour:", tour);
+        //     // Duyệt qua tất cả các lịch trình (schedules) của tour
+        //     for (const schedule of tour.tourSchedules) {
+        //       // Duyệt qua tất cả các bookings của schedule
+        //       for (const booking of schedule.bookings) {
+        //         // Tính tổng số booking details
+        //         userCount += booking.bookingDetails.length;
+        //       }
+        //     }
+        //   }
+        //   // Lưu kết quả cho danh mục này
+        //   counts.push({
+        //     category: category.name,
+        //     UserNumber: userCount,
+        //   });
+        // }
+        // onsole.log("Counts by category:", counts);
+        // setCountUserCate(counts);
+      };
+  
+      fetchData();
+    }, []);
 
 
   return (
@@ -119,8 +153,8 @@ function StatisticAdmin() {
           <Card bordered={false}>
             <Statistic
               title="Người Dùng"
-              value={9300}
-              precision={2}
+              value={countUser}
+              // precision={2}
               valueStyle={{ color: "#3f8600" }}
               suffix="User"
             />
@@ -130,8 +164,8 @@ function StatisticAdmin() {
           <Card bordered={false}>
             <Statistic
               title="Lượt Đặt Tour"
-              value={93}
-              precision={2}
+              value={countTour}
+              // precision={2}
               valueStyle={{ color: "#3f8600" }}
             />
           </Card>

@@ -161,6 +161,9 @@ const tourData = [
     category: "Du lịch nghỉ dưỡng",
   },
 ];
+import { fetchAllTourAPI } from "~/apis";
+
+
 
 const formItemLayout = {
   labelCol: {
@@ -210,9 +213,23 @@ const TourPackage = () => {
     category: "",
     traffic: "",
   });
+  // const [tourData,setTourData] = useState()
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const dataTour = await fetchAllTourAPI();
+      console.log ( dataTour.tours)
+      // setTourData(dataTour.tours);
+    };
+  
+    fetchData();
+  }, []);
+
+  // console.log ( tourData)
+
+  useEffect(() => {
+
     let filtered = tourData.filter((tour) => {
       // Kiểm tra từng điều kiện trong datafilter, chỉ áp dụng nếu có giá trị
       const matchesSearch = datafilter.search
@@ -256,14 +273,20 @@ const TourPackage = () => {
 
     setDataHaveFilter(filtered);
 
-    console.log(datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
+    // console.log(datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
   }, [datafilter]);
 
   return (
     <Flex vertical gutter={[5, 0]} style={{ paddingTop: "2%" }}>
-      <Row>
+      <Row
+      style={{
+        background:'white',
+        boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+
+      }}
+      >
         <Col
-          flex={1.5}
+          flex="1 0 20%"
           style={{
             height: "100vh",
             background: "white",
@@ -279,7 +302,7 @@ const TourPackage = () => {
               margin: "2%",
               padding: "2%",
               borderRadius: "5px",
-              boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+              // boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
             }}
             // initialValues={{ layout: vertical }}
             // style={{ maxWidth: formLayout === "inline" ? "none" : 600 }}
@@ -506,7 +529,7 @@ const TourPackage = () => {
         </Col>
 
         <Col
-          flex={3.5}
+          flex="3 0 80%"
           style={{
             height: "100%",
             display:'flex',
@@ -514,8 +537,7 @@ const TourPackage = () => {
             // background: "black",
           }}
         >
-          <TourDetailsClient data={dataHaveFilter}  />
-          
+          {/* <TourDetailsClient data={dataHaveFilter}  /> */}
           {/* <FeaturesTour  data={dataHaveFilter}  /> */}
         </Col>
       </Row>

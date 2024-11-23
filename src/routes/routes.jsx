@@ -5,12 +5,18 @@ import LayourClient from "~/layouts/app/LayoutClient";
 import { DashboardLayout, UserLayout } from "~/layouts/dashboard";
 import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
+import CreateTour from "~/pages/Admin/CreateTour";
 import Customer from "~/pages/Admin/Customer";
+import EditTour from "~/pages/Admin/EditTour";
 import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/StatisticAdmin";
 import Tour from "~/pages/Admin/Tour";
 import Transport from "~/pages/Admin/Transport";
+import ChangePassword from "~/pages/Client/ChangePassword";
+import DetailsProfileUser from "~/pages/Client/DetailsProfileUser";
 import Home from "~/pages/Client/Home";
+import ListBooking from "~/pages/Client/ListBooking";
+import ProfileUser from "~/pages/Client/ProfileUser";
 import TourClient from "~/pages/Client/TourClient";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
@@ -63,35 +69,45 @@ const routes = createBrowserRouter([
       {
         index: true,
         path: "",
-        element: <Statistic />
+        element: <Statistic />,
       },
       {
         path: "statistic",
-        element: <Statistic />
+        element: <Statistic />,
       },
       {
         path: "tour",
-        element: <Tour />
+        element: <Tour />,
+        children: [
+          {
+            path: "create",
+            element: <CreateTour />,
+          },
+          {
+            path: "edit",
+            element: <EditTour />,
+          },
+        ],
       },
       {
         path: "promotion",
-        element: <Promotion />
+        element: <Promotion />,
       },
       {
         path: "category",
-        element: <Category />
+        element: <Category />,
       },
       {
         path: "transport",
-        element: <Transport />
+        element: <Transport />,
       },
       {
         path: "booking",
-        element: <Booking />
+        element: <Booking />,
       },
       {
         path: "customer",
-        element: <Customer />
+        element: <Customer />,
       },
       
       
@@ -124,13 +140,38 @@ const routes = createBrowserRouter([
         path: "tourDetailsClient",
         element: <TourDetailsClient/>
       },
+     
       
     ]
   },
   {
-    path: "*",
-    element: <NotFound />
+    path: "User",
+    element:(
+    <ProtectedRoute>
+      <PageWrapper>
+          <LayourClient>
+            <ProfileUser/>,
+          </LayourClient>
+      </PageWrapper>
+    </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        path: "ThongTinCaNhan",
+        element: <DetailsProfileUser />,
+      },
+      {
+        path: "DoiMatKhau",
+        element: <ChangePassword/>
+      },
+      {
+        path: "DanhSachTour",
+        element: <ListBooking/>
+      },
+    ],
   },
+ 
 ]);
 
 export default routes;
