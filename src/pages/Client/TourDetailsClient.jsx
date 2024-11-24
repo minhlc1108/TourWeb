@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { Row, Col, Image, Flex } from "antd";
+import { Row, Col, Image, Flex ,Result} from "antd";
 import CardTourVertical from "~/layouts/app/CardTourVertical";
 import { Pagination } from "antd";
 
@@ -37,11 +37,11 @@ const TourDetailsClient = ({ data }) => {
         current={currentPage}
         pageSize={pageSize}
         total={data.length}
-        onChange={(page) => setCurrentPage(page)}
+        onChange={(page) => setCurrentPage(page)} 
         style={{ textAlign: "center", marginTop: "20px" }}
       />
     </div>
   );
 };
-
+ 
 export default TourDetailsClient;

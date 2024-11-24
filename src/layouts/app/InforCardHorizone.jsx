@@ -10,7 +10,7 @@ import {
 import { Avatar, Card } from "antd";
 
 const { Meta } = Card;
-const InforCardHorizone = () => {
+const InforCardHorizone = ({ title, description, image ,detail}) => {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -43,7 +43,7 @@ const InforCardHorizone = () => {
             style={{
               // width: isMobile ? "100%" : "150px",
             }}
-            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+            src={image || "https://via.placeholder.com/150"}
           />
         }
         actions={[
@@ -53,8 +53,13 @@ const InforCardHorizone = () => {
         ]}
       >
         <Meta
-          title="Name Tour"
-          description="This is the description This is the descriptionThis is the descriptionThis is the descriptionThis is th "
+        style={{
+          flex: 1, // Đảm bảo phần meta chiếm tối đa không gian còn lại
+          width: "90vh", // Đảm bảo phần này chiếm đầy chiều ngang
+          
+        }}
+         title={title || "Tên tour chưa có"} // Tiêu đề mặc định
+         description={ "Lịch trình " + description + " Chi tiết " + detail || " Không có mô tả"} // Mô tả mặc định
         >
           {/* <div> check</div> */}
         </Meta>

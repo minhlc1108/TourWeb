@@ -9,158 +9,158 @@ const onPanelChange = (value, mode) => {
   console.log(value.format("YYYY-MM-DD"), mode);
 };
 const { Search } = Input;
-const tourData = [
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour A",
-    tourCode: "T001",
-    organizer: "Nguyễn Văn A",
-    departureTime: "08:00 AM",
-    date: "2023-12-01",
-    slotRemain: "5",
-    price: "3,000,000 VND",
-    departureStart: "TP.HCM",
-    departureEnd: "Đà Nẵng",
-    traffic: "Máy bay",
-    category: "Du lịch biển",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour B",
-    tourCode: "T002",
-    organizer: "Trần Thị B",
-    departureTime: "09:30 AM",
-    date: "2023-12-02",
-    slotRemain: "3",
-    price: "22,500,000 VND",
-    departureStart: "Hà Nội",
-    departureEnd: "Nha Trang",
-    traffic: "Xe khách",
-    category: "Du lịch khám phá",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour C",
-    tourCode: "T003",
-    organizer: "Lê Văn C",
-    departureTime: "07:00 AM",
-    date: "2023-12-03",
-    slotRemain: "1",
-    price: "54,500,000 VND",
-    departureStart: "Đà Nẵng",
-    departureEnd: "Phú Quốc",
-    traffic: "Tàu thủy",
-    category: "Du lịch nghỉ dưỡng",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour D",
-    tourCode: "T004",
-    organizer: "Nguyễn Thị D",
-    departureTime: "10:00 AM",
-    date: "2023-12-04",
-    slotRemain: "2",
-    price: "2,000,000 VND",
-    departureStart: "TP.HCM",
-    departureEnd: "Hà Nội",
-    traffic: "Ô tô",
-    category: "Du lịch văn hóa",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour E",
-    tourCode: "T005",
-    organizer: "Trần Văn E",
-    departureTime: "11:30 AM",
-    date: "2023-12-05",
-    slotRemain: "4",
-    price: "1,500,000 VND",
-    departureStart: "Hà Nội",
-    departureEnd: "Cần Thơ",
-    traffic: "Máy bay",
-    category: "Du lịch sinh thái",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour F",
-    tourCode: "T006",
-    organizer: "Nguyễn Văn F",
-    departureTime: "12:00 PM",
-    date: "2023-12-06",
-    slotRemain: "6",
-    price: "3,800,000 VND",
-    departureStart: "Đà Nẵng",
-    departureEnd: "Hà Nội",
-    traffic: "Xe khách",
-    category: "Du lịch mạo hiểm",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour G",
-    tourCode: "T007",
-    organizer: "Trần Thị G",
-    departureTime: "01:30 PM",
-    date: "2023-12-07",
-    slotRemain: "4",
-    price: "2,200,000 VND",
-    departureStart: "TP.HCM",
-    departureEnd: "Phú Quốc",
-    traffic: "Máy bay",
-    category: "Du lịch lãng mạn",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour H",
-    tourCode: "T008",
-    organizer: "Lê Văn H",
-    departureTime: "03:00 PM",
-    date: "2023-12-08",
-    slotRemain: "2",
-    price: "5,000,000 VND",
-    departureStart: "Hà Nội",
-    departureEnd: "Nha Trang",
-    traffic: "Ô tô",
-    category: "Du lịch khám phá",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour I",
-    tourCode: "T009",
-    organizer: "Nguyễn Thị I",
-    departureTime: "04:00 PM",
-    date: "2023-12-09",
-    slotRemain: "3",
-    price: "11,800,000 VND",
-    departureStart: "Đà Nẵng",
-    departureEnd: "Cần Thơ",
-    traffic: "Tàu thủy",
-    category: "Du lịch khám phá",
-  },
-  {
-    imgurl:
-      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-    title: "Tour J",
-    tourCode: "T010",
-    organizer: "Trần Văn J",
-    departureTime: "05:30 PM",
-    date: "2023-12-10",
-    slotRemain: "5",
-    price: "2,900,000 VND",
-    departureStart: "TP.HCM",
-    departureEnd: "Hà Nội",
-    traffic: "Máy bay",
-    category: "Du lịch nghỉ dưỡng",
-  },
-];
+// const tourData = [
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour A",
+//     tourCode: "T001",
+//     organizer: "Nguyễn Văn A",
+//     departureTime: "08:00 AM",
+//     date: "2023-12-01",
+//     slotRemain: "5",
+//     price: "3,000,000 VND",
+//     departureStart: "TP.HCM",
+//     departureEnd: "Đà Nẵng",
+//     traffic: "Máy bay",
+//     category: "Du lịch biển",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour B",
+//     tourCode: "T002",
+//     organizer: "Trần Thị B",
+//     departureTime: "09:30 AM",
+//     date: "2023-12-02",
+//     slotRemain: "3",
+//     price: "22,500,000 VND",
+//     departureStart: "Hà Nội",
+//     departureEnd: "Nha Trang",
+//     traffic: "Xe khách",
+//     category: "Du lịch khám phá",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour C",
+//     tourCode: "T003",
+//     organizer: "Lê Văn C",
+//     departureTime: "07:00 AM",
+//     date: "2023-12-03",
+//     slotRemain: "1",
+//     price: "54,500,000 VND",
+//     departureStart: "Đà Nẵng",
+//     departureEnd: "Phú Quốc",
+//     traffic: "Tàu thủy",
+//     category: "Du lịch nghỉ dưỡng",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour D",
+//     tourCode: "T004",
+//     organizer: "Nguyễn Thị D",
+//     departureTime: "10:00 AM",
+//     date: "2023-12-04",
+//     slotRemain: "2",
+//     price: "2,000,000 VND",
+//     departureStart: "TP.HCM",
+//     departureEnd: "Hà Nội",
+//     traffic: "Ô tô",
+//     category: "Du lịch văn hóa",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour E",
+//     tourCode: "T005",
+//     organizer: "Trần Văn E",
+//     departureTime: "11:30 AM",
+//     date: "2023-12-05",
+//     slotRemain: "4",
+//     price: "1,500,000 VND",
+//     departureStart: "Hà Nội",
+//     departureEnd: "Cần Thơ",
+//     traffic: "Máy bay",
+//     category: "Du lịch sinh thái",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour F",
+//     tourCode: "T006",
+//     organizer: "Nguyễn Văn F",
+//     departureTime: "12:00 PM",
+//     date: "2023-12-06",
+//     slotRemain: "6",
+//     price: "3,800,000 VND",
+//     departureStart: "Đà Nẵng",
+//     departureEnd: "Hà Nội",
+//     traffic: "Xe khách",
+//     category: "Du lịch mạo hiểm",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour G",
+//     tourCode: "T007",
+//     organizer: "Trần Thị G",
+//     departureTime: "01:30 PM",
+//     date: "2023-12-07",
+//     slotRemain: "4",
+//     price: "2,200,000 VND",
+//     departureStart: "TP.HCM",
+//     departureEnd: "Phú Quốc",
+//     traffic: "Máy bay",
+//     category: "Du lịch lãng mạn",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour H",
+//     tourCode: "T008",
+//     organizer: "Lê Văn H",
+//     departureTime: "03:00 PM",
+//     date: "2023-12-08",
+//     slotRemain: "2",
+//     price: "5,000,000 VND",
+//     departureStart: "Hà Nội",
+//     departureEnd: "Nha Trang",
+//     traffic: "Ô tô",
+//     category: "Du lịch khám phá",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour I",
+//     tourCode: "T009",
+//     organizer: "Nguyễn Thị I",
+//     departureTime: "04:00 PM",
+//     date: "2023-12-09",
+//     slotRemain: "3",
+//     price: "11,800,000 VND",
+//     departureStart: "Đà Nẵng",
+//     departureEnd: "Cần Thơ",
+//     traffic: "Tàu thủy",
+//     category: "Du lịch khám phá",
+//   },
+//   {
+//     imgurl:
+//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+//     title: "Tour J",
+//     tourCode: "T010",
+//     organizer: "Trần Văn J",
+//     departureTime: "05:30 PM",
+//     date: "2023-12-10",
+//     slotRemain: "5",
+//     price: "2,900,000 VND",
+//     departureStart: "TP.HCM",
+//     departureEnd: "Hà Nội",
+//     traffic: "Máy bay",
+//     category: "Du lịch nghỉ dưỡng",
+//   },
+// ];
 import { fetchAllTourAPI } from "~/apis";
 
 
@@ -196,7 +196,7 @@ const tailFormItemLayout = {
   },
 };
 
-const TourPackage = () => {
+const TourPackage = ({dataInput}) => {
   const [form] = Form.useForm();
   // const [budget,setBudget] = useState(0);
   // const [departureStart,setDepartureStart] = useState();
@@ -213,18 +213,47 @@ const TourPackage = () => {
     category: "",
     traffic: "",
   });
-  // const [tourData,setTourData] = useState()
+  const [tourData,setTourData] = useState([])
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
-
   useEffect(() => {
     const fetchData = async () => {
-      const dataTour = await fetchAllTourAPI();
-      console.log ( dataTour.tours)
-      // setTourData(dataTour.tours);
+      try {
+        const response = await fetchAllTourAPI();
+        const dataTour = response.tours; // Dữ liệu fetch được
+        const processedData = dataTour.map(tour => {
+          // Lấy dữ liệu từ schedule đầu tiên (nếu có)
+          const schedule = tour.tourSchedules[0] || {};
+          const image = tour.images[0] || {};
+  
+          return {
+            imgurl: image.url || "", // URL hình ảnh
+            title: tour.name, // Tên tour
+            tourCode: tour.id, // Mã tour
+            departureTime: schedule.departureDate
+              ? new Date(schedule.departureDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              : "", // Lấy phần giờ
+            date: schedule.departureDate
+              ? new Date(schedule.departureDate).toLocaleDateString()
+              : "", // Lấy phần ngày
+            slotRemain: schedule.remain || 0, // Số chỗ còn lại
+            price: schedule.priceAdult || 0, // Giá người lớn
+            departureStart: tour.departure, // Nơi khởi hành
+            departureEnd: tour.destination, // Điểm đến
+            category: tour.categoryName, // Danh mục tour
+          };
+        });   
+
+        setTourData( processedData)
+        setDatafilter(processedData)
+        console.log("proces " , processedData); // Kiểm tra dữ liệu sau xử lý
+      } catch (error) {
+        console.error("Error fetching tours:", error);
+      }
     };
   
     fetchData();
   }, []);
+  // setTourData(dataInput);
 
   // console.log ( tourData)
 
@@ -273,8 +302,11 @@ const TourPackage = () => {
 
     setDataHaveFilter(filtered);
 
-    // console.log(datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
+    console.log("datafilter" , datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
   }, [datafilter]);
+
+
+ 
 
   return (
     <Flex vertical gutter={[5, 0]} style={{ paddingTop: "2%" }}>
@@ -537,7 +569,7 @@ const TourPackage = () => {
             // background: "black",
           }}
         >
-          {/* <TourDetailsClient data={dataHaveFilter}  /> */}
+          <TourDetailsClient data={dataHaveFilter}  />
           {/* <FeaturesTour  data={dataHaveFilter}  /> */}
         </Col>
       </Row>

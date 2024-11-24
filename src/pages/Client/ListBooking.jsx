@@ -1,46 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Pagination } from "antd";
+import { Button, Result } from 'antd';
 import InforCardHorizone from "~/layouts/app/InforCardHorizone";
-import {
-  getCustomerByIdAPI,
-  updateCustomerAPI,
-  
-}from "~/apis";
+import { getCustomerByIdAPI } from "~/apis";
 
 const ListBooking = () => {
-
-  const [User, setUser] = useState();
+  const [User, setUser] = useState([]); // Khởi tạo mảng rỗng
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 3; // Số lượng mục trên mỗi trang
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await getCustomerByIdAPI("20");
-      // console.log(result);
-      const formattedUser = {
-        ...result,
-        birthday: new Date(result.birthday).toISOString().split('T')[0] // Định dạng lại ngày
-      };
-      setUser(formattedUser);
-      // form.setFieldsValue(formattedUser)
-    };
-    fetchData();
 
+      const tours = result.bookings.map((booking) => {
+        const tour = booking.tourSchedule?.tour;
+        if (tour) {
+          return {
+            id: tour.id,
+            title: tour.name,
+            description: `Điểm đến: ${tour.destination}, Thời gian: ${tour.duration} ngày`,
+            detail : tour.detail ,
+            images: tour.images,
+          };
+        }
+        return null;
+      });
+
+      setUser(tours.filter((tour) => tour !== null));
+    };
+
+    fetchData();
   }, []);
 
-  const data = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    title: `Booking ${i + 1}`,
-    description: `This is description for booking ${i + 1}`,
-  }));
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 3; // Số lượng mục trên mỗi trang
-
-  // Dữ liệu hiển thị trên trang hiện tại
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentData = data.slice(startIndex, endIndex);
+  const currentData = User.slice(startIndex, endIndex);
 
-  // Xử lý thay đổi trang
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -50,35 +46,40 @@ const ListBooking = () => {
       title="Tất cả"
       style={{
         height: "100vh",
-   
-
       }}
     >
-      <Row gutter={[16, 16]}
-      style={{
-        // display:'flex',
-        // flexDirection:'column',
-        // alignItems:"center"
-      }}
-      >
-        {/* Chỉ hiển thị dữ liệu trên trang hiện tại */}
-        {currentData.map((item) => (
-          <Col 
-          
-          span={24} key={item.id}>
-            <InforCardHorizone title={item.title} description={item.description} />
-          </Col>
-        ))}
+      <Row gutter={[16, 16]}>
+        {currentData.length > 0 ? (
+          currentData.map((item) => (
+            <Col span={24} key={item.id}>
+              <InforCardHorizone
+                title={item.title}
+                description={item.description}
+                image={item.images?.[0]?.url}
+                detail = {item.detail}
+              />
+            </Col>
+          ))
+        ) : (
+          <Result
+            status="500"
+            title="500"
+            subTitle="Sorry, something went wrong."
+            extra={<Button type="primary">Back Home</Button>}
+          />
+        )}
       </Row>
       <Pagination
         current={currentPage}
         pageSize={pageSize}
-        total={data.length}
+        total={User.length}
         onChange={handlePageChange}
-        style={{ marginTop: "16px",
-          display:'flex',
-          justifyContent:'center',
-          textAlign: "center" }}
+        style={{
+          marginTop: "16px",
+          display: "flex",
+          justifyContent: "center",
+          textAlign: "center",
+        }}
       />
     </Card>
   );
