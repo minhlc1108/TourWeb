@@ -5,7 +5,7 @@ import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
-const Customer = () => {
+const CustomerManagerComponent = () => {
     const [data, setData] = useState([]);
     const location = useLocation();
     const [searchText, setSearchText] = useState('');
@@ -15,7 +15,7 @@ const Customer = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
-                const response = await axios.get('https://localhost:7253/api/customer/listCustomer');
+                const response = await axios.get('https://localhost:7253/api/account/listCustomer');
                 const dataWithKeys = response.data.map((item, index) => ({
                     ...item,
                     key: item.stt || index,
@@ -156,13 +156,6 @@ const Customer = () => {
             ...getColumnSearchProps('sex'),
         },
         {
-            title: 'Ngày sinh',
-            dataIndex: 'birthday',
-            key: 'birthday',
-            width: '20%',
-            ...getColumnSearchProps('birthday'),
-        },
-        {
             title: 'Địa chỉ',
             dataIndex: 'address',
             key: 'address',
@@ -189,4 +182,4 @@ const Customer = () => {
     return <Table columns={columns} dataSource={data} />;
 };
 
-export default Customer;
+export default CustomerManagerComponent;

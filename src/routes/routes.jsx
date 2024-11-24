@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { createBrowserRouter, Navigate, useLocation } from "react-router-dom";
 import { DashboardLayout } from "~/layouts/dashboard";
+import Account from "~/pages/Admin/Account";
 import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
 import CreateTour from "~/pages/Admin/CreateTour";
@@ -13,6 +14,11 @@ import Tour from "~/pages/Admin/Tour";
 import Transport from "~/pages/Admin/Transport";
 import NotFound from "~/pages/Error/NotFound";
 import Home from "~/pages/Client/Home";
+
+import LoginRegister from "~/layouts/dashboard/LoginRegister";
+import Login from "~/pages/Login/LoginComponent";
+import Register from "~/pages/Login/RegisterComponent";
+import ForgotPassword from "~/pages/Login/ForgotPasswordComponent";
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -99,10 +105,43 @@ const routes = createBrowserRouter([
         path: "customer",
         element: <Customer />,
       },
+      {
+        path: "account",
+        element: <Account />,
+      },
     ],
   },
+  {
+      path: "/*",
+      element: (
+          <ProtectedRoute>
+              <PageWrapper>
+                  <LoginRegister />
+              </PageWrapper>
+          </ProtectedRoute>
+      ),
+      children: [
+          {
+              index: true,
+              path: "",
+              element: <Statistic />,
+          },
+          {
+              path: "login",
+              element: <Login />,
+          },
+          {
+              path: "register",
+              element: <Register />,
+          },
+          {
+              path: "forgot-password",
+              element: <ForgotPassword />,
+          },
+      ],
+  },
    // Client route
-   {
+  {
     path: "/client",
     element: <Home />  // Trang chủ cho client
   },
