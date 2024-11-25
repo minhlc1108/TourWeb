@@ -102,3 +102,47 @@ export const updateCustomerAPI = async (id, values) => {
 
 
 
+//Booking
+export const fetchAllBooking = async (params) => {
+  const response = await axios.get(`${API_ROOT}/booking`, { params });
+  return response.data;
+}
+
+export const updateBooking = async (id, values) => {
+  const response = await axios.put(`${API_ROOT}/booking/${id}`, values);
+  return response.data;
+};
+
+
+export const createBooking = async (data) => {
+  const response = await axios.post(`${API_ROOT}/booking`, data)
+  return response.data
+}
+
+export const deleteBooking = async (id) => {
+  const response = await axios.delete(`${API_ROOT}/booking/${id}`);
+  return response.data;
+};
+
+//Booking detail
+export const fetchAllBookingDetailsByIdBook = async (id) => {
+  const response = await axios.get(`${API_ROOT}/booking-detail/${id}`);
+  return response.data;
+}
+
+export const CreateBookingDetail = async (data) => {
+  const response = await axios.post(`${API_ROOT}/booking-detail`, data)
+  return response.data
+}
+
+//Customer
+export const fetchAllCustomers = async (params) => {
+  const response = await axios.get(`${API_ROOT}/customer`, { params });
+  return response.data;
+}
+
+//Tour Schedules
+export const fetchAllTourSchedulesAPI = async (params) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule`, { params });
+  return response.data;
+}
