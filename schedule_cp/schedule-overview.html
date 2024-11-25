@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport"/>
+    <link rel="icon" th:href="@{/admin/img/kaiadmin/favicon.ico}" type="image/x-icon"/>
+
+    <!-- Fonts and icons -->
+    <script type="text/javascript" th:src="@{/admin/js/plugin/webfont/webfont.min.js}"></script>
+    <link th:href="@{/admin/css/fonts.min.css}" rel="stylesheet"/>
+
+    <!-- CSS Files -->
+    <link th:href="@{/admin/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/admin/css/plugins.min.css}" rel="stylesheet"/>
+    <link th:href="@{/admin/css/kaiadmin.min.css}" rel="stylesheet"/>
+
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link th:href="@{/admin/css/demo.css}" rel="stylesheet"/>
+    <link th:href="@{/admin/css/typeahead.css}" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="wrapper">
+    <!-- start sidebar -->
+    <div th:replace="/admin/layout/sidebar.html :: sidebar"></div>
+    <!-- end sidebar -->
+
+    <div class="main-panel">
+        <!-- header  -->
+        <div th:replace="/admin/layout/header.html :: header"></div>
+
+        <!-- content-->
+        <div class="container">
+            <div class="page-inner">
+                <form th:object="${schedule}">
+
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Thông tin lịch trình</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <input type="hidden" id="tour-id" th:field="*{tour.tourId}"/>
+                                    <input type="hidden" id="tour-name" th:field="*{tour.tourName}"/>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-group has-feedback">
+                                            <label for="schedule-name">Tên lịch trình</label>
+                                            <input
+                                                    type="text"
+                                                    id="schedule-name"
+                                                    value=""
+                                                    class="form-control"
+                                                    th:field="*{scheduleName}"
+                                                    disabled
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-group has-feedback">
+                                            <label for="departure-date">Ngày đi</label>
+                                            <input
+                                                    type="date"
+                                                    id="departure-date"
+                                                    class="form-control"
+                                                    th:value="*{departureDate}"
+                                                    disabled
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-group has-feedback">
+                                            <label for="return-date">Ngày về</label>
+                                            <input
+                                                    type="date"
+                                                    id="return-date"
+                                                    class="form-control"
+                                                    th:value="*{returnDate}"
+                                                    disabled
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a class="btn btn-primary btn-edit-schedule"
+                                   href="#"
+                                >Chỉnh sửa</a>
+                                <a class="btn btn-danger btn-back"
+                                   href="#"
+                                >Quay lại</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Phương tiện chiều đi</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- header table -->
+                                    <div class="card-header">
+                                        <div class="d-flex align-items-center">
+                                            <button type="button"
+                                                    class="btn btn-primary btn-round ms-auto btn-add"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop-add"
+                                                    th:attr="data-status=${1}"
+                                            >
+                                                Thêm phương tiện chiều đi
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- table -->
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table
+                                                    id="add-row"
+                                                    class="display table table-striped table-hover"
+                                            >
+                                                <!-- header -->
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên phương tiện đi</th>
+                                                    <th>Thời gian đi</th>
+                                                    <th>Điểm xuất phát</th>
+                                                    <th>Thời gian đến</th>
+                                                    <th>Điểm đến</th>
+                                                    <th style="width: 10%">Hành động</th>
+                                                </tr>
+                                                </thead>
+                                                <!-- end header -->
+
+                                                <!-- body -->
+                                                <tbody>
+
+                                                <tr class="row-data"
+                                                    th:each="transportDeparture: ${transportDepartures}">
+                                                    <td class="txt-id"
+                                                        th:text="${transportDeparture.transportDetailId}"></td>
+                                                    <td class="txt-name"
+                                                        th:text="${transportDeparture.transport.transportName}"></td>
+
+                                                    <td th:text="${transportDeparture.departureTime}"></td>
+                                                    <td th:text="${transportDeparture.transport.departureLocation}"></td>
+                                                    <td th:text="${transportDeparture.arrivalTime}"></td>
+                                                    <td th:text="${transportDeparture.transport.destinationLocation}"></td>
+                                                    <td>
+                                                        <div class="form-button-action">
+                                                            <button
+                                                                    type="button"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#staticBackdrop-edit"
+                                                                    class="btn btn-link btn-primary btn-lg btn-edit"
+                                                                    data-original-title="Edit Task"
+                                                                    th:attr="data-transport-detail-id=${transportDeparture.transportDetailId},
+                                                                    data-transport-id=${transportDeparture.transport.transportId},
+                                                                    data-transport-name = ${transportDeparture.transport.transportName},
+                                                                     data-departure-location = ${transportDeparture.transport.departureLocation},
+                                                                     data-destination-location = ${transportDeparture.transport.destinationLocation},
+                                                                     data-departure-time=${transportDeparture.departureTime},
+                                                                     data-arrival-time=${transportDeparture.arrivalTime},
+                                                                     data-status = ${transportDeparture.status}
+                                                                     "
+                                                            >
+
+                                                                <i class="fa fa-edit"></i>
+                                                            </button>
+                                                            <!-- Button trigger modal -->
+                                                            <button type="button"
+                                                                    class="btn btn-link btn-danger"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#exampleModal"
+                                                                    th:attr="data-id=${transportDeparture.transportDetailId},
+                                                                     data-name=${transportDeparture.transport.transportName},
+                                                                     data-controller-delete='/admin/tour/schedule/delete-transport-detail' ">
+                                                                <i class="fa fa-times"></i>
+                                                            </button>
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- end table -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script th:inline="javascript">
+                    var states = [[${states}]] || [];
+                    var selected = null
+                </script>
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Phương tiện chiều về</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- header table -->
+                                    <div class="card-header">
+                                        <div class="d-flex align-items-center">
+                                            <button type="button"
+                                                    class="btn btn-primary btn-round ms-auto btn-add"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop-add"
+                                                    th:attr="data-status=${2}"
+                                            >
+                                                Thêm phương tiện chiều về
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- table -->
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table
+                                                    id="add-row-1"
+                                                    class="display table table-striped table-hover add-row"
+                                            >
+                                                <!-- header -->
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên phương tiện về</th>
+                                                    <th>Thời gian đi</th>
+                                                    <th>Điểm xuất phát</th>
+                                                    <th>Thời gian đến</th>
+                                                    <th>Điểm đến</th>
+                                                    <th style="width: 10%">Hành động</th>
+                                                </tr>
+                                                </thead>
+                                                <!-- end header -->
+
+                                                <!-- body -->
+                                                <tbody>
+
+                                                <tr class="row-data" th:each="transportReturn: ${transportReturns}">
+                                                    <td class="txt-id"
+                                                        th:text="${transportReturn.transportDetailId}"></td>
+                                                    <td class="txt-name"
+                                                        th:text="${transportReturn.transport.transportName}"></td>
+                                                    <td th:text="${transportReturn.departureTime}"></td>
+                                                    <td th:text="${transportReturn.transport.departureLocation}"></td>
+                                                    <td th:text="${transportReturn.arrivalTime}"></td>
+                                                    <td th:text="${transportReturn.transport.destinationLocation}"></td>
+                                                    <td>
+                                                        <div class="form-button-action">
+                                                            <button
+                                                                    type="button"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#staticBackdrop-edit"
+                                                                    class="btn btn-link btn-primary btn-lg btn-edit"
+                                                                    data-original-title="Edit Task"
+                                                                    th:attr="data-transport-detail-id=${transportReturn.transportDetailId},
+                                                                    data-transport-id=${transportReturn.transport.transportId},
+                                                                    data-transport-name = ${transportReturn.transport.transportName},
+                                                                     data-departure-location = ${transportReturn.transport.departureLocation},
+                                                                     data-destination-location = ${transportReturn.transport.destinationLocation},
+                                                                     data-departure-time=${transportReturn.departureTime},
+                                                                     data-arrival-time=${transportReturn.arrivalTime},
+                                                                     data-status = ${transportReturn.status}
+                                                                     "
+                                                            >
+
+                                                                <i class="fa fa-edit"></i>
+                                                            </button>
+                                                            <!-- Button trigger modal -->
+                                                            <button type="button"
+                                                                    class="btn btn-link btn-danger"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#exampleModal"
+                                                                    th:attr="data-id=${transportReturn.transportDetailId},
+                                                                     data-name=${transportReturn.transport.transportName},
+                                                                     data-controller-delete='/admin/tour/schedule/delete-transport-detail' ">
+                                                                <i class="fa fa-times"></i>
+                                                            </button>
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- end table -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- start footer -->
+        <div th:replace="/admin/layout/footer.html :: footer"></div>
+        <!-- end footer -->
+    </div>
+    <!-- Kiểm tra xem có thông báo thành công không, chỉ để ở trang quản lý table, không  cần để trong trang edit, create -->
+    <div th:if="${successMessage}" class="alert alert-success" id="success-message" style="display: none;">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-success" id="error-message" style="display: none;">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!--modal delete, chỉ để ở trang quản lý table, không  cần để trong trang edit, create -->
+    <div th:replace="/admin/modal.html :: modal"></div>
+
+
+    <script type="text/javascript" th:src="@{/admin/js/core/jquery-3.7.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/js/typeahead.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/js/typeahead-data.js}"></script>
+
+    <div th:replace="/admin/schedule/transport-detail-add.html :: transport-detail-add"></div>
+    <div th:replace="/admin/schedule/transport-detail-edit.html :: transport-detail-edit"></div>
+</div>
+
+<!--js tự viết thông báo và tạo slug, phần này chỉ để ở trang quản lý table, không  cần để trong trang edit, create-->
+<script type="module" th:src="@{/admin/js/notify.js}"></script>
+<script type="module" th:src="@{/admin/js/transport-detail-add.js}"></script>
+<script type="module" th:src="@{/admin/js/transport-detail-edit.js}"></script>
+<!-- end js tự viết-->
+<script th:inline="javascript" type="module">
+    import {CreateSlug} from /*[[@{/admin/js/create-slug.js}]]*/'';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnBack = document.querySelector(".btn-back");
+        const tourId = document.getElementById("tour-id");
+        const tourName = document.getElementById("tour-name");
+        btnBack.href = `/admin/tour/tour-overview/${CreateSlug(tourName.value)}-${tourId.value}`;
+
+        const btnEdit = document.querySelector(".btn-edit-schedule");
+        // Lấy URL hiện tại
+        var url = window.location.pathname;
+        // Tách URL thành các phần tử bằng dấu "/"
+        var parts = url.split('/');
+        var lastPart = parts.pop() || parts.pop();
+        btnEdit.href = `/admin/tour/schedule/${lastPart}`
+
+        $('#add-row-1').DataTable();
+
+    })
+</script>
+<!--   Core JS Files   -->
+
+<script type="text/javascript" th:src="@{/admin/js/core/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/core/bootstrap.min.js}"></script>
+
+<!-- jQuery Scrollbar -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js}"></script>
+
+<!-- Chart JS -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/chart.js/chart.min.js}"></script>
+
+<!-- jQuery Sparkline -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/jquery.sparkline/jquery.sparkline.min.js}"></script>
+
+<!-- Chart Circle -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/chart-circle/circles.min.js}"></script>
+
+<!-- Datatables -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/datatables/datatables.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/datatables.js}"></script>
+
+<!-- Bootstrap Notify -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/bootstrap-notify/bootstrap-notify.min.js}"></script>
+
+<!-- jQuery Vector Maps -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/jsvectormap/jsvectormap.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/plugin/jsvectormap/world.js}"></script>
+
+<!-- Sweet Alert -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/sweetalert/sweetalert.min.js}"></script>
+
+<!-- Kaiadmin JS -->
+<script type="text/javascript" th:src="@{/admin/js/kaiadmin.min.js}"></script>
+
+
+</body>
+
+</html>

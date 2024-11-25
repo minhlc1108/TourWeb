@@ -1,0 +1,126 @@
+
+<!-- Modal -->
+
+
+
+<div  th:fragment="transport-detail-edit"  class="modal fade" id="staticBackdrop-edit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <form method="POST" th:action="@{/admin/tour/schedule/edit-transport-detail}" th:object="${transportDetail}" >
+        <input type="hidden" id="status-edit" name="status" value = "" th:field="*{status}" />
+        <input type="hidden" id="schedule-slug-edit" name="schedule-slug" value ="" />
+        <input type="hidden" id="transport-detail-id-edit" name="transport-detail-id" value ="" th:field="*{transportDetailId}" />
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Thêm phương tiện cho chuyến đi</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group has-feedback">
+                        <label for="transport-edit">Phương tiện</label>
+                        <br/>
+                        <input
+                                type="text"
+                                id="transport-edit"
+                                value=""
+                                class="form-control typeahead"
+                                name="transport-slug"
+                        />
+                        <small id="transport-error-edit" class="form-text text-muted"
+                        >Chọn phương tiện di chuyển.</small>
+                    </div>
+
+
+                    <div class="form-group has-feedback">
+                        <label for="departure-time-edit">Thời gian xuất phát</label>
+                        <br/>
+                        <input type="datetime-local"
+                               id="departure-time-edit"
+                               class="form-control"
+                               name = "departure-time"
+                               value=""
+                               th:field="*{departureTime}"
+                        />
+                        <small id="departure-time-error-edit" class="form-text text-muted"
+                        >Nhập thời gian xuất phát của phương tiện</small>
+                    </div>
+
+                    <div class="form-group has-feedback">
+                        <label for="arrival-time-edit">Thời gian đến</label>
+                        <br/>
+                        <input type="datetime-local"
+                               id="arrival-time-edit"
+                               class="form-control"
+                               name="arrival-time"
+                               value=""
+                               th:field="*{arrivalTime}"
+                        />
+                        <small id="arrival-time-error-edit" class="form-text text-muted"
+                        >Nhập thời gian đến của phương tiện</small>
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Quay lại</button>
+                    <button type="submit" class="btn btn-primary" id="btn-transport-detail-edit">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const modalElement = document.getElementById('staticBackdrop-edit');
+
+
+            const status = document.getElementById('status-edit');
+            const scheduleSlug = document.getElementById('schedule-slug-edit');
+            const  departureTimeRes = document.getElementById('departure-time-edit');
+            const arrivalTimeRes = document.getElementById('arrival-time-edit');
+            const transportDetailIdRes = document.getElementById('transport-detail-id-edit');
+
+
+            //  Nhận sự kiện khi modal mở
+            modalElement.addEventListener('show.bs.modal', function(event) {
+            console.log("Selected  >>>>>> ", selected)
+                // Lấy toàn bộ URL path
+                const path = window.location.pathname;
+                // Tách lấy phần cuối cùng của path
+                const lastSegment = path.substring(path.lastIndexOf('/') + 1);
+
+                const buttonAdd = event.relatedTarget;
+                const dataStatus = buttonAdd.getAttribute('data-status');
+                const dataTransportDetailId = buttonAdd.getAttribute('data-transport-detail-id');
+                const dataTransportId = buttonAdd.getAttribute('data-transport-id');
+                const dataTransportName = buttonAdd.getAttribute('data-transport-name');
+                const departureLocation = buttonAdd.getAttribute('data-departure-location');
+                const destinationLocation = buttonAdd.getAttribute('data-destination-location');
+                const departureTime = buttonAdd.getAttribute('data-departure-time');
+                const arrivalTime = buttonAdd.getAttribute('data-arrival-time');
+
+                status.value = dataStatus;
+                scheduleSlug.value = lastSegment
+                departureTimeRes.value = departureTime.substring(0, 16);
+                arrivalTimeRes.value = arrivalTime.substring(0, 16);
+                transportDetailIdRes.value = dataTransportDetailId;
+
+                selected = `${dataTransportId}-${dataTransportName}-${departureLocation} -> ${destinationLocation}`
+                console.log("Selected  >>>>>> ", selected)
+                console.log("departureTime >>>>>> ", departureTimeRes.value)
+                console.log("arrivalTime >>>>>> ", arrivalTimeRes.value)
+                console.log("status >>>>>> ", status.value)
+
+
+                var $input = $('.typeahead');
+                if (selected != null){
+                    $input.typeahead('val',selected)
+                }
+
+            });
+        });
+    </script>
+
+</div>

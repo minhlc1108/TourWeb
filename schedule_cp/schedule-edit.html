@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <link rel="icon" th:href="@{/admin/img/kaiadmin/favicon.ico}" type="image/x-icon" />
+
+    <!-- Fonts and icons -->
+    <script type="text/javascript" th:src="@{/admin/js/plugin/webfont/webfont.min.js}"></script>
+    <link th:href="@{/admin/css/fonts.min.css}" rel="stylesheet" />
+
+    <!-- CSS Files -->
+    <link th:href="@{/admin/css/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/admin/css/plugins.min.css}" rel="stylesheet" />
+    <link th:href="@{/admin/css/kaiadmin.min.css}" rel="stylesheet" />
+
+
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link th:href="@{/admin/css/demo.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="wrapper">
+    <!-- start sidebar -->
+    <div th:replace="/admin/layout/sidebar.html :: sidebar"></div>
+    <!-- end sidebar -->
+
+    <div class="main-panel">
+        <!-- header  -->
+        <div th:replace="/admin/layout/header.html :: header"></div>
+
+        <!-- content-->
+        <div class="container">
+            <div class="page-inner">
+                <form method="POST" th:action="@{/admin/tour/schedule/edit-schedule}" th:object="${schedule}">
+
+                    <!--schedule form-->
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Thêm lịch trình tour</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <input  type="hidden" id="schedule-id"  th:field="*{scheduleId}" />
+                                    <input type="hidden" name="tour-id" id="tour-id" th:value="*{tour.tourId}" />
+
+                                    <div class="col-md-6 col-lg-4">
+
+                                        <div class="form-group has-feedback">
+                                            <label for="schedule-name">Tên lịch trình</label>
+                                            <input
+                                                    type="text"
+                                                    id="schedule-name"
+                                                    value=""
+                                                    class="form-control"
+                                                    th:field="*{scheduleName}"
+                                            />
+
+                                            <small id="schedule-name-error" class="form-text text-muted"
+                                            >Điền tên lịch trình.</small>
+                                        </div>
+
+                                        <div class="form-group has-feedback">
+                                            <label for="departure-date">Ngày đi</label>
+                                            <input
+                                                    type="date"
+                                                    id="departure-date"
+                                                    name = "departure-date"
+                                                    class="form-control"
+                                                    th:value="*{departureDate}"
+                                            />
+
+                                            <small id="departure-date-error" class="form-text text-muted"
+                                            >Chọn ngày đi.</small>
+                                        </div>
+
+                                        <div class="form-group has-feedback">
+                                            <label for="return-date">Ngày về</label>
+                                            <input
+                                                    type="date"
+                                                    id="return-date"
+                                                    name = "return-date"
+                                                    class="form-control"
+                                                    th:value="*{returnDate}"
+                                            />
+
+                                            <small id="return-date-error" class="form-text text-muted"
+                                            >Chọn ngày về.</small>
+                                        </div>
+
+                                        <div class="form-group has-feedback">
+                                            <label for="quantity">Số chỗ</label>
+                                            <input
+                                                    type="number"
+                                                    id="quantity"
+                                                    class="form-control"
+                                                    th:field="*{quantity}"
+                                                    required
+                                            />
+
+                                            <small id="quantity-error" class="form-text text-muted"
+                                            > Nhập số chỗ của lịch trình.</small>
+                                        </div>
+
+                                        <div class="form-group has-feedback">
+                                            <label for="price-adult">Giá vé người lớn</label>
+                                            <input
+                                                    type="number"
+                                                    id="price-adult"
+                                                    class="form-control"
+                                                    th:field="*{priceAdult}"
+                                                    required
+                                            />
+
+                                            <small id="price-adult-error" class="form-text text-muted"
+                                            > Nhập giá vé người lớn của lịch trình.</small>
+                                        </div>
+
+                                        <div class="form-group has-feedback">
+                                            <label for="price-child">Giá vé trẻ em</label>
+                                            <input
+                                                    type="number"
+                                                    id="price-child"
+                                                    class="form-control"
+
+                                                    th:field="*{priceChild}"
+                                                    required
+                                            />
+
+                                            <small id="price-child-error" class="form-text text-muted"
+                                            > Nhập giá vé trẻ em của lịch trình.</small>
+                                        </div>
+
+
+                                        <div class="form-group has-feedback">
+                                            <label for="visa-expire">Hạn visa</label>
+                                            <input
+                                                    type="date"
+                                                    id="visa-expire"
+                                                    name="visa-expire"
+                                                    th:value="*{visaExpire}"
+                                                    class="form-control"
+                                            />
+
+                                            <small id="visa-expire-error" class="form-text text-muted"
+                                            >Chọn hạn visa (không bắt buộc).</small>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button class="btn btn-success" id="btn-schedule-add" type="submit">Lưu</button>
+                                <a class="btn btn-danger btn-back"
+                                   href="#"
+                                >Quay lại</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- start footer -->
+        <div th:replace="/admin/layout/footer.html :: footer"></div>
+        <!-- end footer -->
+    </div>
+
+</div>
+
+<!--js tự viết thông báo và tạo slug, phần này chỉ để ở trang quản lý table, không  cần để trong trang edit, create-->
+<script type="module" th:src="@{/admin/js/notify.js}"></script>
+<script type="module" th:src="@{/admin/js/create-slug.js}"></script>
+<script type="module" th:src="@{/admin/js/schedule.js}"></script>
+<!-- end js tự viết-->
+<script th:inline="javascript" type="module">
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnBack = document.querySelector(".btn-back");
+        // Lấy URL hiện tại
+        var url = window.location.pathname;
+        // Tách URL thành các phần tử bằng dấu "/"
+        var parts = url.split('/');
+        var lastPart = parts.pop() || parts.pop();
+        btnBack.href = `/admin/tour/schedule/schedule-overview/${lastPart}`
+    })
+</script>
+<!--   Core JS Files   -->
+<script type="text/javascript" th:src="@{/admin/js/core/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/core/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/core/bootstrap.min.js}"></script>
+
+<!-- jQuery Scrollbar -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js}"></script>
+
+<!-- Chart JS -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/chart.js/chart.min.js}"></script>
+
+<!-- jQuery Sparkline -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/jquery.sparkline/jquery.sparkline.min.js}"></script>
+
+<!-- Chart Circle -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/chart-circle/circles.min.js}"></script>
+
+<!-- Datatables -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/datatables/datatables.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/datatables.js}"></script>
+
+<!-- Bootstrap Notify -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/bootstrap-notify/bootstrap-notify.min.js}"></script>
+
+<!-- jQuery Vector Maps -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/jsvectormap/jsvectormap.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/plugin/jsvectormap/world.js}"></script>
+
+<!-- Sweet Alert -->
+<script type="text/javascript" th:src="@{/admin/js/plugin/sweetalert/sweetalert.min.js}"></script>
+
+<!-- Kaiadmin JS -->
+<script type="text/javascript" th:src="@{/admin/js/kaiadmin.min.js}"></script>
+
+
+</body>
+
+</html>

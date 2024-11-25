@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Statistic, Select } from "antd";
-import { Line, Pie, Column } from "@ant-design/charts";
+// import { Line, Pie, Column } from "@ant-design/charts";
 import {
   fetchAllTourAPI,
   fetchAllCategoryAPI,

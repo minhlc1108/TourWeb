@@ -1,0 +1,100 @@
+
+<!-- Modal -->
+
+
+
+<div  th:fragment="transport-detail-add"  class="modal fade" id="staticBackdrop-add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <form method="POST" th:action="@{/admin/tour/schedule/add-transport-detail}" th:object="${transportDetail}">
+    <input type="hidden" id="status" name="status" value = "" th:field="*{status}" />
+        <input type="hidden" id="schedule-slug" name="schedule-slug" value ="" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Thêm phương tiện cho chuyến đi</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group has-feedback">
+                    <label for="transport">Phương tiện</label>
+                    <br/>
+                    <input
+                            type="text"
+                            id="transport"
+                            value=""
+                            class="form-control typeahead"
+                            name="transport-slug"
+                    />
+                    <small id="transport-error" class="form-text text-muted"
+                    >Chọn phương tiện di chuyển.</small>
+                </div>
+
+
+                <div class="form-group has-feedback">
+                    <label for="departure-time">Thời gian xuất phát</label>
+                    <br/>
+                    <input type="datetime-local"
+                           id="departure-time"
+                           class="form-control"
+                           name = "departure-time"
+                           value=""
+                           th:field="*{departureTime}"
+                    />
+                    <small id="departure-time-error" class="form-text text-muted"
+                    >Nhập thời gian xuất phát của phương tiện</small>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <label for="arrival-time">Thời gian đến</label>
+                    <br/>
+                    <input type="datetime-local"
+                           id="arrival-time"
+                           class="form-control"
+                           name="arrival-time"
+                           value=""
+                           th:field="*{arrivalTime}"
+                    />
+                    <small id="arrival-time-error" class="form-text text-muted"
+                    >Nhập thời gian đến của phương tiện</small>
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Quay lại</button>
+                <button type="submit" class="btn btn-primary" id="btn-transport-detail-add">Lưu</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const modalElement = document.getElementById('staticBackdrop-add');
+            const status = document.getElementById('status');
+            const scheduleSlug = document.getElementById('schedule-slug');
+            const departureTime = document.getElementById('departure-time');
+            const arrivalTime = document.getElementById('arrival-time');
+            const transport = document.getElementById('transport');
+
+            //  Nhận sự kiện khi modal mở
+            modalElement.addEventListener('show.bs.modal', function(event) {
+                // selected = null
+                const buttonAdd = event.relatedTarget;
+                const dataStatus = buttonAdd.getAttribute('data-status');
+                // Lấy toàn bộ URL path
+                const path = window.location.pathname;
+                // Tách lấy phần cuối cùng của path
+                const lastSegment = path.substring(path.lastIndexOf('/') + 1);
+
+                status.value = dataStatus;
+                scheduleSlug.value = lastSegment
+
+            });
+        });
+    </script>
+
+</div>
