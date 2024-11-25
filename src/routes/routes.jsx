@@ -18,6 +18,7 @@ import Home from "~/pages/Client/Home";
 import ListBooking from "~/pages/Client/ListBooking";
 import ProfileUser from "~/pages/Client/ProfileUser";
 import TourClient from "~/pages/Client/TourClient";
+import TourDetail from "~/pages/Client/TourDetail";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
@@ -144,7 +145,10 @@ const routes = createBrowserRouter([
         path: "tourDetailsClient",
         element: <TourDetailsClient/>
       },
-     
+      {
+        path: "tour/:id",
+        element: <TourDetail/>
+      },
       
     ]
   },
