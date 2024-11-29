@@ -8,9 +8,11 @@ const formItemLayout = {
     labelCol: { xs: { span: 24 }, sm: { span: 8 } },
     wrapperCol: { xs: { span: 24 }, sm: { span: 16 } },
 };
+
 const tailFormItemLayout = {
     wrapperCol: { xs: { span: 24, offset: 0 }, sm: { span: 16, offset: 8 } },
 };
+
 
 const RegisterComponent = ({ onRegisterSuccess }) => {
     const [form] = Form.useForm();
@@ -30,6 +32,7 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
             if (onRegisterSuccess) {
                 onRegisterSuccess();
             }
+            form.resetFields();
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 messageApi.error(error.response.data.message);
@@ -53,7 +56,11 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
                 form={form}
                 name="register"
                 onFinish={onFinish}
-                style={{ maxWidth: 600 }}
+                style={{
+                    width: '100%',
+                    maxWidth: '600px',
+                    padding: '20px',
+                }}
                 scrollToFirstError
             >
                 <Form.Item
@@ -66,11 +73,39 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
 
                 <Form.Item
                     name="password"
-                    label="Password"
-                    rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }, { min: 8, message: 'Mật khẩu phải có ít nhất 8 ký tự.' }]}
+                    label="Mật khẩu"
+                    rules={[
+                        { required: true, message: 'Vui lòng nhập mật khẩu!' },
+                        { min: 12, message: 'Mật khẩu phải có ít nhất 12 ký tự.' },
+                        {
+                            validator: (_, value) => {
+                                if (!value) {
+                                    return Promise.resolve();
+                                }
+                                const hasUpperCase = /[A-Z]/.test(value);
+                                const hasLowerCase = /[a-z]/.test(value);
+                                const hasNumber = /\d/.test(value);
+                                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+
+                                if (!hasUpperCase) {
+                                    return Promise.reject(new Error('Mật khẩu phải có ít nhất 1 chữ hoa.'));
+                                }
+                                if (!hasLowerCase) {
+                                    return Promise.reject(new Error('Mật khẩu phải có ít nhất 1 chữ thường.'));
+                                }
+                                if (!hasNumber) {
+                                    return Promise.reject(new Error('Mật khẩu phải có ít nhất 1 chữ số.'));
+                                }
+                                if (!hasSpecialChar) {
+                                    return Promise.reject(new Error('Mật khẩu phải có ít nhất 1 ký tự đặc biệt.'));
+                                }
+                                return Promise.resolve();
+                            },
+                        },
+                    ]}
                     hasFeedback
                 >
-                    <Input.Password />
+                    <Input.Password/>
                 </Form.Item>
 
                 <Form.Item
@@ -92,6 +127,7 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
                 >
                     <Input.Password />
                 </Form.Item>
+
 
                 <Form.Item
                     name="customerName"

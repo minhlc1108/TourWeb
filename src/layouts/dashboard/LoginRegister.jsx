@@ -19,7 +19,7 @@ const App = () => {
     };
 
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <Layout style={{ width: '100%', minHeight: '100vh' }}>
             <HeaderNav
                 style={{
                     padding: "0 2rem 0 0",
@@ -41,13 +41,15 @@ const App = () => {
                 style={{
                     margin: '16px 8px',
                     padding: '16px',
+                    maxWidth: '100%',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    flexDirection: 'column',
+                    flexDirection: 'column', 
                     background: colorBgContainer,
                     borderRadius: borderRadiusLG,
                     flex: 1,
+                    gap: '16px',
                 }}
             >
                 <Routes>

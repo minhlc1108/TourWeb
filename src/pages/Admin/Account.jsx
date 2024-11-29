@@ -1,25 +1,36 @@
-﻿import { useState, useEffect, useRef } from 'react';
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table, Switch, message } from 'antd';
-import Highlighter from 'react-highlight-words';
+﻿import { useState, useEffect } from 'react';
+import { Button, Space, Switch, message, Modal } from 'antd'; // Import Modal
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+
+import AccountDetailsModal from "~/components/AccountModal/AccountModal";
+import TableWithSearch from '~/components/TableWithSearch/TableWithSearch';
+
+import {
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    InfoCircleOutlined
+} from "@ant-design/icons";
 
 const Account = () => {
     const [data, setData] = useState([]);
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [accountDetails, setAccountDetails] = useState(null);
+    const [customerDetails, setCustomerDetails] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const fetchAccounts = async () => {
+        setLoading(true);
         try {
             const response = await axios.get('https://localhost:7253/api/account/listAccount');
-            const dataWithKeys = response.data.map((item) => ({
-                ...item,
-                key: item.id, // Sử dụng id thực làm key
-            }));
-            setData(dataWithKeys);
+            setData(response.data);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Lỗi khi lấy dữ liệu:', error);
+            setData([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -27,133 +38,77 @@ const Account = () => {
         fetchAccounts();
     }, []);
 
-
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        setSearchText(selectedKeys[0]);
-        setSearchedColumn(dataIndex);
+    const handleEdit = (record) => {
+        navigate(`/admin/account/edit/${record.id}?source=account`);
     };
 
-    const handleReset = (clearFilters) => {
-        clearFilters();
-        setSearchText('');
+    const handleDelete = (record) => {
+        Modal.confirm({
+            title: 'Xác nhận xóa tài khoản',
+            content: `Bạn có chắc chắn muốn xóa tài khoản của ${record.userName}?`,
+            okText: 'Xóa',
+            cancelText: 'Hủy',
+            onOk: async () => {
+                try {
+                    await axios.delete(`https://localhost:7253/api/customer/delete/${record.id}`);
+                    await axios.delete(`https://localhost:7253/api/account/delete/${record.id}`);
+                    message.success('Đã xóa thành công!');
+                    fetchAccounts();
+                } catch (error) {
+                    console.error("Lỗi khi xóa tài khoản:", error);
+                    message.error('Xóa tài khoản thất bại!');
+                }
+            },
+        });
+    };
+
+    const handleView = async (record) => {
+        setLoading(true);
+        try {
+            const accountResponse = await axios.get(`https://localhost:7253/api/account/${record.id}`);
+            const accountData = accountResponse.data;
+
+            const customerResponse = await axios.get(`https://localhost:7253/api/customer/${record.id}`);
+            const customerData = customerResponse.data;
+
+            setAccountDetails(accountData);
+            setCustomerDetails(customerData);
+
+            setIsModalVisible(true);
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu tài khoản hoặc khách hàng:', error);
+            message.error('Không thể tải dữ liệu tài khoản hoặc khách hàng!');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const toggleStatus = async (record) => {
         const updatedStatus = !record.lockoutEnabled;
 
         try {
-            // Sử dụng record.id để truyền ID
             await axios.put(`https://localhost:7253/api/account/updateStatus/${record.id}`, updatedStatus, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            fetchAccounts();
-            message.success('Status updated successfully!');
+
+            // Cập nhật lại trạng thái trong dữ liệu
+            const updatedData = data.map((account) =>
+                account.id === record.id ? { ...account, lockoutEnabled: updatedStatus } : account
+            );
+            setData(updatedData); 
+
+            message.success('Cập nhật trạng thái thành công!');
         } catch (error) {
-            console.error('Error response data:', error.response?.data); // Thêm ? để tránh lỗi nếu không có response
-            console.error('Error response status:', error.response?.status);
-            console.error('Error response headers:', error.response?.headers);
-            message.error('Failed to update status');
+            console.error('Lỗi khi cập nhật dữ liệu:', error.response?.data);
+            message.error('Cập nhật trạng thái thất bại');
         }
     };
 
-
-
-
-    const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-            <div
-                style={{
-                    padding: 8,
-                }}
-                onKeyDown={(e) => e.stopPropagation()}
-            >
-                <Input
-                    ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{
-                        marginBottom: 8,
-                        display: 'block',
-                    }}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
-                        size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => clearFilters && handleReset(clearFilters)}
-                        size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({
-                                closeDropdown: false,
-                            });
-                            setSearchText(selectedKeys[0]);
-                            setSearchedColumn(dataIndex);
-                        }}
-                    >
-                        Filter
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            close();
-                        }}
-                    >
-                        close
-                    </Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: (filtered) => (
-            <SearchOutlined
-                style={{
-                    color: filtered ? '#1677ff' : undefined,
-                }}
-            />
-        ),
-        onFilter: (value, record) =>
-            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownOpenChange: (visible) => {
-            if (visible) {
-                setTimeout(() => searchInput.current?.select(), 100);
-            }
-        },
-        render: (text) =>
-            searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{
-                        backgroundColor: '#ffc069',
-                        padding: 0,
-                    }}
-                    searchWords={[searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
-            ) : (
-                text
-            ),
-    });
+    const handleModalClose = () => {
+        setIsModalVisible(false);
+        setAccountDetails(null);
+        setCustomerDetails(null);
+    };
 
     const columns = [
         {
@@ -168,43 +123,82 @@ const Account = () => {
             dataIndex: 'userName',
             key: 'userName',
             width: '20%',
-            ...getColumnSearchProps('userName'),
         },
         {
             title: 'Customer Name',
             dataIndex: 'customerName',
             key: 'customerName',
             width: '30%',
-            ...getColumnSearchProps('customerName'),
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
             width: '20%',
-            ...getColumnSearchProps('email'),
         },
         {
             title: 'Phone',
-            dataIndex: 'phone',
-            key: 'phone',
+            dataIndex: 'phoneNumber',
+            key: 'phoneNumber',
             width: '20%',
-            ...getColumnSearchProps('phone'),
         },
         {
             title: 'Trạng thái',
             dataIndex: 'lockoutEnabled',
             key: 'lockoutEnabled',
             render: (_, record) => (
-                <Switch
-                    checked={!record.lockoutEnabled} 
-                    onChange={() => toggleStatus(record)}
-                />
+                <Switch checked={!record.lockoutEnabled} onChange={() => toggleStatus(record)} />
+            ),
+        },
+        {
+            title: '',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record)}
+                    ></Button>
+                    <Button
+                        type="default"
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => handleDelete(record)} // Gọi handleDelete với xác nhận
+                    ></Button>
+                    <Button
+                        type="default"
+                        icon={<InfoCircleOutlined />}
+                        onClick={() => handleView(record)}
+                    ></Button>
+                </Space>
             ),
         },
     ];
 
-    return <Table columns={columns} rowKey="key" dataSource={data} />;
+    return (
+        <>
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                style={{ marginBottom: '16px' }}
+            >
+                <Link to="/admin/account/create" state={{ source: 'account' }} style={{ color: 'white' }}>
+                    Thêm
+                </Link>
+            </Button>
+
+            <TableWithSearch fetchData={fetchAccounts} columns={columns} data={data} />
+
+            <AccountDetailsModal
+                isVisible={isModalVisible}
+                loading={loading}
+                accountDetails={accountDetails}
+                customerDetails={customerDetails}
+                onClose={handleModalClose}
+            />
+        </>
+    );
 };
 
 export default Account;

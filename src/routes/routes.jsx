@@ -15,6 +15,9 @@ import Transport from "~/pages/Admin/Transport";
 import NotFound from "~/pages/Error/NotFound";
 import Home from "~/pages/Client/Home";
 
+import CreateAccount from "~/pages/Admin/CreateAccount";
+import EditAccount from "~/pages/Admin/EditAccount";
+
 import LoginRegister from "~/layouts/dashboard/LoginRegister";
 import Login from "~/pages/Login/LoginComponent";
 import Register from "~/pages/Login/RegisterComponent";
@@ -54,101 +57,110 @@ const PageWrapper = ({ children }) => {
 };
 
 const routes = createBrowserRouter([
-  {
-    path: "admin",
-    element: (
-      <ProtectedRoute>
-        <PageWrapper>
-          <DashboardLayout />
-        </PageWrapper>
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        path: "",
-        element: <Statistic />,
-      },
-      {
-        path: "statistic",
-        element: <Statistic />,
-      },
-      {
-        path: "tour",
-        element: <Tour />,
-      },
-      {
-        path: "tour/create",
-        element: <CreateTour />,
-      },
-      {
-        path: "tour/edit",
-        element: <EditTour />,
-      },
-      {
-        path: "promotion",
-        element: <Promotion />,
-      },
-      {
-        path: "category",
-        element: <Category />,
-      },
-      {
-        path: "transport",
-        element: <Transport />,
-      },
-      {
-        path: "booking",
-        element: <Booking />,
-      },
-      {
-        path: "customer",
-        element: <Customer />,
-      },
-      {
-        path: "account",
-        element: <Account />,
-      },
-    ],
-  },
-  {
-      path: "/*",
-      element: (
-          <ProtectedRoute>
-              <PageWrapper>
-                  <LoginRegister />
-              </PageWrapper>
-          </ProtectedRoute>
-      ),
-      children: [
-          {
-              index: true,
-              path: "",
-              element: <Statistic />,
-          },
-          {
-              path: "login",
-              element: <Login />,
-          },
-          {
-              path: "register",
-              element: <Register />,
-          },
-          {
-              path: "forgot-password",
-              element: <ForgotPassword />,
-          },
-      ],
-  },
-   // Client route
-  {
-    path: "/client",
-    element: <Home />  // Trang chủ cho client
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+    {
+        path: "admin/*",
+        element: (
+            <ProtectedRoute>
+                <PageWrapper>
+                    <DashboardLayout />
+                </PageWrapper>
+            </ProtectedRoute>
+        ),
+        children: [
+            {
+                index: true,
+                path: "",
+                element: <Statistic />,
+            },
+            {
+                path: "statistic",
+                element: <Statistic />,
+            },
+            {
+                path: "tour",
+                element: <Tour />,
+            },
+            {
+                path: "tour/create",
+                element: <CreateTour />,
+            },
+            {
+                path: "tour/edit",
+                element: <EditTour />,
+            },
+            {
+                path: "promotion",
+                element: <Promotion />,
+            },
+            {
+                path: "category",
+                element: <Category />,
+            },
+            {
+                path: "transport",
+                element: <Transport />,
+            },
+            {
+                path: "booking",
+                element: <Booking />,
+            },
+            {
+                path: "customer",
+                children: [
+                    { index: true, element: <Customer /> },
+                    { path: "create", element: <CreateAccount /> },
+                    { path: "edit/:id", element: <EditAccount /> },
+                ],
+            },
+            {
+                path: "account",
+                children: [
+                    { index: true, element: <Account /> },
+                    { path: "create", element: <CreateAccount /> },
+                    { path: "edit/:id", element: <EditAccount /> },
+                ],
+            },
+        ],
+    },
+    {
+        path: "/",
+        element: (
+            <ProtectedRoute>
+                <PageWrapper>
+                    <LoginRegister />
+                </PageWrapper>
+            </ProtectedRoute>
+        ),
+        children: [
+            {
+                index: true,
+                path: "",
+                element: <Statistic />,
+            },
+            {
+                path: "login",
+                element: <Login />,
+            },
+            {
+                path: "register",
+                element: <Register />,
+            },
+            {
+                path: "forgot-password",
+                element: <ForgotPassword />,
+            },
+        ],
+    },
+    // Client route
+    {
+        path: "/client",
+        element: <Home />, // Trang chủ cho client
+    },
+    {
+        path: "*",
+        element: <NotFound />,
+    },
 ]);
 
 export default routes;
+

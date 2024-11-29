@@ -1,192 +1,192 @@
-﻿import { useState, useEffect, useRef } from 'react';
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table } from 'antd';
-import Highlighter from 'react-highlight-words';
+﻿import { useState, useEffect } from 'react';
+import { Button, Space, message, Modal } from 'antd';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+
+import CreateAccount from './CreateAccount';
+import EditAccount from './EditAccount';
+import AccountDetailsModal from "~/components/AccountModal/AccountModal";
+import TableWithSearch from '~/components/TableWithSearch/TableWithSearch';
+
+import {
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    InfoCircleOutlined
+} from "@ant-design/icons";
 
 const Customer = () => {
-    const [data, setData] = useState([]);
-    const location = useLocation();
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
+    const [data, setData] = useState([]); 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [accountDetails, setAccountDetails] = useState(null);
+    const [customerDetails, setCustomerDetails] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
+    const fetchCustomers = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('https://localhost:7253/api/customer/listCustomer');
+            setData(response.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu:', error);
+            setData([]);
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchCustomers = async () => {
-            try {
-                const response = await axios.get('https://localhost:7253/api/customer/listCustomer');
-                const dataWithKeys = response.data.map((item, index) => ({
-                    ...item,
-                    key: item.stt || index,
-                }));
-                setData(dataWithKeys);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }; fetchCustomers();
-    }, [location]);
+        fetchCustomers();
+    }, []);
 
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        setSearchText(selectedKeys[0]);
-        setSearchedColumn(dataIndex);
+    const handleEdit = (record) => {
+        navigate(`/admin/customer/edit/${record.accountId}?source=customer`);
     };
 
-    const handleReset = (clearFilters) => {
-        clearFilters();
-        setSearchText('');
+    const handleDelete = (record) => {
+        Modal.confirm({
+            title: 'Xác nhận xóa tài khoản',
+            content: `Bạn có chắc chắn muốn xóa tài khoản của ${record.name}?`,
+            okText: 'Xóa',
+            cancelText: 'Hủy',
+            onOk: async () => {
+                try {
+                    await axios.delete(`https://localhost:7253/api/customer/delete/${record.accountId}`);
+                    await axios.delete(`https://localhost:7253/api/account/delete/${record.accountId}`);
+                    message.success('Đã xóa thành công!');
+                    fetchCustomers();
+                } catch (error) {
+                    console.error("Lỗi khi xóa tài khoản:", error);
+                    message.error('Xóa tài khoản thất bại!');
+                }
+            },
+        });
     };
 
-    const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-            <div
-                style={{
-                    padding: 8,
-                }}
-                onKeyDown={(e) => e.stopPropagation()}
-            >
-                <Input
-                    ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{
-                        marginBottom: 8,
-                        display: 'block',
-                    }}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
-                        size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => clearFilters && handleReset(clearFilters)}
-                        size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({
-                                closeDropdown: false,
-                            });
-                            setSearchText(selectedKeys[0]);
-                            setSearchedColumn(dataIndex);
-                        }}
-                    >
-                        Filter
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            close();
-                        }}
-                    >
-                        close
-                    </Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: (filtered) => (
-            <SearchOutlined
-                style={{
-                    color: filtered ? '#1677ff' : undefined,
-                }}
-            />
-        ),
-        onFilter: (value, record) =>
-            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownOpenChange: (visible) => {
-            if (visible) {
-                setTimeout(() => searchInput.current?.select(), 100);
-            }
-        },
-        render: (text) =>
-            searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{
-                        backgroundColor: '#ffc069',
-                        padding: 0,
-                    }}
-                    searchWords={[searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
-            ) : (
-                text
-            ),
-    });
+    const handleView = async (record) => {
+        setLoading(true);
+        try {
+            const accountResponse = await axios.get(`https://localhost:7253/api/account/${record.accountId}`);
+            const accountData = accountResponse.data;
+
+            const customerResponse = await axios.get(`https://localhost:7253/api/customer/${record.accountId}`);
+            const customerData = customerResponse.data;
+
+            setAccountDetails(accountData);
+            setCustomerDetails(customerData);
+
+            setIsModalVisible(true);
+        } catch (error) {
+            console.error('Error fetching account or customer data:', error);
+            message.error('Không thể tải dữ liệu tài khoản hoặc khách hàng!');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleModalClose = () => {
+        setIsModalVisible(false);
+        setCustomerDetails(null);
+    };
 
     const columns = [
         {
             title: 'STT',
-            dataIndex: 'stt',  // Khớp với tên trường trong dữ liệu API
-            key: 'stt',
+            dataIndex: 'id',
+            key: 'id',
             width: '5%',
-            ...getColumnSearchProps('stt'),
+            render: (_text, _record, index) => index + 1,
         },
         {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
             width: '30%',
-            ...getColumnSearchProps('name'),
         },
         {
             title: 'Giới tính',
             dataIndex: 'sex',
             key: 'sex',
             width: '20%',
-            ...getColumnSearchProps('sex'),
         },
         {
             title: 'Ngày sinh',
             dataIndex: 'birthday',
             key: 'birthday',
             width: '20%',
-            ...getColumnSearchProps('birthday'),
         },
         {
             title: 'Địa chỉ',
             dataIndex: 'address',
             key: 'address',
             width: '20%',
-            ...getColumnSearchProps('address'),
         },
         {
             title: 'SĐT',
             dataIndex: 'customerPhone',
             key: 'customerPhone',
             width: '20%',
-            ...getColumnSearchProps('customerPhone'),
         },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
-            ...getColumnSearchProps('status'),
             sorter: (a, b) => a.status.length - b.status.length,
             sortDirections: ['descend', 'ascend'],
         },
+        {
+            title: '',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record)}
+                    ></Button>
+                    <Button
+                        type="default"
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => handleDelete(record)}
+                    ></Button>
+                    <Button
+                        type="default"
+                        icon={<InfoCircleOutlined />}
+                        onClick={() => handleView(record)}
+                    ></Button>
+                </Space>
+            ),
+        },
+
     ];
 
-    return <Table columns={columns} dataSource={data} />;
+    return (
+        <>
+            <Routes>
+                <Route path="/admin/customer/create" element={<CreateAccount />} />
+                <Route path="/admin/customer/edit/:id" element={<EditAccount />} />
+            </Routes>
+
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                style={{ marginBottom: '16px' }}
+            >
+                <Link to="/admin/customer/create" state={{ source: 'customer' }} style={{ color: 'white' }}>
+                    Thêm
+                </Link>
+            </Button>
+            <TableWithSearch fetchData={fetchCustomers} columns={columns} data={data} />
+            <AccountDetailsModal
+                isVisible={isModalVisible}
+                loading={loading}
+                accountDetails={accountDetails}
+                customerDetails={customerDetails}
+                onClose={handleModalClose}
+            />
+        </>
+    );
 };
 
 export default Customer;
