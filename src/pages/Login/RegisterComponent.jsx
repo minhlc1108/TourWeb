@@ -1,7 +1,6 @@
-﻿import axios from 'axios';
+﻿import React, { useState } from 'react';
+import axios from 'axios';
 import { Button, Form, Input, Select, DatePicker, message } from 'antd';
-import PropTypes from 'prop-types';
-import moment from 'moment';
 
 const { Option } = Select;
 const formItemLayout = {
@@ -17,6 +16,7 @@ const tailFormItemLayout = {
 const RegisterComponent = ({ onRegisterSuccess }) => {
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false);
 
     const handleRegister = async (values) => {
         const formattedValues = {
@@ -25,6 +25,7 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
             customerSex: parseInt(values.customerSex), 
         };
 
+        setLoading(true);
         try {
             const response = await axios.post('https://localhost:7253/api/account/register', formattedValues);
             messageApi.success('Đăng ký thành công!');
@@ -39,6 +40,9 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
             } else {
                 messageApi.error('Đăng ký thất bại. Vui lòng thử lại!');
             }
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -182,7 +186,7 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
                 </Form.Item>
 
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={loading}>
                         Đăng ký
                     </Button>
                 </Form.Item>

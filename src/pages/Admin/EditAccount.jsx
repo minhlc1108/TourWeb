@@ -54,6 +54,7 @@ const EditAccount = () => {
     const handleUpdate = async (values) => {
         const accountData = {
             userName: values.userName,
+            password: values.password,
             email: values.email,
             phoneNumber: values.phoneNumber, 
             role: values.role,
@@ -151,16 +152,17 @@ const EditAccount = () => {
                 rules={[
                     ({ getFieldValue }) => ({
                         validator(_, value) {
-                            if (!value || getFieldValue('password') === value) {
-                                return Promise.resolve();
+                            if (getFieldValue('password') && value !== getFieldValue('password')) {
+                                return Promise.reject(new Error('Mật khẩu không trùng khớp!'));
                             }
-                            return Promise.reject(new Error('Mật khẩu không trùng khớp!'));
+                            return Promise.resolve();
                         },
                     }),
                 ]}
             >
                 <Input.Password />
             </Form.Item>
+
 
             <Form.Item
                 name="email"
