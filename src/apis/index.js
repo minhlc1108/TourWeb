@@ -100,5 +100,29 @@ export const updateCustomerAPI = async (id, values) => {
   return response.data;
 };
 
+// booking 
 
+export const fetchAllBookingsAPI = async () => {
+  const response = await axios.get(`${API_ROOT}/bookings`);
+  return response.data;
+};
+
+export const fetchBookingByIdAPI = async (id) => {
+  const response = await axios.get(`${API_ROOT}/bookings/${id}`);
+  return response.data;
+};
+
+export const createBookingAPI = async (bookingData) => {
+  const response = await axios.post(`${API_ROOT}/bookings`, bookingData);
+  return response.data;
+};
+
+export const updateBookingAPI = async (id, bookingData) => {
+  const response = await axios.put(`${API_ROOT}/bookings/${id}`, bookingData);
+  return response.data;
+};
+
+export const deleteBookingAPI = async (id) => {
+  await axios.delete(`${API_ROOT}/bookings/${id}`);
+};
 

@@ -22,6 +22,8 @@ import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
 import BookTourPage from "~/pages/Client/BookTour/bookTour.jsx";
+import ContactForm from "~/pages/Client/BookTour/ContactForm.jsx";
+import Tour_client from "~/pages/Client/BookTour/Tour.jsx";
 // import Home from "~/pages/Client/Home";
 
 export const ScrollToTop = () => {
@@ -146,8 +148,8 @@ const routes = createBrowserRouter([
         element: <TourDetailsClient/>
       },
       {
-        path: "book_tour",
-        element: <BookTourPage/>
+        path: "booktour",
+        element: <ContactForm/>
       },
 
 

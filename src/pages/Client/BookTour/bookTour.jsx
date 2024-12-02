@@ -1,27 +1,17 @@
 import { Button, Card, Image, Input, Space, Table , Form , Select, DatePicker , InputNumber
 } from "antd";
-import {
-    DeleteOutlined,
-    EditOutlined,
-    PlusOutlined,
-    SearchOutlined,
-} from "@ant-design/icons";
-import defaultImage from "~/assets/unnamed.png";
+
 import { useEffect, useRef, useState } from "react";
 import { message, modal } from "~/components/EscapeAntd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import {fetchAllTourAPI, fetchTourAPI_ById} from "~/apis";
+import {createBookingAPI, createNewTourAPI, getTourByIdAPI} from "~/apis";
 import { useParams } from 'react-router-dom';
 import Book_Schedule from "~/pages/Client/BookTour/booking_schedule.jsx";
 
 function BookTourPage() {
     const location = useLocation();
-    const isChild = location.pathname.includes("/create") ||  location.pathname.includes("/edit") ;
-    const navigate = useNavigate();
-    const searchInput = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const [searchTexts, setSearchTexts] = useState({});
-    const [sorter, setSorter] = useState({ field: "", order: "ascend" });
     const [tour, setTour] = useState({});
     
     const [pagination, setPagination] = useState({
@@ -31,37 +21,9 @@ function BookTourPage() {
     });
     const { tour_id } = useParams();
     
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        setSearchTexts({
-            ...searchTexts,
-            [dataIndex]: selectedKeys[0],
-        });
-    };
-
-    const handleReset = (clearFilters, dataIndex) => {
-        clearFilters();
-        const updatedSearchTexts = { ...searchTexts };
-        delete updatedSearchTexts[dataIndex];
-        setSearchTexts(updatedSearchTexts);
-    };
-
-    const deleteItem = async (id) => {
-        await modal.confirm({
-            title: "Xóa tour",
-            content: "Bạn có muốn xóa tour này?",
-            onOk: async () => {
-                // const result = await deleteCategoryAPI(id);
-                // if (result) {
-                //   message.success("Xóa thành công!", 3);
-                //   setData((prevData) => prevData.filter((r) => r.id !== id));
-                // }
-            },
-        });
-    };
     
     useEffect(() => {
-        fetchTourAPI_ById(tour_id).then((data) => {
+        getTourByIdAPI(tour_id).then((data) => {
             setIsLoading(false);
             setTour(tour);
             setData(data.tours.map((tour) => ({ key: tour.id, ...tour})));
@@ -97,9 +59,16 @@ function BookTourPage() {
             setChildren(children - 1);
         }
     };
-    const onFinish = (values) => {
-        console.log('Received values of form:', values);
-        // Gửi dữ liệu form đến backend ở đây
+    const onFinish = async (values) => {
+        setIsSubmitting(true);
+        const booking = await createBookingAPI({
+            ...values
+        });
+        if (booking) {
+            message.success("Đặt vé thành công!");
+            // navigate(`/admin/tour/edit?id=${createdTour.id}`);
+        }
+        setIsSubmitting(false);
     };
 
     return (
@@ -154,6 +123,13 @@ function BookTourPage() {
                 {sum}
             </Form.Item>
 
+            <Form.Item
+                label="Tour ID"
+                name="sum_money"
+            >
+                {tour_id}
+            </Form.Item>
+
             {/* ... các Form.Item khác tương tự */}
 
             <Form.Item label="Thông tin tour">
@@ -163,6 +139,98 @@ function BookTourPage() {
         </Form>
     </>
     );
+}
+
+function header (){
+    return (
+        <div className="row p-2 m-3">
+            <div className="col-12 col-sm-6 col-md-4 p-2 col-step">
+                <div className="item-step">
+                    <i className="fa fa-receipt item-icon"></i>
+                    <p className="font-weight-bold">NHẬP THÔNG TIN</p>
+                </div>
+                <i className="fa fa-arrow-right"></i>
+            </div>
+            <div className="col-12 col-sm-6 col-md-4 p-2 col-step">
+                <div className="item-step">
+                    <i className="fa fa-credit-card item-icon"></i>
+                    <p className="font-weight-bold">THANH TOÁN</p>
+                </div>
+                <i className="fa fa-arrow-right"></i>
+            </div>
+            <div className="col-12 col-sm-6 col-md-4 p-2 col-step">
+                <div className="item-step">
+                    <i className="fa fa-clipboard-check item-icon"></i>
+                    <p className="font-weight-bold">HOÀN TẤT</p>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function tour_infor(){
+    return (
+        <div className="row p-2 m-3 badge-light rounded-20">
+            <div className="col-12 col-md-4 p-2 col-step">
+                <img src="/admin/images/0.jpg" className="img-fluid" alt="Image"/>
+            </div>
+            <div className="col-12 col-md-8 p-2">
+                <div>
+                    <p className="tour-title">{tourReserveResponse?.tourName}</p>
+                    <p className="text-color">
+                        Điểm đến: <span className="text-bold-color">{tourReserveResponse?.country}</span>
+                    </p>
+                    <p className="text-color">
+                        Nơi khởi hành: <span className="text-bold-color">{tourReserveResponse?.departureLocation}</span>
+                    </p>
+                    <p className="text-color">
+                        Khởi hành: <span className="text-bold-color">{tourReserveResponse?.departureDate}</span>
+                    </p>
+                    <p className="text-color">
+                        Số chỗ còn nhận: <span className="text-bold-color"
+                                               id="quantity-left">{tourReserveResponse?.quantityLeft}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+
+function bookTour() {
+    return (
+        <>
+            <div className="count-customer mt-2">
+                <p className="text-bold-color"> Hành khách </p>
+                <div id="count-customer">
+                    <span className="tour-title"><i className="fa fa-user"></i> 1 người</span>
+                </div>
+            </div>
+            <div class="adult mt-4">
+                <p class="text-color">Người lớn</p>
+                <input type="hidden" id="inp-price-adult" th:value="${tourReserveResponse.priceAdult}"/>
+                <div id="price-adult">
+                </div>
+            </div>
+            <input type="hidden" id="inp-price-child" th:value="${tourReserveResponse.priceChild}"/>
+            <div class="mb-1" id="price-child">
+        
+            </div>
+            <div class="total mt-2">
+                <p class="tour-title">Tổng tiền</p>
+                <div id="total-price">
+        
+                </div>
+            </div>
+            <button 
+                type="button" 
+                class="btn btn-danger" 
+                style="width: 100%"
+                id="reserve" disabled
+            >Đặt tour
+            </button>
+        </>
+    )
 }
 
 export default BookTourPage;
