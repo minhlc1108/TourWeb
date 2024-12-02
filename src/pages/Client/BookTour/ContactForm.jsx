@@ -1,5 +1,5 @@
 import React, { useEffect, useState }  from 'react';
-import { Form, Input, Button, Row, Col, Select, InputNumber,
+import { Form, Input, Button, Row, Col, Select, InputNumber,Card,
     Divider, Typography,  
     Checkbox} from 'antd';
 import { MinusOutlined, PlusOutlined, UserOutlined, MoneyCollectOutlined } from '@ant-design/icons';
@@ -142,121 +142,137 @@ function ContactForm () {
     return (
         <div className="home-container">
             <Form layout="vertical" className="p-3 m-3">
-                {/* Thông tin liên hệ */}
-                <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                        <p className="inf-title">Thông tin liên hệ</p>
-                    </Col>
+                <div style={{padding: '50px'}}>
+                    {/* Row để căn giữa nội dung */}
+                    <Row justify="center">
+                        {/* Col để chia thành 2 cột */}
+                        <Col xs={24} sm={12} lg={8}>
+                            <Card title="Thông tin khách hành" bordered={false}>
+                                {/* Thông tin liên hệ */}
+                                <Row gutter={[16, 16]}>
+                                    <Col span={24}>
+                                        <p className="inf-title">Thông tin liên hệ</p>
+                                    </Col>
 
-                    <Col xs={24} sm={12} md={8}>
-                        <Form.Item
-                            label="Họ tên"
-                            name="name"
-                            rules={[{required: true, message: 'Vui lòng điền tên'}]}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </Col>
+                                    <Col xs={24} sm={12} md={8}>
+                                        <Form.Item
+                                            label="Họ tên"
+                                            name="name"
+                                            rules={[{required: true, message: 'Vui lòng điền tên'}]}
+                                        >
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
 
-                    <Col xs={24} sm={12} md={8}>
-                        <Form.Item
-                            label="Số điện thoại"
-                            name="phone"
-                            rules={[{required: true, message: 'Vui lòng điền số điện thoại'}]}
-                        >
-                            <InputNumber style={{width: '100%'}}/>
-                        </Form.Item>
-                    </Col>
+                                    <Col xs={24} sm={12} md={8}>
+                                        <Form.Item
+                                            label="Số điện thoại"
+                                            name="phone"
+                                            rules={[{required: true, message: 'Vui lòng điền số điện thoại'}]}
+                                        >
+                                            <InputNumber style={{width: '100%'}}/>
+                                        </Form.Item>
+                                    </Col>
 
-                    <Col xs={24} sm={12} md={8}>
-                        <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[{required: true, message: 'Vui lòng điền email'}]}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </Col>
+                                    <Col xs={24} sm={12} md={8}>
+                                        <Form.Item
+                                            label="Email"
+                                            name="email"
+                                            rules={[{required: true, message: 'Vui lòng điền email'}]}
+                                        >
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
 
-                    <Col xs={24} sm={12} md={8}>
-                        <Form.Item
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[{required: true, message: 'Vui lòng điền địa chỉ'}]}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </Col>
-                </Row>
+                                    <Col xs={24} sm={12} md={8}>
+                                        <Form.Item
+                                            label="Địa chỉ"
+                                            name="address"
+                                            rules={[{required: true, message: 'Vui lòng điền địa chỉ'}]}
+                                        >
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
-                {/* Hành khách */}
-                <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                        <p className="inf-title">Hành khách</p>
-                    </Col>
+                                {/* Hành khách */}
+                                <Row gutter={[16, 16]}>
+                                    <Col span={24}>
+                                        <p className="inf-title">Hành khách</p>
+                                    </Col>
 
-                    {/* Người lớn */}
-                    <Col xs={24} sm={12} md={8}>
-                        <Form.Item label="Người lớn (Từ 12)">
-                            <AdultChange />
-                        </Form.Item>
-                    </Col>
+                                    {/* Người lớn */}
+                                    <Col xs={24} sm={12} md={8}>
+                                        <Form.Item label="Người lớn (Từ 12)">
+                                            <AdultChange/>
+                                        </Form.Item>
+                                    </Col>
 
-                    {/* Trẻ em */}
-                    <Col xs={24} sm={12} md={8}>
-                        <Form.Item label="Trẻ em (Dưới 12)">
-                            <ChildChange/>
-                        </Form.Item>
-                    </Col>
-                </Row>
+                                    {/* Trẻ em */}
+                                    <Col xs={24} sm={12} md={8}>
+                                        <Form.Item label="Trẻ em (Dưới 12)">
+                                            <ChildChange/>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
-                {/* Thông tin hành khách */}
-                <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                        <p className="inf-title">Thông tin hành khách</p>
-                    </Col>
+                                {/* Thông tin hành khách */}
+                                <Row gutter={[16, 16]}>
+                                    <Col span={24}>
+                                        <p className="inf-title">Thông tin hành khách</p>
+                                    </Col>
 
-                    {/* Hành khách người lớn */}
-                    <Col span={24}>
-                        <div className="inf-customer cus-adult">
-                            <Row gutter={[16, 16]}>
-                                <Col span={8}>
-                                    <Form.Item
-                                        label="Họ tên"
-                                        name="adult_name"
-                                        rules={[{required: true, message: 'Vui lòng điền tên'}]}
-                                    >
-                                        <Input/>
-                                    </Form.Item>
-                                </Col>
+                                    {/* Hành khách người lớn */}
+                                    <Col span={24}>
+                                        <div className="inf-customer cus-adult">
+                                            <Row gutter={[16, 16]}>
+                                                <Col span={8}>
+                                                    <Form.Item
+                                                        label="Họ tên"
+                                                        name="adult_name"
+                                                        rules={[{required: true, message: 'Vui lòng điền tên'}]}
+                                                    >
+                                                        <Input/>
+                                                    </Form.Item>
+                                                </Col>
 
-                                <Col span={8}>
-                                    <Form.Item
-                                        label="Ngày sinh"
-                                        name="adult_birthday"
-                                        rules={[{required: true, message: 'Vui lòng chọn ngày sinh'}]}
-                                    >
-                                        <Input type="date"/>
-                                    </Form.Item>
-                                </Col>
+                                                <Col span={8}>
+                                                    <Form.Item
+                                                        label="Ngày sinh"
+                                                        name="adult_birthday"
+                                                        rules={[{required: true, message: 'Vui lòng chọn ngày sinh'}]}
+                                                    >
+                                                        <Input type="date"/>
+                                                    </Form.Item>
+                                                </Col>
 
-                                <Col span={8}>
-                                    <Form.Item label="Giới tính" name="adult_gender">
-                                        <Select defaultValue="1">
-                                            <Option value="1">Nam</Option>
-                                            <Option value="2">Nữ</Option>
-                                            <Option value="3">Khác</Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Col>
-                </Row>
+                                                <Col span={8}>
+                                                    <Form.Item label="Giới tính" name="adult_gender">
+                                                        <Select defaultValue="1">
+                                                            <Option value="1">Nam</Option>
+                                                            <Option value="2">Nữ</Option>
+                                                            <Option value="3">Khác</Option>
+                                                        </Select>
+                                                    </Form.Item>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    </Col>
+                                </Row>
 
-                {/* Submit button */}
-                <ThanhToan/>
-                <Submit_Form/>
+                                {/* Submit button */}
+                                <ThanhToan/>
+                            </Card>
+                        </Col>
+                        <Col xs={24} sm={12} lg={8}>
+                            <Card title="Thông tin thanh toán" bordered={false}>
+                                <Submit_Form/>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+                
+
             </Form>
         </div>
     );
