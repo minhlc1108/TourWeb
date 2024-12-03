@@ -100,5 +100,11 @@ export const updateCustomerAPI = async (id, values) => {
   return response.data;
 };
 
+//Tour Booking 
+export const fetchAllBookingAPI = async (params) => {
+  const response = await axios.get(`${API_ROOT}/booking`, { params });
+  return response.data;
+}
+
 
 

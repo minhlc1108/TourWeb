@@ -27,7 +27,13 @@ const CardTourVertical = ({...props}) => {
       />
     }
     >
-    <Meta title={props.title} />
+    <Meta title={props.title} 
+    style={
+      {
+      }
+    
+    }
+    />
       <div style={{ padding: '0' ,
         
       }}>
@@ -39,7 +45,14 @@ const CardTourVertical = ({...props}) => {
         justify='space-between'
         align='center'
         >
-        <Text >Giá :<strong><Text type="danger" > {props.price}</Text>  </strong> </Text> <Button danger size={3} >Đặt Ngay</Button>
+        <Text >
+          <strong  style={{
+            fontSize:'18px'
+          }}>
+          Giá :
+          </strong>
+          
+          <strong><Text type="danger" > {props.price} VND </Text>  </strong> </Text> <Button danger size={3} >Đặt Ngay</Button>
         </Flex>
         
       </div>

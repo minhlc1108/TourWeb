@@ -9,161 +9,8 @@ const onPanelChange = (value, mode) => {
   console.log(value.format("YYYY-MM-DD"), mode);
 };
 const { Search } = Input;
-// const tourData = [
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour A",
-//     tourCode: "T001",
-//     organizer: "Nguyễn Văn A",
-//     departureTime: "08:00 AM",
-//     date: "2023-12-01",
-//     slotRemain: "5",
-//     price: "3,000,000 VND",
-//     departureStart: "TP.HCM",
-//     departureEnd: "Đà Nẵng",
-//     traffic: "Máy bay",
-//     category: "Du lịch biển",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour B",
-//     tourCode: "T002",
-//     organizer: "Trần Thị B",
-//     departureTime: "09:30 AM",
-//     date: "2023-12-02",
-//     slotRemain: "3",
-//     price: "22,500,000 VND",
-//     departureStart: "Hà Nội",
-//     departureEnd: "Nha Trang",
-//     traffic: "Xe khách",
-//     category: "Du lịch khám phá",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour C",
-//     tourCode: "T003",
-//     organizer: "Lê Văn C",
-//     departureTime: "07:00 AM",
-//     date: "2023-12-03",
-//     slotRemain: "1",
-//     price: "54,500,000 VND",
-//     departureStart: "Đà Nẵng",
-//     departureEnd: "Phú Quốc",
-//     traffic: "Tàu thủy",
-//     category: "Du lịch nghỉ dưỡng",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour D",
-//     tourCode: "T004",
-//     organizer: "Nguyễn Thị D",
-//     departureTime: "10:00 AM",
-//     date: "2023-12-04",
-//     slotRemain: "2",
-//     price: "2,000,000 VND",
-//     departureStart: "TP.HCM",
-//     departureEnd: "Hà Nội",
-//     traffic: "Ô tô",
-//     category: "Du lịch văn hóa",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour E",
-//     tourCode: "T005",
-//     organizer: "Trần Văn E",
-//     departureTime: "11:30 AM",
-//     date: "2023-12-05",
-//     slotRemain: "4",
-//     price: "1,500,000 VND",
-//     departureStart: "Hà Nội",
-//     departureEnd: "Cần Thơ",
-//     traffic: "Máy bay",
-//     category: "Du lịch sinh thái",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour F",
-//     tourCode: "T006",
-//     organizer: "Nguyễn Văn F",
-//     departureTime: "12:00 PM",
-//     date: "2023-12-06",
-//     slotRemain: "6",
-//     price: "3,800,000 VND",
-//     departureStart: "Đà Nẵng",
-//     departureEnd: "Hà Nội",
-//     traffic: "Xe khách",
-//     category: "Du lịch mạo hiểm",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour G",
-//     tourCode: "T007",
-//     organizer: "Trần Thị G",
-//     departureTime: "01:30 PM",
-//     date: "2023-12-07",
-//     slotRemain: "4",
-//     price: "2,200,000 VND",
-//     departureStart: "TP.HCM",
-//     departureEnd: "Phú Quốc",
-//     traffic: "Máy bay",
-//     category: "Du lịch lãng mạn",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour H",
-//     tourCode: "T008",
-//     organizer: "Lê Văn H",
-//     departureTime: "03:00 PM",
-//     date: "2023-12-08",
-//     slotRemain: "2",
-//     price: "5,000,000 VND",
-//     departureStart: "Hà Nội",
-//     departureEnd: "Nha Trang",
-//     traffic: "Ô tô",
-//     category: "Du lịch khám phá",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour I",
-//     tourCode: "T009",
-//     organizer: "Nguyễn Thị I",
-//     departureTime: "04:00 PM",
-//     date: "2023-12-09",
-//     slotRemain: "3",
-//     price: "11,800,000 VND",
-//     departureStart: "Đà Nẵng",
-//     departureEnd: "Cần Thơ",
-//     traffic: "Tàu thủy",
-//     category: "Du lịch khám phá",
-//   },
-//   {
-//     imgurl:
-//       "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-//     title: "Tour J",
-//     tourCode: "T010",
-//     organizer: "Trần Văn J",
-//     departureTime: "05:30 PM",
-//     date: "2023-12-10",
-//     slotRemain: "5",
-//     price: "2,900,000 VND",
-//     departureStart: "TP.HCM",
-//     departureEnd: "Hà Nội",
-//     traffic: "Máy bay",
-//     category: "Du lịch nghỉ dưỡng",
-//   },
-// ];
+
 import { fetchAllTourAPI } from "~/apis";
-
-
 
 const formItemLayout = {
   labelCol: {
@@ -196,7 +43,7 @@ const tailFormItemLayout = {
   },
 };
 
-const TourPackage = ({dataInput}) => {
+const TourPackage = ({ dataInput }) => {
   const [form] = Form.useForm();
   // const [budget,setBudget] = useState(0);
   // const [departureStart,setDepartureStart] = useState();
@@ -213,24 +60,27 @@ const TourPackage = ({dataInput}) => {
     category: "",
     traffic: "",
   });
-  const [tourData,setTourData] = useState([])
+  const [tourData, setTourData] = useState([]);
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchAllTourAPI();
         const dataTour = response.tours; // Dữ liệu fetch được
-        const processedData = dataTour.map(tour => {
+        const processedData = dataTour.map((tour) => {
           // Lấy dữ liệu từ schedule đầu tiên (nếu có)
           const schedule = tour.tourSchedules[0] || {};
           const image = tour.images[0] || {};
-  
+
           return {
             imgurl: image.url || "", // URL hình ảnh
             title: tour.name, // Tên tour
             tourCode: tour.id, // Mã tour
             departureTime: schedule.departureDate
-              ? new Date(schedule.departureDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              ? new Date(schedule.departureDate).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
               : "", // Lấy phần giờ
             date: schedule.departureDate
               ? new Date(schedule.departureDate).toLocaleDateString()
@@ -241,16 +91,16 @@ const TourPackage = ({dataInput}) => {
             departureEnd: tour.destination, // Điểm đến
             category: tour.categoryName, // Danh mục tour
           };
-        });   
+        });
 
-        setTourData( processedData)
-        setDatafilter(processedData)
-        console.log("proces " , processedData); // Kiểm tra dữ liệu sau xử lý
+        setTourData(processedData);
+        setDatafilter(processedData);
+        console.log("proces ", processedData); // Kiểm tra dữ liệu sau xử lý
       } catch (error) {
         console.error("Error fetching tours:", error);
       }
     };
-  
+
     fetchData();
   }, []);
   // setTourData(dataInput);
@@ -258,23 +108,25 @@ const TourPackage = ({dataInput}) => {
   // console.log ( tourData)
 
   useEffect(() => {
-
+    console.log("tourdata", tourData);
     let filtered = tourData.filter((tour) => {
       // Kiểm tra từng điều kiện trong datafilter, chỉ áp dụng nếu có giá trị
       const matchesSearch = datafilter.search
         ? tour.title.toLowerCase().includes(datafilter.search.toLowerCase())
         : true;
+      const priceAsNumber =
+        typeof tour.price === "string"
+          ? parseInt(tour.price.replace(/,/g, ""), 10)
+          : tour.price;
       const matchesBudget = datafilter.budget
-        ? (datafilter.budget === "under5" &&
-            parseInt(tour.price.replace(/,/g, "")) < 5000000) ||
+        ? (datafilter.budget === "under5" && priceAsNumber < 5000000) ||
           (datafilter.budget === "5to10" &&
-            parseInt(tour.price.replace(/,/g, "")) >= 5000000 &&
-            parseInt(tour.price.replace(/,/g, "")) <= 10000000) ||
+            priceAsNumber >= 5000000 &&
+            priceAsNumber <= 10000000) ||
           (datafilter.budget === "10to20" &&
-            parseInt(tour.price.replace(/,/g, "")) > 10000000 &&
-            parseInt(tour.price.replace(/,/g, "")) <= 20000000) ||
-          (datafilter.budget === "over20" &&
-            parseInt(tour.price.replace(/,/g, "")) > 20000000)
+            priceAsNumber > 10000000 &&
+            priceAsNumber <= 20000000) ||
+          (datafilter.budget === "over20" && priceAsNumber > 20000000)
         : true;
       const matchesDepartureStart = datafilter.departureStart
         ? tour.departureStart.includes(datafilter.departureStart)
@@ -302,20 +154,16 @@ const TourPackage = ({dataInput}) => {
 
     setDataHaveFilter(filtered);
 
-    console.log("datafilter" , datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
+    console.log("datafilter", datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
   }, [datafilter]);
-
-
- 
 
   return (
     <Flex vertical gutter={[5, 0]} style={{ paddingTop: "2%" }}>
       <Row
-      style={{
-        background:'white',
-        boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
-
-      }}
+        style={{
+          background: "white",
+          boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
+        }}
       >
         <Col
           flex="1 0 20%"
@@ -564,12 +412,12 @@ const TourPackage = ({dataInput}) => {
           flex="3 0 80%"
           style={{
             height: "100%",
-            display:'flex',
-            justifyContent:'center'
+            display: "flex",
+            justifyContent: "center",
             // background: "black",
           }}
         >
-          <TourDetailsClient data={dataHaveFilter}  />
+          <TourDetailsClient data={dataHaveFilter} />
           {/* <FeaturesTour  data={dataHaveFilter}  /> */}
         </Col>
       </Row>
