@@ -1,43 +1,63 @@
-import { Button, Calendar, DatePicker, Rate } from "antd";
-import { ChevronRight, CircleCheck, CircleX, Minus, Plus, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Calendar, Rate } from "antd";
+import { ArrowLeft, ArrowRight, ChevronRight, CircleCheck, CircleX, Star } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getTourByIdAPI } from "~/apis";
+import { getTourDetail } from "~/apis";
+import dayjs from 'dayjs';
 
 export default function TourDetail() {
     const { id } = useParams();
     const [data, setData] = useState();
     const [active, setActive] = useState(0)
-    const [countAdults, setCountAdults] = useState(0)
-    const [countChildren, setCountChildren] = useState(0)
+    const [showDetailTour, setShowDetailTour] = useState(false)
     const navigate = useNavigate()
+    const calendarRef = useRef(null);
     const onPanelChange = (value, mode) => {
         console.log(value.format('YYYY-MM-DD'), mode);
     };
 
     const getTour = () => {
-        getTourByIdAPI(id).then((data) => {
+        getTourDetail(id).then((data) => {
             setData(data)
         })
     }
+    const scrollToCalendar = () => {
+        calendarRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     useEffect(() => {
         if (id) getTour();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    const handleChange = (e) => {
-        const value = parseInt(e.target.value);
-        setCountAdults(value);
+
+    const [moneyByDay, setMoneyByDay] = useState({});
+
+    useEffect(() => {
+        if (data?.departure && data?.schedules[0]?.priceAdult) {
+            const formattedDate = dayjs(data?.departure).format('YYYY-MM-DD');
+            setMoneyByDay(prevState => ({
+                ...prevState,
+                [formattedDate]: data?.schedules[0]?.priceAdult
+            }));
+        }
+    }, [data]);
+
+    const dateCellRender = (value) => {
+        const dateStr = value.format('YYYY-MM-DD');
+        const money = moneyByDay[dateStr];
+
+        return (
+            <div className="absolute top-0 right-0 left-0 bottom-0" onClick={() => money && setShowDetailTour(true)}>
+                {money && <span className="absolute top-1/3 right-0 left-1/4 bottom-0 mx-auto text-red-600 font-bold">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(money)}</span>}
+            </div>
+        );
     };
-    const handleChangeChildren = (e) => {
-        const value = parseInt(e.target.value);
-        setCountAdults(value);
-    };
+
 
     return (
         <div className="py-8">
-            <div className="max-w-[1400px] mx-auto gap-8 grid grid-cols-7">
+            <div className="max-w-[1600px] mx-auto gap-8 grid grid-cols-7">
                 <div className="col-span-5">
                     <div className="w-full h-[500px]">
                         <img
@@ -158,8 +178,61 @@ export default function TourDetail() {
                     </div>
                     <div>
                         <h3 className="py-[20px] font-bold text-2xl">Calendar & Prices</h3>
-                        <div>
-                            <Calendar onPanelChange={onPanelChange} />
+                        <div ref={calendarRef}>
+                            {
+                                showDetailTour ?
+                                    <div className="w-full shadow-lg h-[400px] rounded-lg bg-white">
+                                        <div className="flex items-center justify-between pr-[30px]">
+                                            <button className="py-[20px] px-[10px] flex items-center gap-2" onClick={() => setShowDetailTour(false)}>
+                                                <ArrowLeft className="mx-auto" />
+                                                <span className="font-bold text-base">Back</span>
+                                            </button>
+                                            <div>
+                                                <h2 className="font-bold text-red-600 text-2xl">{dayjs(data?.departure).format('DD/MM/YYYY')}</h2>
+                                            </div>
+                                        </div>
+                                        <div className="w-full">
+                                            <h3 className="text-center text-blue-800 text-xl font-semibold">Means of transport</h3>
+                                            <div className="flex items-center w-full justify-center gap-[10px] py-[20px]">
+                                                <div className="flex items-center">
+                                                    <span className="font-bold text-base pr-2">Departure date</span> <span> - {dayjs(data?.departure).format('DD/MM/YYYY')}</span>
+                                                </div>
+                                                <div>
+                                                    <span><ArrowRight className="w-[200px]" /></span>
+                                                </div>
+                                                <div>
+                                                    <span className="font-bold text-base pr-2">Return date</span>
+                                                    <span> - {dayjs(data?.departure).add(data?.duration, 'day').format('DD/MM/YYYY')}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-center text-blue-800 text-xl font-semibold">Tour price</h3>
+                                            <div className="flex items-center w-full justify-center gap-[10px] py-[20px] h-[100px]">
+                                                <div className="flex items-center w-[300px] justify-between border-r-2 px-[30px] border-gray-400 h-full">
+                                                    <span className="font-bold text-base pr-2">Adult:</span>
+                                                    <span className="text-red-600 font-bold">
+                                                        {data?.schedules[0]?.priceAdult && new Intl.NumberFormat('vi-VN', {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }).format(data?.schedules[0]?.priceAdult)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center w-[300px] justify-between px-[30px] h-full">
+                                                    <span className="font-bold text-base pr-2">Child:</span>
+                                                    <span className="text-red-600 font-bold">
+                                                        {data?.schedules[0]?.priceChild && new Intl.NumberFormat('vi-VN', {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }).format(data?.schedules[0]?.priceChild)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    :
+                                    <Calendar onPanelChange={onPanelChange} dateCellRender={dateCellRender} />
+                            }
                         </div>
                     </div>
                     <div>
@@ -257,76 +330,38 @@ export default function TourDetail() {
                         </div>
                     </div>
                 </div>
-                <div className="bg-gray-100 px-4 py-4 flex flex-col gap-8 col-span-2 h-[670px] shadow-lg">
-                    <div className="w-full border-b py-[30px] gap-1 flex justify-center items-center ">
-                        <h3 className="font-bold text-3xl">$104</h3>
-                        <span>/</span>
-                        <span>per person</span>
-                    </div>
-                    <div className="border-b">
-                        <div className="flex flex-col gap-3">
-                            <label className="font-bold">Date</label>
-                            <DatePicker showTime />
-                        </div>
-                        <div className="flex flex-col gap-8 mt-[50px] pb-[50px]">
-                            <span className="font-bold">Ticket</span>
-                            <div className="flex items-center w-full justify-between">
-                                <label>Adults (18+ years)</label>
-                                <div className="flex items-center gap-1 *:text-gray-600">
-                                    <Button
-                                        onClick={() => setCountAdults((prev) => Math.max(prev - 1, 0))} 
-                                        className="w-[30px] h-[30px] px-0"
-                                    >
-                                        <Minus size={30} />
-                                    </Button>
-                                    <input
-                                        type="number"
-                                        value={countAdults}
-                                        onChange={handleChange}
-                                        className=" rounded-md w-[45px] border h-[30px] text-center"
-                                        min={0}
-                                    />
-                                    <Button
-                                        onClick={() => setCountAdults((prev) => prev + 1)}
-                                        className="w-[30px] h-[30px] px-0"
-                                    >
-                                        <Plus />
-                                    </Button>
+                <div className="col-span-2">
+                    <div className="sticky top-[50px] shadow-lg h-[300px] bg-white rounded-lg">
+                        <div className="p-5 ">
+                            <p className="text-xl">Price: </p>
+                            <h2 className="text-2xl text-center py-[10px]"><span className="text-red-600 font-bold">{new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }).format(data?.schedules[0]?.priceAdult)}</span>/Person</h2>
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="font-bold text-xl">Departure:</span>
+                                    <span className="text-base">
+                                        {data?.destination}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="font-bold text-xl">Departure Date:</span>
+                                    <span className="text-base">
+                                        {dayjs(data?.departure).format('DD/MM/YYYY')}
+                                    </span>
                                 </div>
                             </div>
-                            <div className="flex items-center w-full justify-between">
-                                <label>Children</label>
-                                <div className="flex items-center gap-1 *:text-gray-600">
-                                    <Button
-                                        onClick={() => setCountChildren((prev) => Math.max(prev - 1, 0))} 
-                                        className="w-[30px] h-[30px] px-0"
-                                    >
-                                        <Minus size={30} />
-                                    </Button>
-                                    <input
-                                        type="number"
-                                        value={countChildren}
-                                        onChange={handleChangeChildren}
-                                        className=" rounded-md w-[45px] border h-[30px] text-center"
-                                        min={0}
-                                    />
-                                    <Button
-                                        onClick={() => setCountChildren((prev) => prev + 1)}
-                                        className="w-[30px] h-[30px] px-0"
-                                    >
-                                        <Plus />
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-14">
-                        <div className="w-full flex items-center justify-between">
-                            <span className="font-bold">Total</span>
-                            <span className="text-red-600 text-2xl font-bold">$104</span>
-                        </div>
-                        <div className="w-full px-3">
-                            <button className="rounded w-full h-[45px] bg-red-500 hover:bg-red-600 duration-300 text-white font-bold">Book now</button>
+                            {
+                                showDetailTour ?
+                                    <button className="w-full bg-red-600 text-white text-xl h-[50px] mt-[20px] rounded-lg">
+                                        Book Tour
+                                    </button>
+                                    :
+                                    <button onClick={scrollToCalendar} className="w-full bg-red-600 text-white text-xl h-[50px] mt-[20px] rounded-lg">
+                                        Choose Departure Date
+                                    </button>
+                            }
                         </div>
                     </div>
                 </div>

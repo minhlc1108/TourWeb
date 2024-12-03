@@ -62,6 +62,10 @@ export const getTourByIdAPI = async (id) => {
   const response = await axios.get(`${API_ROOT}/tour/${id}`);
   return response.data;
 };
+export const getTourDetail = async (id) => {
+  const response = await axios.get(`${API_ROOT}/tour/get-detail/${id}`);
+  return response.data;
+};
 
 export const fetchAllTourAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/tour`, { params });
@@ -144,5 +148,12 @@ export const fetchAllCustomers = async (params) => {
 //Tour Schedules
 export const fetchAllTourSchedulesAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/tour-schedule`, { params });
+  return response.data;
+}
+
+
+//Tour
+export const fetchAllTours = async (params) => {
+  const response = await axios.get(`${API_ROOT}/tour/get-tours`, { params });
   return response.data;
 }

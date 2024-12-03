@@ -1,6 +1,6 @@
-import { Card, Button, Space, Table, Select, Form, Input, Modal, DatePicker } from "antd";
+import { Card, Button, Space, Table, Select, Form, Input, Modal, DatePicker, InputNumber } from "antd";
 import { useEffect, useState } from "react";
-import { fetchAllBooking, fetchAllTourSchedulesAPI, fetchAllCustomers, createBooking, updateBooking, CreateBookingDetail, fetchAllBookingDetailsByIdBook, deleteBooking } from "~/apis"; // Đảm bảo API fetchAllTourSchedulesAPI và fetchAllCustomers có sẵn
+import { fetchAllBooking, fetchAllCustomers, createBooking, updateBooking, CreateBookingDetail, fetchAllBookingDetailsByIdBook, deleteBooking, fetchAllTours } from "~/apis"; // Đảm bảo API fetchAllTourSchedulesAPI và fetchAllCustomers có sẵn
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { message, modal } from "~/components/EscapeAntd";
 import dayjs from "dayjs";
@@ -23,6 +23,9 @@ function Booking() {
   const [customers, setCustomers] = useState([]);
   const [bookingItem, setBookingItem] = useState([]);
   const [addDetailModalVisible, setAddDetailModalVisible] = useState(false);
+  const [quantityChild, setQuantityChild] = useState(0)
+  const [quantityAdult, setQuantityAdult] = useState(0)
+  const [sumPrice, setSumPrice] = useState(0)
   const [date, setDate] = useState(null)
   const [detailForm] = Form.useForm();
   const handleAddDetail = () => {
@@ -94,8 +97,8 @@ function Booking() {
       })
       .catch(() => message.error("Lỗi khi gọi api"));
 
-    fetchAllTourSchedulesAPI().then((tourData) => {
-      setTours(tourData.tourSchedules);
+    fetchAllTours().then((tourData) => {
+      setTours(tourData);
     }).catch(() => message.error("Lỗi khi tải danh sách Tour"));
 
     fetchAllCustomers().then((customerData) => {
@@ -178,7 +181,27 @@ function Booking() {
       },
     });
   };
-  
+  const [tour, setTour] = useState(null);
+  const handleSelected = (value) => {
+    const tour = tours.find(tour => tour.id === value);
+    setTour(tour);
+    if (tour) {
+      const dateFormat = dayjs(tour?.departure, "YYYY-MM-DD HH:mm:ss")
+      setDate(dateFormat)
+    }
+    form.setFieldsValue({ tourScheduleId: value });
+  }
+  useEffect(() => {
+    const tourSchedule = tour?.schedules[0];
+    const priceAdult = (tourSchedule?.priceAdult || 0) * (quantityAdult || 0);
+    const priceChild = (tourSchedule?.priceChild || 0) * (quantityChild || 0);
+    setSumPrice(priceAdult + priceChild);
+  }, [tour, quantityAdult, quantityChild]);
+
+  useEffect(() => {
+    form.setFieldsValue({ totalPrice: sumPrice });
+  }, [sumPrice, form]);
+
   const columns = [
     {
       title: "ID",
@@ -254,7 +277,7 @@ function Booking() {
               form.setFieldsValue(record);
               setVisible(true);
             }}></Button>
-            <Button   onClick={() => deleteItem(record.id)} color="danger" variant="outlined" icon={<DeleteOutlined />}></Button>
+            <Button onClick={() => deleteItem(record.id)} color="danger" variant="outlined" icon={<DeleteOutlined />}></Button>
             <Button variant="outlined" icon={<SearchOutlined />} onClick={() => handleViewDetails(record)} >
               Chi tiết
             </Button>
@@ -289,15 +312,29 @@ function Booking() {
             name="tourScheduleId"
             rules={[{ required: true, message: "Vui lòng chọn tour" }]}
           >
-            <Select>
+            <Select onChange={handleSelected}>
               {tours.map((tour) => (
-                <Select.Option key={tour.id} value={tour.id}>
+                <Select.Option key={tour.id} value={tour?.schedules[0]?.id} >
                   {tour.name}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
-
+          <Form.Item
+            style={{ width: '100%' }}
+            label="Thời gian"
+            rules={[{ required: true, message: "Vui lòng chọn thời gian" }]}
+          >
+            <DatePicker
+              showTime
+              onChange={(value, dateString) => {
+                setDate(value);
+              }}
+              disabled
+              format="YYYY-MM-DD HH:mm:ss"
+              value={date ? dayjs(date, "YYYY-MM-DD HH:mm:ss") : null}
+            />
+          </Form.Item>
           <Form.Item
             style={{ width: '100%' }}
             label="Tên khách hàng"
@@ -315,20 +352,15 @@ function Booking() {
 
           <Form.Item
             style={{ width: '100%' }}
-            label="Tổng giá"
-            name="totalPrice"
-            rules={[{ required: true, message: "Vui lòng nhập tổng giá" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            style={{ width: '100%' }}
             label="Số lượng người lớn"
             name="adultCount"
             rules={[{ required: true, message: "Vui lòng nhập số lượng người lớn" }]}
           >
-            <Input />
+            <InputNumber
+              min={0}
+              value={quantityAdult}
+              onChange={(value) => setQuantityAdult(value || 0)}
+            />
           </Form.Item>
 
           <Form.Item
@@ -337,21 +369,25 @@ function Booking() {
             name="childCount"
             rules={[{ required: true, message: "Vui lòng nhập số lượng trẻ em" }]}
           >
-            <Input />
+            <InputNumber
+              min={0}
+              value={quantityChild}
+              onChange={(value) => setQuantityChild(value || 0)}
+            />
           </Form.Item>
 
           <Form.Item
             style={{ width: '100%' }}
-            label="Thời gian"
-            rules={[{ required: true, message: "Vui lòng chọn thời gian" }]}
+            label="Tổng giá"
+            name="totalPrice"
+            rules={[{ required: true, message: "Vui lòng nhập tổng giá" }]}
           >
-            <DatePicker
-              showTime
-              onChange={(value, dateString) => {
-                setDate(value);
-              }}
-              format="YYYY-MM-DD HH:mm:ss"
-              value={date ? dayjs(date, "YYYY-MM-DD HH:mm:ss") : null}
+            <InputNumber
+              defaultValue={0}
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'VNĐ'}
+              parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+              className="w-[200px]"
+              readOnly
             />
           </Form.Item>
         </Form>
