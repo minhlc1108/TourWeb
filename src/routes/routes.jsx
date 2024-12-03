@@ -21,12 +21,8 @@ import TourClient from "~/pages/Client/TourClient";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
-import BookTourPage from "~/pages/Client/BookTour/bookTour.jsx";
-import ContactForm from "~/pages/Client/BookTour/ContactForm.jsx";
-import Tour_client from "~/pages/Client/BookTour/Tour.jsx";
-import PayMoney from "~/pages/Client/BookTour/PayMoney.jsx";
-import BookingConfirmation from "~/pages/Client/BookTour/BookingConfirmation.jsx";
-import BookingDetails from "~/pages/Client/BookTour/BookingDetails.jsx";
+import ContactForm from "~/pages/Client/BookTour/BOOK/ContactForm.jsx";
+import BookingDetails from "~/pages/Client/BookTour/PAY/BookingDetails.jsx";
 import PayMethod from "~/pages/Client/BookTour/PayMethod.jsx";
 // import Home from "~/pages/Client/Home";
 

@@ -107,11 +107,6 @@ export const fetchAllBookingsAPI = async () => {
   return response.data;
 };
 
-export const fetchBookingByIdAPI = async (id) => {
-  const response = await axios.get(`${API_ROOT}/bookings/${id}`);
-  return response.data;
-};
-
 export const createBookingAPI = async (bookingData) => {
   const response = await axios.post(`${API_ROOT}/bookings`, bookingData);
   return response.data;

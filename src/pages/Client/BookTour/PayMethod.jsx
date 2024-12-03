@@ -1,6 +1,6 @@
-import BookingDetails from "~/pages/Client/BookTour/BookingDetails.jsx";
-import BookingConfirmation from "~/pages/Client/BookTour/BookingConfirmation.jsx";
-import PayMoney from "~/pages/Client/BookTour/PayMoney.jsx";
+import BookingDetails from "~/pages/Client/BookTour/PAY/BookingDetails.jsx";
+import BookingConfirmation from "~/pages/Client/BookTour/PAY/BookingConfirmation.jsx";
+import PayMoney from "~/pages/Client/BookTour/PAY/PayMoney.jsx";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 
 function PayMethod() {

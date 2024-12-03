@@ -3,6 +3,9 @@ import { Form, Input, Button, Row, Col, Select, InputNumber,Card,
     Divider, Typography,  
     Checkbox} from 'antd';
 import { MinusOutlined, PlusOutlined, UserOutlined, MoneyCollectOutlined } from '@ant-design/icons';
+import {createBookingAPI, getTourByIdAPI} from "~/apis/index.js";
+import {message} from "~/components/EscapeAntd/index.jsx";
+import FormDataBooking from "~/pages/Client/BookTour/BOOK/FormDataBooking.jsx";
 
 const { Option } = Select;
 
@@ -11,6 +14,35 @@ function ContactForm () {
     const [childCount, setChildCount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState(false); // Trạng thái checkbox
+
+    const [tours, setTours] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmit, setIsSubmitting] = useState(true);
+    const [error, setError] = useState(null);
+
+
+    useEffect(() => {
+        // Hàm lấy dữ liệu tour
+        const fetchTours = async () => {
+            setIsLoading(true); // Đặt trạng thái đang tải khi bắt đầu gọi API
+            try {
+                const response = await getTourByIdAPI(1); // Gọi API
+                if (response?.data?.tours) {
+                    setTours(response.data.tours); // Cập nhật danh sách tour
+                } else {
+                    throw new Error('Dữ liệu tour không hợp lệ'); // Xử lý nếu dữ liệu không hợp lệ
+                }
+            } catch (err) {
+                console.error(err); // Log chi tiết lỗi ra console
+                setError('Lỗi khi gọi API: ' + (err.message || 'Không thể kết nối')); // Cập nhật lỗi
+            } finally {
+                setIsLoading(false); // Đảm bảo trạng thái không còn đang tải khi đã hoàn tất
+            }
+        };
+
+        fetchTours(); // Gọi hàm lấy dữ liệu khi component mount
+    }, []); // [] để chỉ chạy 1 lần khi component mount
+    
     const handleCheckboxChange = (e) => {
         setPaymentMethod(e.target.checked);
     };
@@ -60,7 +92,30 @@ function ContactForm () {
             </Col>
         </Row>)
     }
-    
+    const onFinish = async (values) => {
+        // Bật trạng thái đang submit
+        setIsSubmitting(true);
+        alert(123);
+        try {
+            // Gửi dữ liệu booking
+            const booking = await createBookingAPI({ ...values });
+
+            if (booking) {
+                message.success("Đặt vé thành công!");
+                // Điều hướng hoặc các hành động tiếp theo sau khi đặt vé thành công
+                // navigate(`/admin/tour/edit?id=${createdTour.id}`); // Nếu cần điều hướng
+            }
+        } catch (error) {
+            // Xử lý lỗi khi API gọi không thành công
+            message.error("Có lỗi xảy ra trong quá trình đặt vé. Vui lòng thử lại!");
+            console.error("Error creating booking:", error); // In lỗi để debug
+        } finally {
+            // Tắt trạng thái submit dù có thành công hay lỗi
+            setIsSubmitting(false);
+        }
+    };
+
+
     const ChildChange = () =>{
         return (<Row gutter={8}>
             <Col span={8}>
@@ -89,23 +144,7 @@ function ContactForm () {
         </Row>)
     }
     
-    const ThanhToan = () => {
-        return (
-            <>
-                <Title level={4} className="inf-title mt-4">Hình thức thanh toán</Title>
-                <Form.Item>
-                    <Checkbox
-                        id="tien-mat"
-                        checked={paymentMethod}
-                        onChange={handleCheckboxChange}
-                    >
-                        <MoneyCollectOutlined style={{ marginLeft: 10 }} />
-                        Tiền mặt
-                    </Checkbox>
-                </Form.Item>
-            </>
-        )
-    }
+    
     const Submit_Form = () => {
         return (
         <div className="customer-form">
@@ -129,153 +168,73 @@ function ContactForm () {
 
             {/* Nút Đặt tour */}
             <Button
-                type="danger"
-                style={{width: '100%'}}
+                type="primary" // Chọn màu nền chính (có thể thay đổi sang 'danger' nếu bạn muốn)
+                htmlType="submit" // Thêm htmlType="submit"
+                style={{
+                    width: '100%',
+                    borderRadius: '8px',  // Bo góc nút
+                    fontSize: '16px',  // Thay đổi kích thước font
+                    fontWeight: 'bold',  // Làm cho văn bản đậm hơn
+                    padding: '10px 20px',  // Thêm khoảng cách bên trong nút
+                    transition: 'all 0.3s ease',  // Thêm hiệu ứng chuyển đổi khi hover
+                }}
                 id="reserve"
-                disabled={totalPrice === 0 || !paymentMethod} // Vô hiệu hóa nếu chưa chọn hình thức thanh toán}
+                // disabled={totalPrice === 0 || !paymentMethod} // Vô hiệu hóa nếu chưa chọn hình thức thanh toán
+                className={totalPrice === 0 || !paymentMethod ? 'button-disabled' : ''}
             >
                 Đặt tour
             </Button>
+
         </div>)
     };
 
+    
+    const component = () => {
+        return (
+            <div className="home-container">
+                <Form layout="vertical" className="p-3 m-3"
+                      onFinish={onFinish}>
+                    <div style={{padding: '50px'}}>
+                        {/* Row để căn giữa nội dung */}
+                        <Row justify="center">
+                            {/* Col để chia thành 2 cột */}
+                            <Col xs={24} sm={12} lg={8}>
+                                <FormDataBooking AdultChange={AdultChange} ChildChange={ChildChange} handleCheckboxChange={handleCheckboxChange}
+                                                 paymentMethod={paymentMethod}
+                                />
+                            </Col>
+                            <Col xs={24} sm={12} lg={8}>
+                                <Card title="Thông tin thanh toán" bordered={false}>
+                                    <Submit_Form/>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return <div>Đang tải dữ liệu...</div>;
+    }
+
+    // if (error) {
+    //     return <div>{error}</div>;
+    // }
+
     return (
-        <div className="home-container">
-            <Form layout="vertical" className="p-3 m-3">
-                <div style={{padding: '50px'}}>
-                    {/* Row để căn giữa nội dung */}
-                    <Row justify="center">
-                        {/* Col để chia thành 2 cột */}
-                        <Col xs={24} sm={12} lg={8}>
-                            <Card title="Thông tin khách hành" bordered={false}>
-                                {/* Thông tin liên hệ */}
-                                <Row gutter={[16, 16]}>
-                                    <Col span={24}>
-                                        <p className="inf-title">Thông tin liên hệ</p>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={8}>
-                                        <Form.Item
-                                            label="Họ tên"
-                                            name="name"
-                                            rules={[{required: true, message: 'Vui lòng điền tên'}]}
-                                        >
-                                            <Input/>
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={8}>
-                                        <Form.Item
-                                            label="Số điện thoại"
-                                            name="phone"
-                                            rules={[{required: true, message: 'Vui lòng điền số điện thoại'}]}
-                                        >
-                                            <InputNumber style={{width: '100%'}}/>
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={8}>
-                                        <Form.Item
-                                            label="Email"
-                                            name="email"
-                                            rules={[{required: true, message: 'Vui lòng điền email'}]}
-                                        >
-                                            <Input/>
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={8}>
-                                        <Form.Item
-                                            label="Địa chỉ"
-                                            name="address"
-                                            rules={[{required: true, message: 'Vui lòng điền địa chỉ'}]}
-                                        >
-                                            <Input/>
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-
-                                {/* Hành khách */}
-                                <Row gutter={[16, 16]}>
-                                    <Col span={24}>
-                                        <p className="inf-title">Hành khách</p>
-                                    </Col>
-
-                                    {/* Người lớn */}
-                                    <Col xs={24} sm={12} md={8}>
-                                        <Form.Item label="Người lớn (Từ 12)">
-                                            <AdultChange/>
-                                        </Form.Item>
-                                    </Col>
-
-                                    {/* Trẻ em */}
-                                    <Col xs={24} sm={12} md={8}>
-                                        <Form.Item label="Trẻ em (Dưới 12)">
-                                            <ChildChange/>
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-
-                                {/* Thông tin hành khách */}
-                                <Row gutter={[16, 16]}>
-                                    <Col span={24}>
-                                        <p className="inf-title">Thông tin hành khách</p>
-                                    </Col>
-
-                                    {/* Hành khách người lớn */}
-                                    <Col span={24}>
-                                        <div className="inf-customer cus-adult">
-                                            <Row gutter={[16, 16]}>
-                                                <Col span={8}>
-                                                    <Form.Item
-                                                        label="Họ tên"
-                                                        name="adult_name"
-                                                        rules={[{required: true, message: 'Vui lòng điền tên'}]}
-                                                    >
-                                                        <Input/>
-                                                    </Form.Item>
-                                                </Col>
-
-                                                <Col span={8}>
-                                                    <Form.Item
-                                                        label="Ngày sinh"
-                                                        name="adult_birthday"
-                                                        rules={[{required: true, message: 'Vui lòng chọn ngày sinh'}]}
-                                                    >
-                                                        <Input type="date"/>
-                                                    </Form.Item>
-                                                </Col>
-
-                                                <Col span={8}>
-                                                    <Form.Item label="Giới tính" name="adult_gender">
-                                                        <Select defaultValue="1">
-                                                            <Option value="1">Nam</Option>
-                                                            <Option value="2">Nữ</Option>
-                                                            <Option value="3">Khác</Option>
-                                                        </Select>
-                                                    </Form.Item>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                    </Col>
-                                </Row>
-
-                                {/* Submit button */}
-                                <ThanhToan/>
-                            </Card>
-                        </Col>
-                        <Col xs={24} sm={12} lg={8}>
-                            <Card title="Thông tin thanh toán" bordered={false}>
-                                <Submit_Form/>
-                            </Card>
-                        </Col>
-                    </Row>
-                </div>
-                
-
-            </Form>
-        </div>
+        component()
+        // <div>
+        //     <h2>Danh sách tour</h2>
+        //     <ul>
+        //         {tours.map((tour) => (
+        //             <li key={tour.id}>{tour.name}</li> // Giả sử mỗi tour có thuộc tính `id` và `name`
+        //         ))}
+        //     </ul>
+        // </div>
     );
+    
 };
 
 export default ContactForm;
