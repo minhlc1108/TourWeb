@@ -3,9 +3,10 @@ import { Form, Input, Button, Row, Col, Select, InputNumber,Card,
     Divider, Typography,  
     Checkbox} from 'antd';
 import { MinusOutlined, PlusOutlined, UserOutlined, MoneyCollectOutlined } from '@ant-design/icons';
-import {createBookingAPI, getTourByIdAPI} from "~/apis/index.js";
+import {createBookingAPI, getTourByIdAPI, getTourScheduleByIdAPI} from "~/apis/index.js";
 import {message} from "~/components/EscapeAntd/index.jsx";
 import FormDataBooking from "~/pages/Client/BookTour/BOOK/FormDataBooking.jsx";
+import {useNavigate} from "react-router-dom";
 
 const { Option } = Select;
 
@@ -15,20 +16,20 @@ function ContactForm () {
     const [totalPrice, setTotalPrice] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState(false); // Trạng thái checkbox
 
-    const [tours, setTours] = useState([]);
+    const [toursSchedule, setToursSchedule] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmit, setIsSubmitting] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-
-    useEffect(() => {
+    useEffect((tour_id) => {
         // Hàm lấy dữ liệu tour
         const fetchTours = async () => {
             setIsLoading(true); // Đặt trạng thái đang tải khi bắt đầu gọi API
             try {
-                const response = await getTourByIdAPI(1); // Gọi API
-                if (response?.data?.tours) {
-                    setTours(response.data.tours); // Cập nhật danh sách tour
+                const response = await getTourScheduleByIdAPI(tour_id); // Gọi API
+                if (response?.data?.tour) {
+                    setToursSchedule(response.data.tour); // Cập nhật danh sách tour
                 } else {
                     throw new Error('Dữ liệu tour không hợp lệ'); // Xử lý nếu dữ liệu không hợp lệ
                 }
@@ -47,9 +48,6 @@ function ContactForm () {
         setPaymentMethod(e.target.checked);
     };
     const { Title } = Typography;
-    // Giả sử giá của người lớn và trẻ em (bạn có thể thay đổi theo dữ liệu thực tế)
-    const priceAdult = 500000; // Giá của người lớn
-    const priceChild = 300000; // Giá của trẻ em
     const handleAdultChange = (value) => {
         setAdultCount(value);
         calculateTotal(value, childCount);
@@ -61,7 +59,7 @@ function ContactForm () {
     };
 
     const calculateTotal = (adults, children) => {
-        const total = (adults * priceAdult) + (children * priceChild);
+        const total = (adults * toursSchedule.priceAdult) + (children * toursSchedule.priceChild);
         setTotalPrice(total);
     };
     
@@ -102,6 +100,7 @@ function ContactForm () {
 
             if (booking) {
                 message.success("Đặt vé thành công!");
+                
                 // Điều hướng hoặc các hành động tiếp theo sau khi đặt vé thành công
                 // navigate(`/admin/tour/edit?id=${createdTour.id}`); // Nếu cần điều hướng
             }
@@ -112,6 +111,7 @@ function ContactForm () {
         } finally {
             // Tắt trạng thái submit dù có thành công hay lỗi
             setIsSubmitting(false);
+            navigate('/PayMethod');
         }
     };
 

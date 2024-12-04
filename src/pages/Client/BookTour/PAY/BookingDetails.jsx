@@ -4,23 +4,18 @@ import { CalendarOutlined, PhoneOutlined, CreditCardOutlined } from '@ant-design
 
 const { Title, Text } = Typography;
 
-const BookingDetails = () => {
+const BookingDetails = (Booking) => {
   const data = [
     {
       title: 'Mã đặt chỗ',
-      description: '241202DHI8TV',
+      description: Booking.Id, //'241202DHI8TV',
       icon: <CreditCardOutlined />
     },
     {
       title: 'Ngày tạo',
-      description: '02/12/2024 14:05',
+      description: Booking.Time,    //'02/12/2024 14:05',
       icon: <CalendarOutlined />
-    },
-    {
-      title: 'Số điện thoại',
-      description: '+84 123 456 789',
-      icon: <PhoneOutlined />
-    },
+    }
     // Thêm các cặp key-value nếu cần
   ];
 
@@ -53,7 +48,7 @@ const BookingDetails = () => {
           <Text type="secondary">Tiền mặt</Text>
         </Col>
         <Col span={24}>
-          <Text>Quý khách vui lòng thanh toán tại bất kỳ văn phòng Vietravel trên toàn quốc và các chi nhánh tại nước ngoài.</Text>
+          <Text>Quý khách vui lòng thanh toán tại bất kỳ văn phòng trên toàn quốc và các chi nhánh tại nước ngoài.</Text>
         </Col>
         <Col span={24}>
           <Space>

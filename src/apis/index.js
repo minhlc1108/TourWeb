@@ -112,6 +112,15 @@ export const createBookingAPI = async (bookingData) => {
   return response.data;
 };
 
+export const getBookingByIdAPI = async (id) => {
+  try {
+    const response = await axios.get(`${API_ROOT}/bookings/${id}`);
+    return response.data; // Trả về dữ liệu booking từ API
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    throw error; // Ném lỗi nếu có
+  }
+};
 export const updateBookingAPI = async (id, bookingData) => {
   const response = await axios.put(`${API_ROOT}/bookings/${id}`, bookingData);
   return response.data;
@@ -119,5 +128,59 @@ export const updateBookingAPI = async (id, bookingData) => {
 
 export const deleteBookingAPI = async (id) => {
   await axios.delete(`${API_ROOT}/bookings/${id}`);
+};
+
+
+// tour schedule
+export const getAllTourSchedulesAPI = async () => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule`);
+  return response.data;
+};
+
+
+export const getTourScheduleByIdAPI = async (id) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/${id}`);
+  return response.data;
+};
+
+
+export const createTourScheduleAPI = async (values) => {
+  const response = await axios.post(`${API_ROOT}/tour-schedule`, values);
+  return response.data;
+};
+
+
+export const updateTourScheduleAPI = async (id, values) => {
+  const response = await axios.put(`${API_ROOT}/tour-schedule/${id}`, values);
+  return response.data;
+};
+
+
+export const deleteTourScheduleAPI = async (id) => {
+  await axios.delete(`${API_ROOT}/tour-schedule/${id}`);
+};
+
+export const getTourSchedulesByTourIdAPI = async (tourId) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/ByTourId/${tourId}`);
+  return response.data;
+};
+
+export const searchTourSchedulesByNameAPI = async (name) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/SearchByName`, {
+    params: { name },
+  });
+  return response.data;
+};
+
+export const getTourSchedulesByStatusAPI = async (status) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/ByStatus/${status}`);
+  return response.data;
+};
+
+export const getTourSchedulesByDateRangeAPI = async (startDate, endDate) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/ByDateRange`, {
+    params: { startDate, endDate },
+  });
+  return response.data;
 };
 

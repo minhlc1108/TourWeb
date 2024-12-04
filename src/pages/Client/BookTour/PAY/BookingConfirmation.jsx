@@ -4,7 +4,7 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
-const BookingConfirmation = () => {
+const BookingConfirmation = ({bookingId, TourSchedule}) => {
   return (
     <Card
       title="Phiếu xác nhận booking"
@@ -23,27 +23,22 @@ const BookingConfirmation = () => {
             alt="Booking Image"
             style={{ borderRadius: '8px', marginBottom: '16px' }}
           />
-          <Text strong>Số booking:</Text> <Text>{'241202DHI8TV'}</Text>
+          <Text strong>Số booking:</Text> <Text>{bookingId}</Text>
           <br />
-          <Text strong>Mã tour:</Text> <Text>{'NNSGN130-133-051224VJ-H'}</Text>
+          <Text strong>Mã tour:</Text> <Text>{TourSchedule.TourId}</Text>
         </Col>
 
         {/* Thông tin chuyến bay */}
         <Col xs={24} md={16}>
-          <Title level={4}>Thông tin chuyến bay</Title>
+          {/*<Title level={4}>Thông tin chuyến bay</Title>*/}
           <div style={{ marginBottom: '16px' }}>
             <Text strong>Ngày đi: </Text>
-            <Text>{'05/12/2024 - VJ805 (17:15 SGN - 18:45 BKK)'}</Text>
+            <Text>{TourSchedule.DepartureDate}</Text>
             <br />
             <Text strong>Ngày về: </Text>
-            <Text>{'09/12/2024 - VJ806 (19:55 BKK - 21:25 SGN)'}</Text>
+            <Text>{TourSchedule.ReturnDate}</Text>
           </div>
-          <Image
-            width={180}
-            src="https://www.vietjetair.com/images/logo.png" // Logo hãng hàng không
-            alt="Vietjet Logo"
-            style={{ borderRadius: '8px', marginBottom: '16px' }}
-          />
+           
         </Col>
       </Row>
 
