@@ -2,6 +2,13 @@
 import { Button, Space, message, Modal } from 'antd';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {
+    fetchAllCustomersAPI,
+    deleteCustomerAPI,
+    fetchCustomerDetailsAPI,
+    deleteAccountAPI,
+    fetchAccountDetailsAPI,
+} from "~/apis";
 
 import CreateAccount from './CreateAccount';
 import EditAccount from './EditAccount';
@@ -26,8 +33,8 @@ const Customer = () => {
     const fetchCustomers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://localhost:7253/api/customer/listCustomer');
-            setData(response.data);
+            const response = await fetchAllCustomersAPI();
+            setData(response);
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu:', error);
             setData([]);
@@ -51,8 +58,8 @@ const Customer = () => {
             cancelText: 'Hủy',
             onOk: async () => {
                 try {
-                    await axios.delete(`https://localhost:7253/api/customer/delete/${record.accountId}`);
-                    await axios.delete(`https://localhost:7253/api/account/delete/${record.accountId}`);
+                    await deleteCustomerAPI(record.accountId);
+                    await deleteAccountAPI(record.accountId);
                     message.success('Đã xóa thành công!');
                     fetchCustomers();
                 } catch (error) {
@@ -66,14 +73,11 @@ const Customer = () => {
     const handleView = async (record) => {
         setLoading(true);
         try {
-            const accountResponse = await axios.get(`https://localhost:7253/api/account/${record.accountId}`);
-            const accountData = accountResponse.data;
+            const accountResponse = await fetchAccountDetailsAPI(record.accountId);
+            const customerResponse = await fetchCustomerDetailsAPI(record.accountId);
 
-            const customerResponse = await axios.get(`https://localhost:7253/api/customer/${record.accountId}`);
-            const customerData = customerResponse.data;
-
-            setAccountDetails(accountData);
-            setCustomerDetails(customerData);
+            setAccountDetails(accountResponse);
+            setCustomerDetails(customerResponse);
 
             setIsModalVisible(true);
         } catch (error) {

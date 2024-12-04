@@ -3,6 +3,7 @@ import { Form, Input, Button, Select, message, DatePicker } from 'antd';
 import axios from 'axios';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { fetchAccountDetailsAPI, fetchCustomerDetailsAPI, updateCustomerAPI, updateAccountAPI } from '~/apis';
 
 const { Option } = Select;
 
@@ -12,6 +13,7 @@ const EditAccount = () => {
     const { id } = useParams();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
 
     const handleBack = () => {
         const source = searchParams.get('source') || 'account';
@@ -24,26 +26,26 @@ const EditAccount = () => {
 
     useEffect(() => {
         const fetchAccount = async () => {
+            setIsFetching(true);
             try {
-                const accountResponse = await axios.get(`https://localhost:7253/api/account/${id}`);
-                const accountData = accountResponse.data;
+                const accountResponse = await fetchAccountDetailsAPI(id);
+                const accountData = accountResponse;
 
-                const customerResponse = await axios.get(`https://localhost:7253/api/customer/${id}`);
-                const customerData = customerResponse.data;
-
+                const customerResponse = await fetchCustomerDetailsAPI(id);
+                const customerData = customerResponse;
+                console.log(accountData, customerData);
                 form.setFieldsValue({
-                    userName: accountData.userName,
-                    email: accountData.email,
-                    phoneNumber: accountData.phoneNumber,
-                    role: accountData.role ? "Admin" : "User", 
-
-                    customerName: customerData.name,
-                    customerSex: customerData?.sex?.toString(),
-                    address: customerData?.address,
+                    ...accountData,
+                    ...customerData,
+                    role: accountData.role ? "Admin" : "User",
                     dateOfBirth: customerData.birthday ? dayjs(customerData.birthday) : null,
+                    customerSex: customerData?.sex?.toString()
                 });
+
             } catch (error) {
                 message.error('Không thể tải dữ liệu tài khoản hoặc khách hàng!');
+            } finally {
+                setIsFetching(false);
             }
         };
 
@@ -54,14 +56,17 @@ const EditAccount = () => {
     const handleUpdate = async (values) => {
         const accountData = {
             userName: values.userName,
-            password: values.password,
             email: values.email,
             phoneNumber: values.phoneNumber, 
             role: values.role,
         };
+        if (values.password) {
+            accountData.password = values.password;
+        }
+
 
         const customerData = {
-            name: values.customerName,
+            name: values.name,
             address: values.address,
             birthday: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null,
             sex: parseInt(values.customerSex, 10),
@@ -71,8 +76,8 @@ const EditAccount = () => {
         console.log('Account Data:', accountData);
         console.log('Customer Data:', customerData);
         try {
-            await axios.put(`https://localhost:7253/api/account/update/${id}`, accountData);
-            await axios.put(`https://localhost:7253/api/customer/update/${id}`, customerData);
+            await updateAccountAPI(id, accountData);
+            await updateCustomerAPI(id, customerData);
             message.success('Cập nhật tài khoản thành công!');
             handleBack();
         } catch (error) {
@@ -184,7 +189,7 @@ const EditAccount = () => {
             </Form.Item>
 
             <Form.Item
-                name="customerName"
+                name="name"
                 label="Tên khách hàng"
                 rules={[{ required: true, message: 'Vui lòng nhập tên khách hàng!' }]}
             >
@@ -233,9 +238,15 @@ const EditAccount = () => {
             </Form.Item>
 
             <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading}>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    disabled={isFetching || loading}
+                >
                     Cập nhật
                 </Button>
+
                 <Button
                     style={{ marginLeft: '10px' }}
                     onClick={handleBack}

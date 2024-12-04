@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Form, Input, Select, DatePicker, message } from 'antd';
+import { registerAPI } from '~/apis';
 
 const { Option } = Select;
 const formItemLayout = {
@@ -27,7 +28,7 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
 
         setLoading(true);
         try {
-            const response = await axios.post('https://localhost:7253/api/account/register', formattedValues);
+            registerAPI(formattedValues);
             messageApi.success('Đăng ký thành công!');
 
             if (onRegisterSuccess) {

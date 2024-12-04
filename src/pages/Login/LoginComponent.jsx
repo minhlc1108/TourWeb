@@ -3,6 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Spin } from 'antd';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { loginAPI } from '~/apis';
 
 const LoginComponent = () => {
     const navigate = useNavigate();
@@ -12,29 +13,30 @@ const LoginComponent = () => {
         const { username, password } = values;
         setLoading(true);
         try {
-            const response = await axios.post('https://localhost:7253/api/account/login', {
-                username,
-                password,
-            });
+            const response = await loginAPI(username, password);
 
-            console.log("Dữ liệu phản hồi:", response.data);
+            if (response) {
+                console.log("Dữ liệu phản hồi:", response);
 
-            if (response.data.token) {
-                localStorage.setItem('authToken', response.data.token);
-            }
+                if (response.token) {
+                    localStorage.setItem('authToken', response.token);
+                }
 
-            if (response.data.isAdmin) {
-                message.success('Đăng nhập thành công! Bạn là quản trị viên.');
-                navigate('/admin');
+                if (response.isAdmin) {
+                    message.success('Đăng nhập thành công! Bạn là quản trị viên.');
+                    navigate('/admin');
+                } else {
+                    message.success('Đăng nhập thành công!');
+                    navigate('/client');
+                }
             } else {
-                message.success('Đăng nhập thành công!');
-                navigate('/client');
+                message.error('Không nhận được dữ liệu từ máy chủ!');
             }
         } catch (error) {
             if (error.response) {
                 const errorMessage = error.response.data || 'Có lỗi xảy ra!';
                 if (error.response.status === 401) {
-                    message.error(errorMessage); // Hiển thị thông báo chi tiết từ server
+                    message.error(errorMessage);
                 } else if (error.response.status === 400) {
                     message.error('Tài khoản không hợp lệ!');
                 } else {
@@ -47,6 +49,7 @@ const LoginComponent = () => {
             setLoading(false);
         }
     };
+
 
 
     const onFinish = (values) => {

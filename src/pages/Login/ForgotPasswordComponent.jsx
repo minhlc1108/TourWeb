@@ -1,6 +1,7 @@
 ﻿import axios from 'axios';
 import { Form, Input, Button, message } from 'antd';
 import { useNavigate, Link } from 'react-router-dom';
+import { forgotPasswordAPI } from '~/apis';
 
 const ForgotPasswordComponent = () => {
     const navigate = useNavigate();
@@ -10,22 +11,12 @@ const ForgotPasswordComponent = () => {
         const { email } = values;
 
         try {
-            const response = await axios.post(
-                'https://localhost:7253/api/account/forgot-password',
-                JSON.stringify(email),
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-            );
+            await forgotPasswordAPI(email);
             message.success('Mật khẩu mới tạm thời đã được gửi, vui lòng kiểm tra email của bạn!');
             navigate('/login');
         } catch (error) {
             if (error.response) {
                 console.log('Response error:', error.response.data);
-                const errorMessage = error.response.data.errors?.email?.[0] || 'Có lỗi xảy ra! Vui lòng thử lại.';
-                message.error(`Lỗi: ${errorMessage}`);
             } else if (error.request) {
                 message.error('Không thể kết nối tới server.');
             } else {

@@ -7,6 +7,15 @@ import AccountDetailsModal from "~/components/AccountModal/AccountModal";
 import TableWithSearch from '~/components/TableWithSearch/TableWithSearch';
 
 import {
+    fetchAllAccountsAPI,
+    updateAccountStatusAPI,
+    deleteAccountAPI,
+    fetchAccountDetailsAPI,
+    deleteCustomerAPI,
+    fetchCustomerDetailsAPI,
+} from "~/apis";
+
+import {
     DeleteOutlined,
     EditOutlined,
     PlusOutlined,
@@ -24,8 +33,8 @@ const Account = () => {
     const fetchAccounts = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://localhost:7253/api/account/listAccount');
-            setData(response.data);
+            const response = await fetchAllAccountsAPI();
+            setData(response);
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu:', error);
             setData([]);
@@ -50,8 +59,8 @@ const Account = () => {
             cancelText: 'Hủy',
             onOk: async () => {
                 try {
-                    await axios.delete(`https://localhost:7253/api/customer/delete/${record.id}`);
-                    await axios.delete(`https://localhost:7253/api/account/delete/${record.id}`);
+                    await deleteCustomerAPI(record.id);
+                    await deleteAccountAPI(record.id);
                     message.success('Đã xóa thành công!');
                     fetchAccounts();
                 } catch (error) {
@@ -65,14 +74,11 @@ const Account = () => {
     const handleView = async (record) => {
         setLoading(true);
         try {
-            const accountResponse = await axios.get(`https://localhost:7253/api/account/${record.id}`);
-            const accountData = accountResponse.data;
+            const accountResponse = await fetchAccountDetailsAPI(record.id);
+            const customerResponse = await fetchCustomerDetailsAPI(record.id);
 
-            const customerResponse = await axios.get(`https://localhost:7253/api/customer/${record.id}`);
-            const customerData = customerResponse.data;
-
-            setAccountDetails(accountData);
-            setCustomerDetails(customerData);
+            setAccountDetails(accountResponse);
+            setCustomerDetails(customerResponse);
 
             setIsModalVisible(true);
         } catch (error) {
@@ -87,11 +93,8 @@ const Account = () => {
         const updatedStatus = !record.lockoutEnabled;
 
         try {
-            await axios.put(`https://localhost:7253/api/account/updateStatus/${record.id}`, updatedStatus, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            await updateAccountStatusAPI(record.id, updatedStatus);
 
-            // Cập nhật lại trạng thái trong dữ liệu
             const updatedData = data.map((account) =>
                 account.id === record.id ? { ...account, lockoutEnabled: updatedStatus } : account
             );
