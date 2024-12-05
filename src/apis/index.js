@@ -78,13 +78,37 @@ export const updateTourAPI = async (id, values) => {
   return response.data;
 };
 
+export const deleteTourAPI = async (id) => {
+  const response = await axios.delete(`${API_ROOT}/tour/${id}`);
+  return response.data;
+};
+
 //Tour Image
 export const uploadImageAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/tour-image/upload`, { params });
   return response.data;
 }
 
+// Tour Schedule
+export const getTourScheduleByTourIdAPI = async (tourId, params) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/${tourId}`, { params });
+  return response.data;
+}
 
+export const createNewTourScheduleAPI = async (values) => {
+  const response = await axios.post(`${API_ROOT}/tour-schedule`, values);
+  return response.data;
+}
+
+export const updateTourScheduleAPI = async (id, values) => {
+  const response = await axios.put(`${API_ROOT}/tour-schedule/${id}`, values);
+  return response.data;
+}
+
+export const deleteTourScheduleAPI = async (id) => {
+  const response = await axios.delete(`${API_ROOT}/tour-schedule/${id}`);
+  return response.data;
+}
 //Tour customer 
 export const fetchAllCustomerAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/Customer`, { params });
