@@ -37,7 +37,7 @@ const LayoutClient = ( {children} ) => {
 
         </Header>
       <Content style={{
-        padding: '0 48px',
+        // padding: '0 48px',
 
       }}>
             <TransitionGroup>

@@ -60,6 +60,7 @@ const TourPackage = ({ dataInput }) => {
     category: "",
     traffic: "",
   });
+  
   const [tourData, setTourData] = useState([]);
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
   useEffect(() => {

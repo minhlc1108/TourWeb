@@ -236,6 +236,13 @@
    
    
 }
+.carousel-arrow {
+  z-index: 10; /* Đảm bảo mũi tên nằm trên carousel */
+}
+.carousel-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.5); /* Hiệu ứng hover */
+  color: white;
+}
 
 
 .testimonials h2 {
@@ -365,4 +372,22 @@ height: 100px;
   padding: 0px;
   text-align: center;
   font-size: 14px;
+}
+
+
+
+.slick-prev,
+.slick-next {
+  z-index: 10 !important; /* Mũi tên luôn nằm trên cùng */
+  display: inline-block;
+  /* justify-content: space-between; */
+}
+.carousel img {
+  width: 100%; /* Đảm bảo ảnh nằm gọn trong carousel */
+  height: auto; /* Giữ tỉ lệ ảnh */
+  object-fit: cover; /* Phù hợp với khung carousel */
+}
+.carousel-container {
+  overflow: visible !important; /* Đảm bảo mũi tên không bị cắt */
+  position: relative; /* Đặt vị trí để mũi tên xuất hiện đúng */
 }

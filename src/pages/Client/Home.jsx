@@ -1,7 +1,9 @@
 // src/pages/Client/Home.jsx
 import React from "react";
 import "./Home.css";
-
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Carousel, Flex } from "antd";
+import Search from "~/layouts/app/Search";
 
 const Header = () => (
   <header className="header">
@@ -11,7 +13,7 @@ const Header = () => (
       <a href="#about">About</a>
       <a href="#tours">Tours</a>
       <a href="#destination">Destination</a>
-      
+
       <a href="#pages">Pages</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -26,12 +28,8 @@ const Banner = () => (
   <section className="banner">
     <h1>Travel & Adventures</h1>
     <p>Find awesome hotels, tours, and activities</p>
-   
-    
-    
   </section>
 );
-
 
 const PopularTours = () => (
   <section className="popular-tours" id="tours">
@@ -83,16 +81,14 @@ const TopAttractions = () => (
   </section>
 );
 
-
 const OurExperiences = () => (
   <section className="our-experiences" id="about">
-    
     <div className="experience-content">
       <img src="/our.jpg" alt="Experience" />
-      
+
       <div className="experience-text">
-      <h2 className="tour-title">Why Choose Us</h2>
-      <p>Our Experiences meet high quality standards</p>
+        <h2 className="tour-title">Why Choose Us</h2>
+        <p>Our Experiences meet high quality standards</p>
         <ul>
           <li>Travel Plan</li>
           <li>Cheap Rates</li>
@@ -104,7 +100,6 @@ const OurExperiences = () => (
   </section>
 );
 
-
 const Testimonials = () => (
   <section className="testimonials">
     <div className="testimonials-content">
@@ -112,7 +107,9 @@ const Testimonials = () => (
         <h2 className="tour-title">Testimonials</h2>
         <h2 className="sub-title">What Travelers Say</h2>
         <blockquote className="testimonial-quote">
-          “The UI designs he crafted are top-notch, and the design system he integrated allows for straightforward fixes and bulk updates throughout almost every area of the app.”
+          “The UI designs he crafted are top-notch, and the design system he
+          integrated allows for straightforward fixes and bulk updates
+          throughout almost every area of the app.”
         </blockquote>
         <p className="testimonial-author">- By Mollie Rosa, Photographer</p>
       </div>
@@ -162,7 +159,6 @@ const LatestTravelGuide = () => (
   </section>
 );
 
-
 const Footer = () => (
   <footer className="footer">
     <p>&copy; 2024 All Rights Reserved</p>
@@ -171,17 +167,63 @@ const Footer = () => (
 );
 
 const Home = () => {
+  const contentStyle = {
+    height: "100%",
+    width: "100%",
+    // lineHeight: "300px",
+    // textAlign: "center",
+    objectFit: "cover",
+   
+  };
+
   return (
-    <div className="home-container">
-      <Header />
-      <Banner />
-      <PopularTours />
-      <TopAttractions />
-      <OurExperiences />
-      <Testimonials />
-      <LatestTravelGuide />
-      <Footer />
-    </div>
+    <>
+    <Flex
+      vertical
+      style={{
+        height: "calc(30vw)",
+        width: "100%", // Giới hạn chiều rộng
+        margin: "0 auto", // Căn giữa
+        overflow: "hidden", // Ẩn phần bị tràn
+        zIndex: "0",
+        position: "relative",
+      }}
+    >
+      <Carousel
+        autoplay
+        autoplaySpeed={2000}
+        easing="ease-in-out"
+        arrows
+         infinite={true}
+      >
+        <div>
+          <img style={contentStyle} src="/Carousel1.jpg" alt="" />
+        </div>
+        <div>
+          <img style={contentStyle}  src="/Carousel2.jpg" alt="" />
+        </div>
+        <div>
+        <img style={contentStyle}  src="/Carousel3.jpg" alt="" />
+
+        </div>
+        <div>
+        <img style={contentStyle}  src="/Carousel6.jpg" alt="" />
+
+        </div>
+        
+      </Carousel>
+     
+    
+    </Flex>
+     <div
+     style={{
+      display:'flex',
+      justifyContent:'center'
+     }}
+     >
+     <Search/>
+     </div>
+     </>
   );
 };
 

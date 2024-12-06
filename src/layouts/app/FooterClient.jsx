@@ -3,7 +3,8 @@ import React from 'react'
 const FooterClient = () => {
   return (
     <div>
-      My footer
+     <p>&copy; 2024 All Rights Reserved</p>
+     <p>Contact us: Us@gmail.com</p>
     </div>
   )
 }
