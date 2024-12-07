@@ -3,7 +3,7 @@ import { Form, Input, Button, Select, message, DatePicker } from 'antd';
 import axios from 'axios';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { fetchAccountDetailsAPI, fetchCustomerDetailsAPI, updateCustomerAPI, updateAccountAPI } from '~/apis';
+import { fetchAccountDetailsAPI, fetchCustomerDetailsAPI, updateAccountAPI, updateCustomerAnAPI } from '~/apis';
 
 const { Option } = Select;
 
@@ -77,7 +77,7 @@ const EditAccount = () => {
         console.log('Customer Data:', customerData);
         try {
             await updateAccountAPI(id, accountData);
-            await updateCustomerAPI(id, customerData);
+            await updateCustomerAnAPI(id, customerData);
             message.success('Cập nhật tài khoản thành công!');
             handleBack();
         } catch (error) {

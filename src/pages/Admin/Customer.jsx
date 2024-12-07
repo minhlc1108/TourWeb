@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { Button, Space, message, Modal } from 'antd';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
     fetchAllCustomersAPI,
     deleteCustomerAPI,

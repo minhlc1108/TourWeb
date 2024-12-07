@@ -78,7 +78,7 @@ export const fetchAllCustomersAPI = async (params) => {
     return response.data;
 };
 
-export const updateCustomerAPI = async (id, customerData) => {
+export const updateCustomerAnAPI = async (id, customerData) => {
     const response = await axios.put(`${API_ROOT}/customer/update/${id}`, customerData, {
         headers: { "Content-Type": "application/json" },
     });

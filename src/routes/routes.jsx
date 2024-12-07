@@ -1,9 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
-import { createBrowserRouter, Navigate, useLocation } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Link,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import LayourClient from "~/layouts/app/LayoutClient";
 import { DashboardLayout, UserLayout } from "~/layouts/dashboard";
-import { DashboardLayout } from "~/layouts/dashboard";
 import Account from "~/pages/Admin/Account";
 import Booking from "~/pages/Admin/Booking";
 import Category from "~/pages/Admin/Category";
@@ -24,12 +28,8 @@ import TourClient from "~/pages/Client/TourClient";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
-import Home from "~/pages/Client/Home";
-
 import CreateAccount from "~/pages/Admin/CreateAccount";
 import EditAccount from "~/pages/Admin/EditAccount";
-
-import LoginRegister from "~/layouts/dashboard/LoginRegister";
 import Login from "~/pages/Login/LoginComponent";
 import Register from "~/pages/Login/RegisterComponent";
 import ForgotPassword from "~/pages/Login/ForgotPasswordComponent";
@@ -68,151 +68,182 @@ const PageWrapper = ({ children }) => {
 };
 
 const routes = createBrowserRouter([
-    {
-        path: "admin/*",
-        element: (
-            <ProtectedRoute>
-                <PageWrapper>
-                    <DashboardLayout />
-                </PageWrapper>
-            </ProtectedRoute>
-        ),
-        children: [
-            {
-                index: true,
-                path: "",
-                element: <Statistic />,
-            },
-            {
-                path: "statistic",
-                element: <Statistic />,
-            },
-            {
-                path: "tour",
-                element: <Tour />,
-            },
-            {
-                path: "tour/create",
-                element: <CreateTour />,
-            },
-            {
-                path: "tour/edit",
-                element: <EditTour />,
-            },
-            {
-                path: "promotion",
-                element: <Promotion />,
-            },
-            {
-                path: "category",
-                element: <Category />,
-            },
-            {
-                path: "transport",
-                element: <Transport />,
-            },
-            {
-                path: "booking",
-                element: <Booking />,
-            },
-            {
-                path: "customer",
-                children: [
-                    { index: true, element: <Customer /> },
-                    { path: "create", element: <CreateAccount /> },
-                    { path: "edit/:id", element: <EditAccount /> },
-                ],
-            },
-            {
-                path: "account",
-                children: [
-                    { index: true, element: <Account /> },
-                    { path: "create", element: <CreateAccount /> },
-                    { path: "edit/:id", element: <EditAccount /> },
-                ],
-            },
-        ],
-    },
-    {
-        path: "/",
-        element: (
-            <ProtectedRoute>
-                <PageWrapper>
-                    <LoginRegister />
-                </PageWrapper>
-            </ProtectedRoute>
-        ),
-        children: [
-            {
-                index: true,
-                path: "",
-                element: <Statistic />,
-            },
-            {
-                path: "login",
-                element: <Login />,
-            },
-            {
-                path: "register",
-                element: <Register />,
-            },
-            {
-                path: "forgot-password",
-                element: <ForgotPassword />,
-            },
-      
-      
-        ],
-    },
-    // Client route
-    {
-        path: "/client",
-        element: <Home />, // Trang chủ cho client
-    },
   {
-    path: "",
+    path: "admin/*",
     element: (
-    <ProtectedRoute>
-      <PageWrapper>
-        <UserLayout/>
-      </PageWrapper>
-    </ProtectedRoute>
+      <ProtectedRoute>
+        <PageWrapper>
+          <DashboardLayout />
+        </PageWrapper>
+      </ProtectedRoute>
     ),
     children: [
       {
         index: true,
         path: "",
-        element: <Home />
+        element: <Statistic />,
+      },
+      {
+        path: "statistic",
+        element: <Statistic />,
+      },
+      {
+        path: "tour",
+        element: <Tour />,
+      },
+      {
+        path: "tour/create",
+        element: <CreateTour />,
+      },
+      {
+        path: "tour/edit",
+        element: <EditTour />,
+      },
+      {
+        path: "promotion",
+        element: <Promotion />,
+      },
+      {
+        path: "category",
+        element: <Category />,
+      },
+      {
+        path: "transport",
+        element: <Transport />,
+      },
+      {
+        path: "booking",
+        element: <Booking />,
+      },
+      {
+        path: "customer",
+        children: [
+          { index: true, element: <Customer /> },
+          { path: "create", element: <CreateAccount /> },
+          { path: "edit/:id", element: <EditAccount /> },
+        ],
+      },
+      {
+        path: "account",
+        children: [
+          { index: true, element: <Account /> },
+          { path: "create", element: <CreateAccount /> },
+          { path: "edit/:id", element: <EditAccount /> },
+        ],
+      },
+    ],
+  },
+
+  // Client route
+  {
+    path: "",
+    element: (
+      <ProtectedRoute>
+        <PageWrapper>
+          <UserLayout />
+        </PageWrapper>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        path: "",
+        element: <Home />,
       },
       {
         path: "home",
-        element: <Home />
+        element: <Home />,
       },
       {
         path: "tourClient",
-        element: <TourClient/>
+        element: <TourClient />,
       },
       {
         path: "tourDetailsClient",
-        element: <TourDetailsClient/>
+        element: <TourDetailsClient />,
       },
       {
         path: "order-booking/:id",
-        element: <OrderBooking/>
-      }
-      
-    ]
+        element: <OrderBooking />,
+      },
+      {
+        path: "login",
+        element: (
+          <>
+            <div
+              style={{
+                display: "flex",
+                height: "100vh",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <h1>Đăng nhập</h1>
+              <Login />
+              <Link to="/register">Chưa có tài khoản? Đăng ký ngay!</Link>
+            </div>
+          </>
+        ),
+      },
+      {
+        path: "register",
+        element: (
+          <>
+            <div
+              style={{
+                display: "flex",
+                height: "100vh",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <h1>Đăng ký</h1>
+              <Register
+                onRegisterSuccess={() => {
+                  return true;
+                }}
+              />
+              <Link to="/login">Đã có tài khoản? Đăng nhập!</Link>
+            </div>
+          </>
+        ),
+      },
+      {
+        path: "forgot-password",
+        element: (
+          <>
+            <div
+              style={{
+                display: "flex",
+                height: "100vh",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <h1>Quên mật khẩu</h1>
+              <ForgotPassword />,
+            </div>
+          </>
+        ),
+      },
+    ],
   },
   {
     path: "User",
-    element:(
-    <ProtectedRoute>
-      <PageWrapper>
+    element: (
+      <ProtectedRoute>
+        <PageWrapper>
           <LayourClient>
-            <ProfileUser/>,
+            <ProfileUser />,
           </LayourClient>
-      </PageWrapper>
-    </ProtectedRoute>
+        </PageWrapper>
+      </ProtectedRoute>
     ),
     children: [
       {
@@ -222,19 +253,18 @@ const routes = createBrowserRouter([
       },
       {
         path: "DoiMatKhau",
-        element: <ChangePassword/>
+        element: <ChangePassword />,
       },
       {
         path: "DanhSachTour",
-        element: <ListBooking/>
+        element: <ListBooking />,
       },
     ],
   },
-    {
-        path: "*",
-        element: <NotFound />,
-    },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
 ]);
 
 export default routes;
-
