@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
-import { createNewTourScheduleAPI, deleteTourScheduleAPI, getTourScheduleByTourIdAPI, updateTourScheduleAPI } from "~/apis";
+import { createNewTourScheduleAPI, deleteTourScheduleAPI, getTourSchedulesAPI, updateTourScheduleAPI } from "~/apis";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -44,10 +44,11 @@ function TourScheduleTable({ dataTable, tourId }) {
       isDecsending: sorter.order === "ascend" ? false : true,
       pageNumber: pagination.current,
       pageSize: pagination.pageSize,
+      tourId: tourId,
     };
 
     setIsLoading(true);
-    getTourScheduleByTourIdAPI(tourId, params).then((data) => {
+    getTourSchedulesAPI(params).then((data) => {
       setData(
         data.tourSchedules.map((tourSchedule) => ({
           key: tourSchedule.id,

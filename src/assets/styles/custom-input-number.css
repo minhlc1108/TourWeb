@@ -1,0 +1,36 @@
+.custom-input-number {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 150px; /* Adjust width as needed */
+}
+
+.custom-btn {
+  background-color: #f0f0f0;
+  border: none;
+  width: 30px;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.custom-btn:disabled {
+  cursor: not-allowed;
+  background-color: #d9d9d9;
+}
+
+.custom-input {
+  border: none;
+  text-align: center;
+  flex: 1;
+}
+
+.custom-input:focus {
+  outline: none;
+  box-shadow: none;
+}
