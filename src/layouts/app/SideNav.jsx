@@ -7,7 +7,8 @@ import {
   CompassOutlined,
   FolderOpenOutlined,
   GiftOutlined,
-  UserOutlined,
+  UserOutlined, 
+  KeyOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 
@@ -54,6 +55,11 @@ const items = [
     <Link to={"/admin/customer"}>Khách hàng</Link>,
     "customer",
     <UserOutlined />
+  ),
+  getItem(
+    <Link to={"/admin/account"}>Tài khoản</Link>,
+    "account",
+    <KeyOutlined />
   ),
 ];
 
