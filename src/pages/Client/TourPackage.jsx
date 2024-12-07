@@ -5,6 +5,8 @@ import { Input, Space, Typography, Button, Calendar, theme } from "antd";
 import { Col, Flex, Row, Select, Form, Checkbox } from "antd";
 import { AudioOutlined } from "@ant-design/icons";
 const { Text, Link } = Typography;
+import { useLocation } from "react-router-dom";
+
 const onPanelChange = (value, mode) => {
   console.log(value.format("YYYY-MM-DD"), mode);
 };
@@ -45,13 +47,18 @@ const tailFormItemLayout = {
 
 const TourPackage = ({ dataInput }) => {
   const [form] = Form.useForm();
-  // const [budget,setBudget] = useState(0);
-  // const [departureStart,setDepartureStart] = useState();
-  // const [departureEnd, setDepartureEnd] = useState();
-  // const [departureDate , setDepartureDate] = useState()
-  // const [category, setCategory] = useState()
-  // const [traffic, setTraffic] = useState()
-  // const [departureOpitions , setDepartureOpitions] = useState();
+  const location = useLocation();
+
+  const searchParams = location.state || {
+    budget: "",
+    departureStart: "",
+    departureEnd: "",
+    departureDate: "",
+    category: "",
+    traffic: "",
+  };
+  // console.log ( 'search apraasm',searchParams)
+
   const [datafilter, setDatafilter] = useState({
     budget: "",
     departureStart: "",
@@ -60,7 +67,9 @@ const TourPackage = ({ dataInput }) => {
     category: "",
     traffic: "",
   });
-  
+  // const [datafilter, setDatafilter] = useState(searchParams);
+  // console.log(' date fil;lter',datafilter)
+
   const [tourData, setTourData] = useState([]);
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
   useEffect(() => {
@@ -95,7 +104,9 @@ const TourPackage = ({ dataInput }) => {
         });
 
         setTourData(processedData);
-        setDatafilter(processedData);
+        setDatafilter(searchParams);
+
+        // setDatafilter(processedData);
         console.log("proces ", processedData); // Kiểm tra dữ liệu sau xử lý
       } catch (error) {
         console.error("Error fetching tours:", error);
@@ -105,11 +116,10 @@ const TourPackage = ({ dataInput }) => {
     fetchData();
   }, []);
   // setTourData(dataInput);
-
-  // console.log ( tourData)
+  // console.log ( 'datafilter',datafilter)
 
   useEffect(() => {
-    console.log("tourdata", tourData);
+    // console.log("tourdata", tourData);
     let filtered = tourData.filter((tour) => {
       // Kiểm tra từng điều kiện trong datafilter, chỉ áp dụng nếu có giá trị
       const matchesSearch = datafilter.search
@@ -135,8 +145,26 @@ const TourPackage = ({ dataInput }) => {
       const matchesDepartureEnd = datafilter.departureEnd
         ? tour.departureEnd.includes(datafilter.departureEnd)
         : true;
+      // const matchesDepartureDate = datafilter.departureDate
+      //   ? tour.date === datafilter.departureDate
+      //   : true;
+        console.log('tour date check',tour.date)
+        console.log('tour date dataf',datafilter.departureDate)
       const matchesDepartureDate = datafilter.departureDate
-        ? tour.date === datafilter.departureDate
+        ? (() => {
+            try {
+              const tourDate = new Date(tour.date);
+              const filterDate = new Date(datafilter.departureDate);
+              return (
+                !isNaN(tourDate) &&
+                !isNaN(filterDate) &&
+                tourDate.toDateString() === filterDate.toDateString()
+              );
+            } catch (error) {
+              console.error("Error parsing dates:", error);
+              return false;
+            }
+          })()
         : true;
       const matchesCategory = datafilter.category
         ? tour.category === datafilter.category
@@ -154,14 +182,15 @@ const TourPackage = ({ dataInput }) => {
     });
 
     setDataHaveFilter(filtered);
-
-    console.log("datafilter", datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
+    // console.log ('checkdatahvefilter', dataHaveFilter)
+    // console.log("datafilter", datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
   }, [datafilter]);
 
   return (
     <Flex vertical gutter={[5, 0]} style={{ paddingTop: "2%" }}>
       <Row
         style={{
+          padding: "2% 1%",
           background: "white",
           boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
         }}

@@ -1,9 +1,21 @@
 // src/pages/Client/Home.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Carousel, Flex } from "antd";
 import Search from "~/layouts/app/Search";
+import { Row, Col, Image, Flex ,Result,Carousel, Button} from "antd";
+import CardTourVertical from "~/layouts/app/CardTourVertical";
+import { Link, useLocation } from "react-router-dom";
+
+import {
+  fetchAllTourAPI,
+  fetchAllCategoryAPI,
+  fetchAllCustomerAPI,
+  fetchAllBookingAPI,
+  getTourByIdAPI,
+} from "~/apis";
+import TopTour from "./TopTour";
+import CarouselComponent from "./CarouselComponent ";
 
 const Header = () => (
   <header className="header">
@@ -30,54 +42,13 @@ const Banner = () => (
     <p>Find awesome hotels, tours, and activities</p>
   </section>
 );
-
-const PopularTours = () => (
-  <section className="popular-tours" id="tours">
-    <h2 className="tour-title">Tours</h2>
-    <h2 className="sub-title">Most Popular Tours</h2>
-    <div className="tour-list">
-      <div className="tour-card">
-        <img src="/tour-card1.jpg" alt="Tour 1" />
-        <div className="tour-name">Wonder of the West Coast & Kimberley</div>
-      </div>
-      <div className="tour-card">
-        <img src="/tour-card2.jpg" alt="Tour 2" />
-        <div className="tour-name">Stonehenge, Windsor,and Bath in London</div>
-      </div>
-      <div className="tour-card">
-        <img src="/tour-card3.jpg" alt="Tour 3" />
-        <div className="tour-name">Switzerland</div>
-      </div>
-      <div className="tour-card">
-        <img src="/tour-card4.jpg" alt="Tour 4" />
-        <div className="tour-name">Germany</div>
-      </div>
-    </div>
-  </section>
-);
+// const [countTour, setCountTour] = useState(0);
 
 const TopAttractions = () => (
   <section className="top-attractions" id="destination">
     <h2 className="tour-title">Destination</h2>
     <h2 className="sub-title">Top Attractions Destinations</h2>
-    <div className="attractions-list">
-      <div className="attraction-card">
-        <img src="/united-kingdom.jpg" alt="United Kingdom" />
-        <div className="attraction-name">United Kingdom</div>
-      </div>
-      <div className="attraction-card">
-        <img src="/turkey.jpg" alt="Turkey" />
-        <div className="attraction-name">Turkey</div>
-      </div>
-      <div className="attraction-card">
-        <img src="/japan.jpg" alt="Switzerland" />
-        <div className="attraction-name">Japan</div>
-      </div>
-      <div className="attraction-card">
-        <img src="/france.jpg" alt="France" />
-        <div className="attraction-name">France</div>
-      </div>
-    </div>
+    <div className="attractions-list"></div>
   </section>
 );
 
@@ -87,13 +58,11 @@ const OurExperiences = () => (
       <img src="/our.jpg" alt="Experience" />
 
       <div className="experience-text">
-        <h2 className="tour-title">Why Choose Us</h2>
-        <p>Our Experiences meet high quality standards</p>
+        <h2 className="tour-title">Đến với chung tôi để nhận được dịch vụ tốt nhất </h2>
         <ul>
-          <li>Travel Plan</li>
-          <li>Cheap Rates</li>
-          <li>Hand-picked Tours</li>
-          <li>Private Guide</li>
+          <li>Lịch trình chỉnh chu </li>
+          <li>Giá Hợp lý </li>
+          <li>Tư vấn điện ảnh tuyệt đối</li>
         </ul>
       </div>
     </div>
@@ -104,14 +73,12 @@ const Testimonials = () => (
   <section className="testimonials">
     <div className="testimonials-content">
       <div className="testimonial-text">
-        <h2 className="tour-title">Testimonials</h2>
-        <h2 className="sub-title">What Travelers Say</h2>
+        <h2 className="tour-title">Trải nghiệm tuyệt vời </h2>
+        <h2 className="sub-title">Phản hồi  từ khách hàng </h2>
         <blockquote className="testimonial-quote">
-          “The UI designs he crafted are top-notch, and the design system he
-          integrated allows for straightforward fixes and bulk updates
-          throughout almost every area of the app.”
+          “Sốp quá tuyệt vời quá đỉnh :D  .”
         </blockquote>
-        <p className="testimonial-author">- By Mollie Rosa, Photographer</p>
+        <p className="testimonial-author">- By Em Chiến Q4 :D </p>
       </div>
       <div className="testimonial-images">
         <img src="/traveler1.jpg" alt="Traveler 1" />
@@ -173,57 +140,105 @@ const Home = () => {
     // lineHeight: "300px",
     // textAlign: "center",
     objectFit: "cover",
-   
   };
+  const [dataTour , setDataTour] = useState()
+  const [dataCate, setDataCate] = useState();
+  const [currentData,setCurrentData] = useState(1)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const tour = await fetchAllTourAPI()
+        const Cate = await fetchAllCategoryAPI();
+        const result = await fetchAllBookingAPI();
+        const categoryNames = (Cate?.categories || []).map(
+          (category) => category.name
+        );
+
+        const toursData = (tour?.tours || []).map(t => ({
+          id: t.id,
+          name: t.name,
+          image: t.images[0]?.url, // Lấy ảnh đầu tiên của mỗi tour (nếu có)
+        }));
+        setDataTour(toursData)
+        setCurrentData(result)
+        setDataCate(categoryNames);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        setDataCate([]); // Tránh lỗi khi fetch thất bại
+      }
+    };
+    fetchData();
+  }, []);
+
 
   return (
     <>
-    <Flex
-      vertical
-      style={{
-        height: "calc(30vw)",
-        width: "100%", // Giới hạn chiều rộng
-        margin: "0 auto", // Căn giữa
-        overflow: "hidden", // Ẩn phần bị tràn
-        zIndex: "0",
-        position: "relative",
-      }}
-    >
-      <Carousel
-        autoplay
-        autoplaySpeed={2000}
-        easing="ease-in-out"
-        arrows
-         infinite={true}
+      <Flex
+        vertical
+        style={{
+          height: "calc(30vw)",
+          width: "100%", // Giới hạn chiều rộng
+          margin: "0 auto", // Căn giữa
+          overflow: "hidden", // Ẩn phần bị tràn
+          zIndex: "0",
+          position: "relative",
+        }}
       >
-        <div>
-          <img style={contentStyle} src="/Carousel1.jpg" alt="" />
-        </div>
-        <div>
-          <img style={contentStyle}  src="/Carousel2.jpg" alt="" />
-        </div>
-        <div>
-        <img style={contentStyle}  src="/Carousel3.jpg" alt="" />
+        <Carousel
+          autoplay
+          autoplaySpeed={2000}
+          easing="ease-in-out"
+          arrows
+          infinite={true}
+        >
+          <div>
+            <img style={contentStyle} src="/Carousel1.jpg" alt="" />
+          </div>
+          <div>
+            <img style={contentStyle} src="/Carousel2.jpg" alt="" />
+          </div>
+          <div>
+            <img style={contentStyle} src="/Carousel3.jpg" alt="" />
+          </div>
+          <div>
+            <img style={contentStyle} src="/Carousel6.jpg" alt="" />
+          </div>
+        </Carousel>
+      </Flex>
 
-        </div>
-        <div>
-        <img style={contentStyle}  src="/Carousel6.jpg" alt="" />
+      
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Search data={dataCate} />
+      </div>
+      {/* <PopularTours /> */}
+          
+      <CarouselComponent
+      data = {dataTour}/>
+      <Flex
+      justify="center"
+      style={{
+        backgroundColor: "#f0f0f0" ,
+        paddingBottom:'2%',
+        width:'80%',
+        margin: "0px auto"
+      }}
+   
+      >
+      <Button
+      
+      size="large">
+    <Link to={"/tourClient"}>Xem tất cả </Link>
+     </Button>
+      </Flex>
 
-        </div>
-        
-      </Carousel>
-     
-    
-    </Flex>
-     <div
-     style={{
-      display:'flex',
-      justifyContent:'center'
-     }}
-     >
-     <Search/>
-     </div>
-     </>
+      <OurExperiences/>
+      {/* <TopTour/> */}
+    </>
   );
 };
 

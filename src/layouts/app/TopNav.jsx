@@ -66,7 +66,7 @@ const TopNav = ({ ...others }) => {
     <div ref={nodeRef} breakpoint="lg"  {...others}
     
     >
-      <Link to={"/client/home"} className="logo-link">
+      <Link to={"/home"} className="logo-link">
           <Flex
           gap={"small"}
           align="center"

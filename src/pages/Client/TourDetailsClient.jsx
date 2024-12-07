@@ -18,7 +18,6 @@ const TourDetailsClient = ({ data }) => {
       height: "100%",
        backgroundColor: "white", maxWidth: "1200px", margin: "0 auto", padding: "10px",display:"flex", flexDirection:'column', alignItems:'center',
       borderRadius: "5px",
-      boxShadow:"rgba(0, 0, 0, 0.1) 2px 0px 5px"
 
 
      }}>
@@ -27,7 +26,7 @@ const TourDetailsClient = ({ data }) => {
        style={{
         width:"100%",
         display:"flex",
-        justifyContent:'center'
+         justifyContent: currentData.length === 0 ? 'center' : 'normal' 
        }}
        
        >
@@ -35,7 +34,7 @@ const TourDetailsClient = ({ data }) => {
           <Result title="Không có dữ liệu hiển thị" />
         ) : (
           currentData.map((item, index) => (
-            <Col key={index} xs={24} sm={12} md={6} lg={currentData.length < 3 ? 12 : 6} >
+            <Col key={index} xs={24} sm={12} md={6}    >
               <CardTourVertical {...item} />
             </Col>
           ))

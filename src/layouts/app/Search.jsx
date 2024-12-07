@@ -2,6 +2,7 @@ import { Input, Space, Typography, Button, Calendar, Divider, Col, Row, Select, 
 import React ,{useState} from 'react';
 import { AntDesignOutlined, SearchOutlined  } from '@ant-design/icons';
 // import { createStyles } from 'antd-style';
+import { useNavigate,Link } from "react-router-dom";
 
 const formItemLayout = {
   labelCol: {
@@ -22,19 +23,41 @@ const formItemLayout = {
   },
 };
 
-const Search = () => {
+const Search = ({data}) => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [searchData,setSearchData] = useState();
-  const [position, setPosition] = useState('end');
-  const handleSearch = ( values) => {
-    setSearchData({
-      destination : values.destination ,
-      budget : values.budget, 
-      date : values.date  
-    }
-    )
+  console.log ( 'check datee cate',data)
 
-  }
+  const [searchParams, setSearchParams] = useState({
+    search: "",
+    budget: "",
+    departureStart: "",
+    departureEnd: "",
+    category: "",
+  });
+  const [position, setPosition] = useState('end');
+  console.log ('this is para',searchParams)
+  const handleSearch = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        // Chuyển đến trang tourClient và truyền dữ liệu
+        navigate("/tourClient", { state: searchParams });
+      })
+      .catch((error) => {
+        console.error("Lỗi khi nhập form:", error);
+      });
+  };
+
+  const destinationOptions = Array.isArray(data)
+  ? data.map((destination) => ({
+      value: destination,
+      label: destination,
+    }))
+  : [];
+
+
+  // console.log ('hi' , destinationOptions )
 
   return (
     <Row gutter={[26, 16]} justify="start" style={{ paddingTop: "2%" }}>
@@ -55,7 +78,6 @@ const Search = () => {
             flexDirection: 'row', // Đặt các Form.Item nằm ngang
             alignItems: 'center', // Căn giữa các Form.Item
           }}
-          onFinish={handleSearch} 
         >
           <Form.Item
           style={{
@@ -67,21 +89,19 @@ const Search = () => {
             <Select
               showSearch
               placeholder="Điểm đến"
+              onChange={(value) => {
+                setSearchParams((prevData) => ({
+                  ...prevData,
+                  departureStart: value,
+                }));
+              }}
               style={{ fontSize: "16px", height: "40px" }}
               filterOption={(input, option) =>
                 (option?.label ?? "")
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={[
-                { value: "", label: "Tất cả" },
-                { value: "Cần thơ", label: "Cần thơ" },
-                { value: "Hà Nội", label: "Hà Nội" },
-                { value: "Phú Quốc", label: "Phú Quốc" },
-                { value: "Nha Trang", label: "Nha Trang" },
-                { value: "Đà Nẵng", label: "Đà Nẵng" },
-                { value: "Hồ Chí Minh", label: "Hồ Chí Minh" },
-              ]}
+              options={[{ value: "", label: "Tất cả" }, ...destinationOptions]}
             />
           </Form.Item>
           <Divider type="vertical"
@@ -102,6 +122,12 @@ const Search = () => {
             <Select
               showSearch
               placeholder="Ngân sách"
+              onChange={(value) => {
+                setSearchParams((prevData) => ({
+                  ...prevData,
+                  budget: value,
+                }));
+              }}
               style={{ fontSize: "16px", height: "40px" }}
               filterOption={(input, option) =>
                 (option?.label ?? "")
@@ -136,11 +162,12 @@ const Search = () => {
               placeholder="input placeholder"
               type="date"
               onChange={(e) => {
-                setDatafilter((prevData) => ({
+                setSearchParams((prevData) => ({
                   ...prevData,
                   departureDate: e.target.value,
                 }));
               }}
+          
               style={{ fontSize: "16px", height: "40px" }}
             />
           </Form.Item>
@@ -156,14 +183,22 @@ const Search = () => {
 
           <Form.Item
            style={{
+            display:'flex',
+            justifyContent:'center',
           }}
             label="Tìm kiếm"
             labelCol={{ style: { fontSize: "20px", fontWeight: "bold" } }}
           >
           <Button
+          htmlType="submit" 
           size='large'
-          icon={<SearchOutlined />} iconPosition={position}>
-            Search
+          icon={<SearchOutlined />} iconPosition={position}
+          onClick={handleSearch}
+          >
+             Search
+           {/* <Link to={"/tourClient"}>
+
+           </Link>  */}
           </Button>
           </Form.Item>
 
