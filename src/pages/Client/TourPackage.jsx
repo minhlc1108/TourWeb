@@ -69,6 +69,18 @@ const TourPackage = ({ dataInput }) => {
   });
   // const [datafilter, setDatafilter] = useState(searchParams);
   // console.log(' date fil;lter',datafilter)
+  function formatDate(inputDate) {
+    if (!inputDate) return ""; // Xử lý nếu input là null hoặc undefined
+  
+    const date = new Date(inputDate);
+    if (isNaN(date.getTime())) return ""; // Xử lý nếu input không phải ngày hợp lệ
+  
+    const day = String(date.getDate()).padStart(2, "0"); // Lấy ngày, thêm số 0 nếu <10
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Lấy tháng (bắt đầu từ 0)
+    const year = date.getFullYear(); // Lấy năm
+  
+    return `${day}/${month}/${year}`; // Định dạng DD/MM/YYYY
+  }
 
   const [tourData, setTourData] = useState([]);
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
@@ -145,27 +157,13 @@ const TourPackage = ({ dataInput }) => {
       const matchesDepartureEnd = datafilter.departureEnd
         ? tour.departureEnd.includes(datafilter.departureEnd)
         : true;
-      // const matchesDepartureDate = datafilter.departureDate
-      //   ? tour.date === datafilter.departureDate
-      //   : true;
-        console.log('tour date check',tour.date)
-        console.log('tour date dataf',datafilter.departureDate)
       const matchesDepartureDate = datafilter.departureDate
-        ? (() => {
-            try {
-              const tourDate = new Date(tour.date);
-              const filterDate = new Date(datafilter.departureDate);
-              return (
-                !isNaN(tourDate) &&
-                !isNaN(filterDate) &&
-                tourDate.toDateString() === filterDate.toDateString()
-              );
-            } catch (error) {
-              console.error("Error parsing dates:", error);
-              return false;
-            }
-          })()
+        ? tour.date === formatDate(datafilter.departureDate)
         : true;
+        console.log('1', tour.date)
+        console.log('2', datafilter.departureDate)
+
+       
       const matchesCategory = datafilter.category
         ? tour.category === datafilter.category
         : true;
