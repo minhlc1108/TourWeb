@@ -16,6 +16,85 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+//Account
+export const fetchAllAccountsAPI = async () => {
+    const response = await axios.get(`${API_ROOT}/account/listAccount`);
+    return response.data;
+};
+
+export const deleteAccountAPI = async (id) => {
+    const response = await axios.delete(`${API_ROOT}/account/delete/${id}`);
+    return response.data;
+};
+
+export const updateAccountStatusAPI = async (id, status) => {
+    const response = await axios.put(`${API_ROOT}/account/updateStatus/${id}`, status, {
+        headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+};
+
+export const updateAccountAPI = async (id, accountData) => {
+    const response = await axios.put(`${API_ROOT}/account/update/${id}`, accountData, {
+        headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+};
+
+export const fetchAccountDetailsAPI = async (id) => {
+    const response = await axios.get(`${API_ROOT}/account/${id}`);
+    return response.data;
+};
+export const loginAPI = async (username, password) => {
+    const response = await axios.post(
+        `${API_ROOT}/account/login`,
+        { username, password }, 
+        {
+            headers: { "Content-Type": "application/json" },
+        }
+    );
+    return response.data;
+};
+
+
+export const registerAPI = async (infor) => {
+    const response = await axios.post(`${API_ROOT}/account/register`, infor);
+    return response.data;
+};
+
+export const forgotPasswordAPI = async (email) => {
+    const response = await axios.post(`${API_ROOT}/account/forgot-password`,
+        JSON.stringify(email),
+        {
+            headers: { "Content-Type": "application/json" },
+        }
+    );
+    return response.data;
+};
+
+//Customer
+export const fetchAllCustomersAPI = async (params) => {
+    const response = await axios.get(`${API_ROOT}/customer/listCustomer`, { params });
+    return response.data;
+};
+
+export const updateCustomerAnAPI = async (id, customerData) => {
+    const response = await axios.put(`${API_ROOT}/customer/update/${id}`, customerData, {
+        headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+};
+
+export const deleteCustomerAPI = async (id) => {
+    const response = await axios.delete(`${API_ROOT}/customer/delete/${id}`);
+    return response.data;
+};
+
+export const fetchCustomerDetailsAPI = async (id) => {
+    const response = await axios.get(`${API_ROOT}/customer/${id}`);
+    return response.data;
+};
+
 //Category
 export const fetchAllCategoryAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/category`, { params });
