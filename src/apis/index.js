@@ -57,6 +57,11 @@ export const deletePromotionAPI = async (id) => {
   return response.data;
 };
 
+export const getPromotionByCodeAPI = async (code) => {
+  const response = await axios.get(`${API_ROOT}/promotion/code/${code}`);
+  return response.data;
+}
+
 // Tour
 export const getTourByIdAPI = async (id) => {
   const response = await axios.get(`${API_ROOT}/tour/${id}`);
@@ -90,8 +95,13 @@ export const uploadImageAPI = async (params) => {
 }
 
 // Tour Schedule
-export const getTourScheduleByTourIdAPI = async (tourId, params) => {
-  const response = await axios.get(`${API_ROOT}/tour-schedule/${tourId}`, { params });
+export const getTourSchedulesAPI = async (params) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule`, { params });
+  return response.data;
+}
+
+export const fetchTourScheduleByIdAPI = async (id) => {
+  const response = await axios.get(`${API_ROOT}/tour-schedule/${id}`);
   return response.data;
 }
 

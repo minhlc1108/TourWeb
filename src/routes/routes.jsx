@@ -16,6 +16,7 @@ import ChangePassword from "~/pages/Client/ChangePassword";
 import DetailsProfileUser from "~/pages/Client/DetailsProfileUser";
 import Home from "~/pages/Client/Home";
 import ListBooking from "~/pages/Client/ListBooking";
+import OrderBooking from "~/pages/Client/OrderBooking";
 import ProfileUser from "~/pages/Client/ProfileUser";
 import TourClient from "~/pages/Client/TourClient";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
@@ -144,7 +145,10 @@ const routes = createBrowserRouter([
         path: "tourDetailsClient",
         element: <TourDetailsClient/>
       },
-     
+      {
+        path: "order-booking/:id",
+        element: <OrderBooking/>
+      }
       
     ]
   },
