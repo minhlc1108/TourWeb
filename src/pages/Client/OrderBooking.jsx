@@ -22,9 +22,14 @@ import { CustomInputNumber } from "~/components/CustomInputNumber";
 import CashImage from "~/assets/cash-icon.svg";
 import MoMoImage from "~/assets/momo.png";
 import VNPayImage from "~/assets/vnpay.png";
-import { fetchTourScheduleByIdAPI, getPromotionByCodeAPI } from "~/apis";
+import {
+  createBookingAPI,
+  fetchTourScheduleByIdAPI,
+  getPromotionByCodeAPI,
+} from "~/apis";
 import moment from "moment";
 import { formatCurrencyVND } from "~/utils/format";
+import { message } from "~/components/EscapeAntd";
 const { Title } = Typography;
 function OrderBooking() {
   const navigate = useNavigate();
@@ -32,6 +37,7 @@ function OrderBooking() {
   const [childCount, setChildCount] = useState(0);
   const [tourSchedule, setTourSchedule] = useState(null);
   const [isApply, setIsApply] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   let discount = useRef(null);
   const [form] = Form.useForm();
   let { id } = useParams();
@@ -41,13 +47,32 @@ function OrderBooking() {
       fetchTourScheduleByIdAPI(id)
         .then((data) => {
           setTourSchedule(data);
+          if (data.remain === 0) {
+            message.error("Tour hiện tại đã hết chỗ!");
+            new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
+              navigate(-1);
+            });
+          } else if (data.remain < adultCount + childCount) {
+            message.error(`Tour hiện tại chỉ còn ${data.remain} chỗ!`);
+          }
         })
         .catch((error) => {
           navigate("/404");
         });
     }
-  }, [id]);
-  const handleSubmit = (values) => {
+  }, [id, navigate]);
+
+  const checkFormValidity = () => {
+    const hasErrors = form
+      .getFieldsError()
+      .some(({ errors }) => errors.length > 0);
+
+    if (hasErrors) {
+      message.error("Vui lòng điền đầy đủ và chính xác thông tin!");
+    }
+  };
+
+  const handleSubmit = async (values) => {
     const adults = [];
     const children = [];
 
@@ -55,7 +80,7 @@ function OrderBooking() {
     for (let i = 0; i < adultCount; i++) {
       adults.push({
         name: values[`name_adult_${i}`],
-        birthDate: values[`birthDate_adult_${i}`].format("YYYY-MM-DD"),
+        birthday: values[`birthDate_adult_${i}`].format("YYYY-MM-DD"),
         sex: values[`gender_adult_${i}`],
         price: tourSchedule.priceAdult,
       });
@@ -65,27 +90,50 @@ function OrderBooking() {
     for (let i = 0; i < childCount; i++) {
       children.push({
         name: values[`name_child_${i}`],
-        birthDate: values[`birthDate_child_${i}`].format("YYYY-MM-DD"),
+        birthday: values[`birthDate_child_${i}`].format("YYYY-MM-DD"),
         sex: values[`gender_child_${i}`],
         price: tourSchedule.priceChild,
       });
     }
     const customers = [...adults, ...children];
-
-   
-    console.log({
+    setIsSubmitting(true);
+    await createBookingAPI({
       customers,
+      tourScheduleId: tourSchedule.id,
       name: values.name,
       phone: values.phone,
       email: values.email,
       address: values.address,
       paymentMethod: values.paymentMethod,
-      totalPrice: discount.current ? (adultCount * tourSchedule.priceAdult + childCount * tourSchedule.priceChild) * (1 - discount.current?.percentage / 100) : adultCount * tourSchedule.priceAdult + childCount * tourSchedule.priceChild,
-      discountPrice: discount.current ? (adultCount * tourSchedule.priceAdult + childCount * tourSchedule.priceChild) * discount.current?.percentage / 100  : 0,
+      totalPrice: discount.current
+        ? (adultCount * tourSchedule.priceAdult +
+            childCount * tourSchedule.priceChild) *
+          (1 - discount.current?.percentage / 100)
+        : adultCount * tourSchedule.priceAdult +
+          childCount * tourSchedule.priceChild,
+      priceDiscount: discount.current
+        ? ((adultCount * tourSchedule.priceAdult +
+            childCount * tourSchedule.priceChild) *
+            discount.current?.percentage) /
+          100
+        : 0,
       promotionId: discount.current ? discount.current.id : null,
       adultCount,
-      childCount
-    });
+      childCount,
+    })
+      .then((data) => {
+        navigate(`/payment-booking/${data.id}`);
+      })
+      .catch(() => {
+        fetchTourScheduleByIdAPI(id).then((data) => {
+          setTourSchedule(data);
+        });
+        setIsSubmitting(false);
+      }).finally(() => {
+        setIsSubmitting(false);
+        form.resetFields();
+      })
+      ;
   };
 
   return (
@@ -212,7 +260,7 @@ function OrderBooking() {
                           min={1}
                           onChange={(value) => setAdultCount(value)}
                           currentQuantity={adultCount + childCount}
-                          remain={tourSchedule.remain}
+                          tourSchedule={tourSchedule}
                           step={1}
                         />
                       </Form.Item>
@@ -226,7 +274,7 @@ function OrderBooking() {
                       >
                         <CustomInputNumber
                           min={0}
-                          remain={tourSchedule.remain}
+                          tourSchedule={tourSchedule}
                           onChange={(value) => setChildCount(value)}
                           currentQuantity={adultCount + childCount}
                           step={1}
@@ -562,16 +610,22 @@ function OrderBooking() {
                     <Divider></Divider>
                     <Row justify="space-between">
                       <Col span={18}>
-                        <Form.Item name="code"> 
+                        <Form.Item name="code">
                           <Flex gap={4}>
                             <Input
                               disabled={isApply}
                               placeholder="Mã giảm giá"
                             />
-                            {isApply && <Button onClick={() => {
-                              setIsApply(false);
-                              discount.current = 0;
-                            }}>Hủy</Button>}
+                            {isApply && (
+                              <Button
+                                onClick={() => {
+                                  setIsApply(false);
+                                  discount.current = 0;
+                                }}
+                              >
+                                Hủy
+                              </Button>
+                            )}
                           </Flex>
                         </Form.Item>
                       </Col>
@@ -617,15 +671,27 @@ function OrderBooking() {
                           color: "red",
                         }}
                       >
-                        { discount.current ? formatCurrencyVND(
-                          (adultCount * tourSchedule.priceAdult +
-                            childCount * tourSchedule.priceChild) *
-                            (1 - discount.current?.percentage / 100)
-                        ) : formatCurrencyVND(adultCount * tourSchedule.priceAdult +  childCount * tourSchedule.priceChild)}  
+                        {discount.current
+                          ? formatCurrencyVND(
+                              (adultCount * tourSchedule.priceAdult +
+                                childCount * tourSchedule.priceChild) *
+                                (1 - discount.current?.percentage / 100)
+                            )
+                          : formatCurrencyVND(
+                              adultCount * tourSchedule.priceAdult +
+                                childCount * tourSchedule.priceChild
+                            )}
                       </Col>
                     </Row>
                   </Card>
-                  <Button type="primary" htmlType="submit" size="large" block>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    size="large"
+                    block
+                    loading={isSubmitting}
+                    onClick={checkFormValidity}
+                  >
                     Xác nhận
                   </Button>
                 </Card>

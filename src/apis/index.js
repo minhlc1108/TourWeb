@@ -213,5 +213,18 @@ export const updateCustomerAPI = async (id, values) => {
   return response.data;
 };
 
+// Booking
+export const createBookingAPI = async (values) => {
+  const response = await axios.post(`${API_ROOT}/booking`, values);
+  return response.data;
+}
 
+export const fetchPaymentBookingAPI = async (id) => {
+  const response = await axios.get(`${API_ROOT}/booking/details/${id}`);
+  return response.data;
+}
 
+export const CreatePaymentVNPayAPI = async (params) => {
+  const response = await axios.post(`${API_ROOT}/booking/payment/vnpay`, params);
+  return response.data
+}

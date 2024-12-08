@@ -33,6 +33,7 @@ import EditAccount from "~/pages/Admin/EditAccount";
 import Login from "~/pages/Login/LoginComponent";
 import Register from "~/pages/Login/RegisterComponent";
 import ForgotPassword from "~/pages/Login/ForgotPasswordComponent";
+import PaymentBooking from "~/pages/Client/PaymentBooking";
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -165,6 +166,10 @@ const routes = createBrowserRouter([
       {
         path: "order-booking/:id",
         element: <OrderBooking />,
+      },
+      {
+        path: "payment-booking/:id",
+        element: <PaymentBooking />,
       },
       {
         path: "login",

@@ -80,10 +80,8 @@ const EditAccount = () => {
             await updateCustomerAnAPI(id, customerData);
             message.success('Cập nhật tài khoản thành công!');
             handleBack();
-        } catch (error) {
-            console.error('API Error:', error.response?.data || error.message);
-            message.error('Cập nhật thất bại!');
-        } finally {
+        } 
+        finally {
             setLoading(false);
         }
     };
@@ -221,8 +219,8 @@ const EditAccount = () => {
                 rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
             >
                 <Select placeholder="Chọn giới tính">
-                    <Option value="0">Nam</Option>
-                    <Option value="1">Nữ</Option>
+                    <Option value="1">Nam</Option>
+                    <Option value="0">Nữ</Option>
                 </Select>
             </Form.Item>
 
