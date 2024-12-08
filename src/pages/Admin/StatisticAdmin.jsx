@@ -6,18 +6,12 @@ import {
   fetchAllCategoryAPI,
   fetchAllCustomerAPI,
   fetchAllBookingAPI,
-  getTourByIdAPI
+  getTourByIdAPI,
 } from "~/apis";
 
 // tk tour
 function StatisticAdmin() {
- 
-
   const [categoryData, setCategoryData] = useState([]);
-
-  
-
-
 
   const getWeekNumber = (date) => {
     const startOfYear = new Date(date.getFullYear(), 0, 1);
@@ -53,14 +47,13 @@ function StatisticAdmin() {
   const [totalPriceByWeek, setTotalPriceByWeek] = useState(0);
   const [data, setData] = useState([]);
 
-
   const [staticCate, setStaticCate] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await fetchAllCustomerAPI();
         const totalBooking = await fetchAllBookingAPI();
-        const DsBookings = totalBooking.bookings
+        const DsBookings = totalBooking.bookings;
         const Tour = await fetchAllTourAPI();
 
         const totalByMonth = groupByPeriod(totalBooking.bookings, "month");
@@ -75,9 +68,9 @@ function StatisticAdmin() {
         setCountTour(Tour.total || 0);
         setCountUser(result.total || 0);
 
-        setTotalPriceByMonth (totalByMonth)
-        setTotalPriceByYear(totalByYear)
-        setTotalPriceByWeek(totalByWeek)
+        setTotalPriceByMonth(totalByMonth);
+        setTotalPriceByYear(totalByYear);
+        setTotalPriceByWeek(totalByWeek);
 
         const dataTour = Tour.tours || [];
         if (!Array.isArray(dataTour)) {
@@ -108,12 +101,12 @@ function StatisticAdmin() {
 
         async function categorizeBookings(Bookings) {
           const categoryCounts = {}; // Object để lưu số lượng
-        
+
           for (const booking of Bookings) {
             const tourId = booking.tourSchedule.tourId; // Lấy tourId từ booking
             const myTour = await getTourByIdAPI(tourId); // Gọi API lấy thông tin tour
             const categoryName = myTour.categoryName; // Lấy tên danh mục (categoryName)
-        
+
             // Tăng số lượng cho danh mục tương ứng
             if (categoryCounts[categoryName]) {
               categoryCounts[categoryName]++;
@@ -121,20 +114,20 @@ function StatisticAdmin() {
               categoryCounts[categoryName] = 1;
             }
           }
-        
-          return setCountUserCate (categoryCounts);
+
+          return setCountUserCate(categoryCounts);
         }
 
         categorizeBookings(DsBookings);
 
-
         // console.log (totalByMonth)
         // setData(totalPriceByMonth)
-        const defaultData = Object.entries(totalByMonth).map(([period, revenue]) => ({
-          period,
-          revenue,
-        }));
-
+        const defaultData = Object.entries(totalByMonth).map(
+          ([period, revenue]) => ({
+            period,
+            revenue,
+          })
+        );
 
         setData(defaultData);
 
@@ -148,36 +141,30 @@ function StatisticAdmin() {
     fetchData();
   }, []);
 
-
-  
-  
-// console.log ('tk tour ', countUserCate)
+  // console.log ('tk tour ', countUserCate)
 
   const handleChange = (value) => {
+    let sortedData = [];
     if (value === "month") {
-      const monthlyRevenue = Object.entries(totalPriceByMonth).map(([period, revenue]) => ({
-        period,
-        revenue,
-      }));
-      setData(monthlyRevenue);
+      sortedData = Object.entries(totalPriceByMonth)
+        .map(([period, revenue]) => ({ period, revenue }))
+        .sort((a, b) => new Date(a.period) - new Date(b.period)); // Sắp xếp theo ngày
     } else if (value === "week") {
-      const weeklyRevenue = Object.entries(totalPriceByWeek).map(([period, revenue]) => ({
-        period,
-        revenue,
-      }));
-      setData(weeklyRevenue);
+      sortedData = Object.entries(totalPriceByWeek)
+        .map(([period, revenue]) => ({ period, revenue }))
+        .sort(
+          (a, b) =>
+            new Date(a.period.split("-W")[0]) -
+            new Date(b.period.split("-W")[0])
+        ); // Sắp xếp theo tuần
     } else if (value === "year") {
-      const yearlyRevenue = Object.entries(totalPriceByYear).map(([period, revenue]) => ({
-        period,
-        revenue,
-      }));
-      setData(yearlyRevenue);
+      sortedData = Object.entries(totalPriceByYear)
+        .map(([period, revenue]) => ({ period, revenue }))
+        .sort((a, b) => a.period - b.period); // Sắp xếp theo năm
     }
+    setData(sortedData);
   };
-  
 
-
-  
   const revenueConfig = {
     data: data,
     xField: "period",
@@ -186,8 +173,6 @@ function StatisticAdmin() {
     point: { size: 5, shape: "diamond" },
   };
 
-
-  
   // const bookingData = Object.entries(countUserCate).map(([period, revenue]) => ({
   //   period,
   //   revenue,
@@ -197,13 +182,12 @@ function StatisticAdmin() {
     tour,
     bookings,
   }));
- 
+
   // console.log('checkbokdata', bookingData)
   // const bookingData = [
   //   { tour: "Tour A", bookings: 150 },
   //   { tour: "Tour B", bookings: 300 },
   // ];
-
 
   const bookingConfig = {
     data: bookingData,
@@ -212,7 +196,6 @@ function StatisticAdmin() {
     label: { position: "middle" },
     color: "#cf1322",
   };
-
 
   const categoryConfig = {
     data: categoryData,
@@ -224,7 +207,7 @@ function StatisticAdmin() {
       content: "{name}: {percentage}",
     },
   };
-  
+
   // const monthlyRevenue = [
   //   { period: "Jan", revenue: 3000 },
   //   { period: "Feb", revenue: 4000 },
@@ -242,7 +225,7 @@ function StatisticAdmin() {
   //   { period: "2023", revenue: 60000 },
   //   { period: "2024", revenue: 60000 },
   // ];
-  
+
   // console.log('this is week',weeklyRevenue);
 
   // console.log(categoryData);
