@@ -10,35 +10,27 @@ import {
   Spin,
   Steps,
   Table,
+  Tag,
   Typography,
 } from "antd";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CreatePaymentVNPayAPI, fetchPaymentBookingAPI } from "~/apis";
+import {
+  checkBeforeCreatePaymentAPI,
+  CreatePaymentVNPayAPI,
+  fetchPaymentBookingAPI,
+} from "~/apis";
 import { formatCurrencyVND } from "~/utils/format";
 
 const { Title } = Typography;
 function PaymentBooking() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState(null);
+  const[isSubmitting, setIsSubmitting] = useState(false);
   let { id } = useParams();
-
   let dataSource = useRef([]);
-  // const dataSource = [
-  //   {
-  //     key: "1",
-  //     name: "Mike",
-  //     age: 32,
-  //     address: "10 Downing Street",
-  //   },
-  //   {
-  //     key: "2",
-  //     name: "John",
-  //     age: 42,
-  //     address: "10 Downing Street",
-  //   },
-  // ];
+
   useEffect(() => {
     if (id) {
       fetchPaymentBookingAPI(id)
@@ -47,7 +39,7 @@ function PaymentBooking() {
           dataSource.current = data.bookingDetails.map((item) => ({
             key: item.id,
             name: item.name,
-            birthday: item.birthday,
+            birthday: moment(item.birthday, "YYYY-MM-DD").format("DD/MM/YYYY"),
             sex: item.sex == 1 ? "Nam" : "Nữ",
             price: formatCurrencyVND(item.price),
           }));
@@ -83,19 +75,23 @@ function PaymentBooking() {
 
   const handlePayment = () => {
     if (booking.paymentMethod === "vnpay") {
-      CreatePaymentVNPayAPI({
-        orderId: booking.id,
-        description: `Thanh toán cho hóa đơn ${booking.id}`,
-        fullName: booking.customer?.name,
-        amount: booking.totalPrice,
-      }).then((data) => {
-        console.log(data);
-        window.location = data;
+      checkBeforeCreatePaymentAPI(booking.id).then(() => {
+        setIsSubmitting(true);
+        CreatePaymentVNPayAPI({
+          orderId: booking.id,
+          description: `Thanh toán cho hóa đơn ${booking.id}`,
+          fullName: booking.customer?.name,
+          amount: booking.totalPrice,
+        }).then((data) => {
+          console.log(data);
+          window.location = data;
+        }).finally(() => {
+          setIsSubmitting(false);
+        });
       });
     }
   };
 
-  useEffect(() => {}, []);
   return (
     <>
       {!booking ? (
@@ -224,7 +220,7 @@ function PaymentBooking() {
                         fontWeight: 500,
                       }}
                     >
-                      1
+                      {booking.id}
                     </p>
                   </Col>
                   <Col style={{ marginTop: 10 }} xs={24} sm={8}>
@@ -256,13 +252,46 @@ function PaymentBooking() {
                         fontWeight: 500,
                       }}
                     >
-                      {booking.paymentMethod === "cash"
-                        ? "Tiền mặt"
-                        : booking.paymentMethod === "vnpay"
-                        ? "VNPAY"
-                        : booking.paymentMethod === "momo"
-                        ? "Momo"
-                        : ""}
+                      {booking.paymentMethod === "cash" ? (
+                        <>
+                          Tiền mặt{" "}
+                          {booking.status == 0 && (
+                            <span style={{ color: "rgb(11, 93, 167)" }}>
+                              ( Vui lòng đến văn phòng gần nhất để thanh toán)
+                            </span>
+                          )}
+                        </>
+                      ) : booking.paymentMethod === "vnpay" ? (
+                        "VNPAY"
+                      ) : booking.paymentMethod === "momo" ? (
+                        "Momo"
+                      ) : (
+                        ""
+                      )}
+                    </p>
+                  </Col>
+                  <Col style={{ marginTop: 10 }} xs={24} sm={8}>
+                    <h3 style={{ fontSize: 16, fontWeight: 700 }}>
+                      Thời hạn thanh toán:
+                    </h3>
+                  </Col>
+                  <Col style={{ marginTop: 10 }} xs={24} sm={16}>
+                    <p
+                      style={{
+                        color: booking.status === 2 ? "red" : "#171717",
+                        fontSize: "14px",
+                        lineHeight: "20px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {moment(booking.time)
+                        .add(8, "hours")
+                        .format("DD/MM/YYYY HH:mm")}
+                      <span style={{ color: "rgb(11, 93, 167)" }}>
+                        {" "}
+                        ( 8 giờ sau thời gian đặt nếu không thanh toán booking
+                        sẽ được hủy tự động)
+                      </span>
                     </p>
                   </Col>
                   <Col style={{ marginTop: 10 }} xs={24} sm={8}>
@@ -279,13 +308,15 @@ function PaymentBooking() {
                         fontWeight: 500,
                       }}
                     >
-                      {booking.status === 0
-                        ? "Chưa thanh toán"
-                        : booking.status === 1
-                        ? "Đã thanh toán"
-                        : booking.status === 2
-                        ? "Đã hủy"
-                        : ""}
+                      {booking.status === 0 ? (
+                        <Tag color="gold">Chưa thanh toán</Tag>
+                      ) : booking.status === 1 ? (
+                        <Tag color="green">Đã thanh toán</Tag>
+                      ) : booking.status === 2 ? (
+                        <Tag color="red">Đã bị hủy</Tag>
+                      ) : (
+                        ""
+                      )}
                     </p>
                   </Col>
                 </Row>
@@ -398,7 +429,16 @@ function PaymentBooking() {
                   </Row>
                 </Card>
                 {booking?.paymentMethod != "cash" && booking.status === 0 && (
-                  <Button onClick={handlePayment}>Thanh toán</Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    size="large"
+                    block
+                    loading={isSubmitting}
+                    onClick={handlePayment}
+                  >
+                    Thanh toán
+                  </Button>
                 )}
               </Card>
             </Col>

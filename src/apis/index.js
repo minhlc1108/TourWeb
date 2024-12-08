@@ -224,6 +224,11 @@ export const fetchPaymentBookingAPI = async (id) => {
   return response.data;
 }
 
+export const checkBeforeCreatePaymentAPI = async (id) => {
+  const response = await axios.get(`${API_ROOT}/booking/check-before-create-payment/${id}`);
+  return response.data
+}
+
 export const CreatePaymentVNPayAPI = async (params) => {
   const response = await axios.post(`${API_ROOT}/booking/payment/vnpay`, params);
   return response.data
