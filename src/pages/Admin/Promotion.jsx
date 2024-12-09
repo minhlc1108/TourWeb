@@ -269,6 +269,7 @@ function Promotion() {
         loading={isLoading}
         onChange={handleTableChange}
         size="middle"
+        scroll={{ x: 800 }}
       />
       
     </Card>

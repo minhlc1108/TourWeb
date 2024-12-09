@@ -9,7 +9,7 @@ import defaultImage from "~/assets/unnamed.png";
 import { useEffect, useRef, useState } from "react";
 import { message, modal } from "~/components/EscapeAntd";
 import { useNavigate } from "react-router-dom";
-import { fetchAllTourAPI } from "~/apis";
+import { deleteTourAPI, fetchAllTourAPI } from "~/apis";
 
 function Tour() {
   // const location = useLocation();
@@ -137,11 +137,11 @@ function Tour() {
       title: "Xóa tour",
       content: "Bạn có muốn xóa tour này?",
       onOk: async () => {
-        // const result = await deleteCategoryAPI(id);
-        // if (result) {
-        //   message.success("Xóa thành công!", 3);
-        //   setData((prevData) => prevData.filter((r) => r.id !== id));
-        // }
+        const result = await deleteTourAPI(id);
+        if (result) {
+          message.success("Xóa thành công!", 3);
+          setData((prevData) => prevData.filter((r) => r.id !== id));
+        }
       },
     });
   };

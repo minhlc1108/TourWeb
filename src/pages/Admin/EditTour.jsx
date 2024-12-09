@@ -1,27 +1,11 @@
-import {
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Image,
-  Input,
-  Modal,
-  Select,
-  Space,
-  Table,
-  Upload,
-} from "antd";
+import { Button, Card, Form, Image, Input, Select, Upload } from "antd";
 import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { message } from "~/components/EscapeAntd";
 import { API_ROOT } from "~/utils/constants";
 import { getTourByIdAPI, updateTourAPI } from "~/apis";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import TourScheduleTable from "~/components/TourScheduleTable";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -41,11 +25,6 @@ function EditTour() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
   const [formEditTour] = Form.useForm();
-  const [formTourSchedule] = Form.useForm();
-  const [visible, setVisible] = useState(false);
-  const [title, setTitle] = useState("");
-  const [itemSelected, setItemSelected] = useState({});
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const id = searchParams.get("id");
 
   const handlePreview = async (file) => {
@@ -57,12 +36,7 @@ function EditTour() {
   };
 
   const handleChange = ({ fileList: newFileList }) => {
-    // if (file.status === "done") {
-    //   const updatedFileList = newFileList.map((file) => ({
-    //     url: file.response?.secure_url || file.url,
-    //   }));
     setFileList(newFileList);
-    // } else setFileList(newFileList);
   };
 
   const handleSubmit = (values) => {
@@ -108,7 +82,6 @@ function EditTour() {
     getTourByIdAPI(id)
       .then((tour) => {
         setIsLoading(false);
-        console.log(tour);
         setTour(tour);
         formEditTour.setFieldsValue(tour);
         setFileList(tour.images);
@@ -116,103 +89,7 @@ function EditTour() {
       .catch(() => {
         navigate("/admin/tour");
       });
-  }, [id, navigate]);
-
-  const showModal = (record) => {
-    if (record) {
-      setTitle("Sửa lịch tour");
-      setItemSelected(record);
-      formTourSchedule.setFieldsValue({
-        name: record.name,
-        detail: record.detail,
-      });
-    } else {
-      setItemSelected(null);
-      setTitle("Thêm lịch tour");
-    }
-    setVisible(true);
-  };
-
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      sorter: true,
-    },
-    {
-      title: "Tên lịch trình",
-      dataIndex: "name",
-      key: "name",
-      sorter: true,
-    },
-    {
-      title: "Ngày khởi hành",
-      dataIndex: "departure",
-      key: "departure",
-      sorter: true,
-    },
-    {
-      title: "Ngày đến",
-      dataIndex: "destination",
-      key: "destination",
-      sorter: true,
-    },
-    {
-      title: "Còn lại",
-      dataIndex: "remain",
-      key: "remain",
-      sorter: true,
-    },
-    {
-      title: "Giá người lớn",
-      dataIndex: "priceAdult",
-      key: "priceAdult",
-      sorter: true,
-    },
-    {
-      title: "Giá trẻ em",
-      dataIndex: "priceChild",
-      key: "priceChild",
-      sorter: true,
-    },
-    {
-      title: "Hành động",
-      dataIndex: "",
-      key: "x",
-      render: (record) => {
-        return (
-          <Space size="small">
-            <Button
-              variant="outlined"
-              icon={<EditOutlined />}
-              // onClick={() => showModal(record)}
-            ></Button>
-            <Button
-              // onClick={() => deleteItem(record.id)}
-              color="danger"
-              variant="outlined"
-              icon={<DeleteOutlined />}
-            ></Button>
-          </Space>
-        );
-      },
-    },
-  ];
-
-  const disablePastDates = (current) => {
-    const today = new Date(); // Lấy ngày hôm nay
-    today.setHours(0, 0, 0, 0); // Đặt thời gian là 0:00:00 để so sánh chính xác
-    return current && current < today; // Vô hiệu hóa các ngày trước hôm nay
-  };
-
-  const handleTourScheduleSubmit = () => {};
-
-  const handleCancel = () => {
-    setVisible(false);
-    setItemSelected(null);
-    formTourSchedule.resetFields();
-  };
+  }, [id, navigate, formEditTour]);
 
   return (
     <>
@@ -391,105 +268,7 @@ function EditTour() {
           </Form.Item>
         </Form>
       </Card>
-
-      <Modal
-        open={visible}
-        onOk={formTourSchedule.submit}
-        onCancel={handleCancel}
-        confirmLoading={confirmLoading}
-        title={title}
-      >
-        <Form
-          name="basic"
-          labelCol={{
-            span: 6,
-          }}
-          form={formTourSchedule}
-          onFinish={handleTourScheduleSubmit}
-        >
-          <Form.Item
-            label="Tên lịch trình"
-            name="name"
-            rules={[
-              {
-                max: 255,
-                message: "Tên lịch trình tối đa 255 ký tự",
-              },
-            ]}
-          >
-            <Input width={"100%"} />
-          </Form.Item>
-          <Form.Item
-            label="Ngày khởi hành"
-            name="departure"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn ngày khởi hành",
-              },
-            ]}
-          >
-            <DatePicker disabledDate={disablePastDates} />
-          </Form.Item>
-
-          <Form.Item
-            label="Giá người lớn"
-            name="priceAdult"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá người lớn",
-              },
-              {
-                pattern: /^\d+$/,
-                message: "Vui lòng nhập số!",
-              },
-            ]}
-          >
-            <Input/>
-          </Form.Item>
-          <Form.Item
-            label="Giá trẻ em"
-            name="priceChild"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá trẻ em",
-              },
-              {
-                pattern: /^\d+$/,
-                message: "Vui lòng nhập số!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Card
-        loading={isLoading}
-        title="Lịch tour"
-        padding="1.25rem 1.25rem 0"
-        style={{ marginTop: 16 }}
-      >
-        <Button
-          color="primary"
-          variant="solid"
-          icon={<PlusOutlined />}
-          iconPosition={"start"}
-          onClick={() => showModal()}
-        >
-          Thêm
-        </Button>
-        <Table
-          columns={columns}
-          // dataSource={data}
-          // pagination={pagination}
-          // onChange={handleTableChange}
-          // loading={isLoading}
-          scroll={{ x: 800 }}
-        ></Table>
-      </Card>
+      <TourScheduleTable tourId={id} data={tour.tourSchedules} />
     </>
   );
 }
