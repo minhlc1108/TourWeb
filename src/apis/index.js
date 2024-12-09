@@ -123,6 +123,21 @@ export const createBooking = async (data) => {
   return response.data
 }
 
+export const createAdminBooking = async (data) => {
+  const response = await axios.post(`${API_ROOT}/booking/create-booking-customer`, data)
+  return response.data
+}
+
+export const updateAdminBooking = async (id,data) => {
+  const response = await axios.put(`${API_ROOT}/booking/update-booking-customer/${id}`, data)
+  return response.data
+}
+
+export const updateStatusBooking = async (id,data) => {
+  const response = await axios.put(`${API_ROOT}/booking/update-status/${id}`, data)
+  return response.data
+}
+
 export const deleteBooking = async (id) => {
   const response = await axios.delete(`${API_ROOT}/booking/${id}`);
   return response.data;
