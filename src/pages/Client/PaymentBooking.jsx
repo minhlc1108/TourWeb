@@ -1,5 +1,4 @@
 import { LeftOutlined } from "@ant-design/icons";
-import create from "@ant-design/icons/lib/components/IconFont";
 import {
   Button,
   Card,
@@ -417,12 +416,12 @@ function PaymentBooking() {
                     <Col span={12}>
                       Ngày khởi hành:{" "}
                       {moment(
-                        booking?.tourSchedule?.tour?.departureDate
+                        booking?.tourSchedule?.departureDate
                       ).format("DD/MM/YYYY")}
                     </Col>
                     <Col span={12}>
                       Ngày về:{" "}
-                      {moment(booking?.tourSchedule?.tour?.returnDate).format(
+                      {moment(booking?.tourSchedule?.returnDate).format(
                         "DD/MM/YYYY"
                       )}{" "}
                     </Col>
