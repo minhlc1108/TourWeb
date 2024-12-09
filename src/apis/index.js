@@ -16,6 +16,15 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // Hoặc từ Redux store
+  if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 //Account
 export const fetchAllAccountsAPI = async () => {
     const response = await axios.get(`${API_ROOT}/account/listAccount`);
