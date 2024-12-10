@@ -17,7 +17,6 @@ import EditTour from "~/pages/Admin/EditTour";
 import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/StatisticAdmin";
 import Tour from "~/pages/Admin/Tour";
-import Transport from "~/pages/Admin/Transport";
 import ChangePassword from "~/pages/Client/ChangePassword";
 import DetailsProfileUser from "~/pages/Client/DetailsProfileUser";
 import Home from "~/pages/Client/Home";
@@ -25,6 +24,7 @@ import ListBooking from "~/pages/Client/ListBooking";
 import OrderBooking from "~/pages/Client/OrderBooking";
 import ProfileUser from "~/pages/Client/ProfileUser";
 import TourClient from "~/pages/Client/TourClient";
+import TourDetail from "~/pages/Client/TourDetail";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
@@ -109,10 +109,6 @@ const routes = createBrowserRouter([
         element: <Category />,
       },
       {
-        path: "transport",
-        element: <Transport />,
-      },
-      {
         path: "booking",
         element: <Booking />,
       },
@@ -162,6 +158,10 @@ const routes = createBrowserRouter([
       {
         path: "tourDetailsClient",
         element: <TourDetailsClient />,
+      },
+      {
+        path: "tour/:id",
+        element: <TourDetail/>
       },
       {
         path: "order-booking/:id",

@@ -3,7 +3,6 @@ import { ConfigProvider, Flex, Layout, Menu, Typography } from "antd";
 import {
   BarChartOutlined,
   CalendarOutlined,
-  CarOutlined,
   CompassOutlined,
   FolderOpenOutlined,
   GiftOutlined,
@@ -40,11 +39,6 @@ const items = [
     <Link to={"/admin/category"}>Danh mục</Link>,
     "category",
     <FolderOpenOutlined />
-  ),
-  getItem(
-    <Link to={"/admin/transport"}>Phương tiện</Link>,
-    "transport",
-    <CarOutlined />
   ),
   getItem(
     <Link to={"/admin/booking"}>Đặt chỗ</Link>,

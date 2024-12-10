@@ -36,8 +36,8 @@ function OrderBooking() {
   const [adultCount, setAdultCount] = useState(1);
   const [childCount, setChildCount] = useState(0);
   const [tourSchedule, setTourSchedule] = useState(null);
-  const [isApply, setIsApply] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isApply, setIsApply] = useState(false);
   let discount = useRef(null);
   const [form] = Form.useForm();
   let { id } = useParams();
@@ -471,7 +471,7 @@ function OrderBooking() {
                           </Flex>
                         </Radio>
                       </div>
-                      <div
+                      {/* <div
                         style={{
                           border: "1px solid #d9d9d9",
                           borderRadius: "8px",
@@ -497,7 +497,7 @@ function OrderBooking() {
                             </span>
                           </Flex>
                         </Radio>
-                      </div>
+                      </div> */}
                       <div
                         style={{
                           border: "1px solid #d9d9d9",
