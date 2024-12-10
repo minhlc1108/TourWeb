@@ -37,10 +37,6 @@ const items = [
     "Tour",
   ),
   getItem(
-    <Link to={"/transport"}>Booking</Link>,
-    "Booking",
-  ),
-  getItem(
     <Link to={"/home"}>Contact</Link>,
     "Contact",
   ),

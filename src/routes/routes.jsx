@@ -17,7 +17,6 @@ import EditTour from "~/pages/Admin/EditTour";
 import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/StatisticAdmin";
 import Tour from "~/pages/Admin/Tour";
-import Transport from "~/pages/Admin/Transport";
 import ChangePassword from "~/pages/Client/ChangePassword";
 import DetailsProfileUser from "~/pages/Client/DetailsProfileUser";
 import Home from "~/pages/Client/Home";
@@ -108,10 +107,6 @@ const routes = createBrowserRouter([
       {
         path: "category",
         element: <Category />,
-      },
-      {
-        path: "transport",
-        element: <Transport />,
       },
       {
         path: "booking",
