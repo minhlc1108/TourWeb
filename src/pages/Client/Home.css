@@ -79,9 +79,7 @@
 
 .tour-title {
   color: red;
-  font-style: italic; /* Kiểu chữ nghiêng */
   font-size: 10px; 
-  font-family: "Georgia", serif; 
   margin-bottom: 10px;
 }
 
@@ -100,11 +98,13 @@
   display: flex;
   justify-content: center;
   gap: 20px;
+  margin-top: 8%;
 }
 
 .popular-tours {
-  padding: 50px 20px;
+  padding: 5% 4%;
   text-align: center;
+  margin : 0 8% ;
 }
 
 .popular-tours h2 {
@@ -137,7 +137,7 @@
 .tour-name {
   margin-top: 10px;
   font-size: 1.2rem;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 /* Top Attractions */
@@ -180,7 +180,7 @@
 }
 
 .our-experiences {
-  padding: 150px 20px;
+  padding: 5% 10%;
    /* Căn trái tất cả nội dung bên trong */
 }
 
@@ -200,8 +200,6 @@
 .experience-content img {
   width: 50%; /* Điều chỉnh kích thước ảnh */
   height: auto;
-  padding-left: 15%;
-  border-radius: 20px;
 }
 
 .experience-text {
@@ -230,11 +228,19 @@
 }
 
 .testimonials {
-  padding: 150px 30px;
+  padding: 5% 0;
+  margin-bottom: 10%;
    /* Căn trái tất cả nội dung bên trong */
    background-color: #f5f5f5;
    
    
+}
+.carousel-arrow {
+  z-index: 10; /* Đảm bảo mũi tên nằm trên carousel */
+}
+.carousel-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.5); /* Hiệu ứng hover */
+  color: white;
 }
 
 
@@ -365,4 +371,22 @@ height: 100px;
   padding: 0px;
   text-align: center;
   font-size: 14px;
+}
+
+
+
+.slick-prev,
+.slick-next {
+  z-index: 10 !important; /* Mũi tên luôn nằm trên cùng */
+  display: inline-block;
+  /* justify-content: space-between; */
+}
+.carousel img {
+  width: 100%; /* Đảm bảo ảnh nằm gọn trong carousel */
+  height: auto; /* Giữ tỉ lệ ảnh */
+  object-fit: cover; /* Phù hợp với khung carousel */
+}
+.carousel-container {
+  overflow: visible !important; /* Đảm bảo mũi tên không bị cắt */
+  position: relative; /* Đặt vị trí để mũi tên xuất hiện đúng */
 }

@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Pagination } from "antd";
+import { Card, Row, Col, Pagination, Flex } from "antd";
 import { Button, Result } from 'antd';
 import InforCardHorizone from "~/layouts/app/InforCardHorizone";
-import { getCustomerByIdAPI } from "~/apis";
+import { getCustomerByIdAPI ,
+  updateCustomerAPI,
+  getAccountByIdAPI,
+  getCustomerByEmailAPI,
+
+} from "~/apis";
+import { Link } from "react-router-dom";
 
 const ListBooking = () => {
   const [User, setUser] = useState([]); // Khởi tạo mảng rỗng
@@ -11,23 +17,25 @@ const ListBooking = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await getCustomerByIdAPI("20");
-
-      const tours = result.bookings.map((booking) => {
+      // const result = await getCustomerByIdAPI("1");
+      const customer = await getCustomerByEmailAPI ('abc@gmail.com')
+      const tours = customer.bookings
+      .map((booking) => {
         const tour = booking.tourSchedule?.tour;
-        if (tour) {
-          return {
-            id: tour.id,
-            title: tour.name,
-            description: `Điểm đến: ${tour.destination}, Thời gian: ${tour.duration} ngày`,
-            detail : tour.detail ,
-            images: tour.images,
-          };
-        }
-        return null;
-      });
 
-      setUser(tours.filter((tour) => tour !== null));
+        if (!tour) return null;
+        return {
+          id: booking.id,
+          title: tour.name,
+          description: `Điểm đến: ${tour.destination}`,
+          time: `${tour.duration} ngày`,
+          price: `Tổng tiền: ${booking.totalPrice} VND`, // Lấy từ booking thay vì tour
+          images: tour.tourImages, // Sử dụng trường tourImages từ tour
+        };
+      })
+      .filter(Boolean); // Loại bỏ null
+
+    setUser(tours);
     };
 
     fetchData();
@@ -48,15 +56,24 @@ const ListBooking = () => {
         height: "100vh",
       }}
     >
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]}
+        style={{
+          display:"flex",
+         justifyContent: currentData.length === 0 ? 'center' : 'normal' 
+
+          }
+        }
+      >
         {currentData.length > 0 ? (
           currentData.map((item) => (
             <Col span={24} key={item.id}>
               <InforCardHorizone
+                id = {item.id}
                 title={item.title}
                 description={item.description}
                 image={item.images?.[0]?.url}
-                detail = {item.detail}
+                price = {item.price}
+                time = {item.time}
               />
             </Col>
           ))
