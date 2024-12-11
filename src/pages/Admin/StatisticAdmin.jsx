@@ -4,14 +4,194 @@ import { Line, Pie, Column } from "@ant-design/charts";
 import {
   fetchAllTourAPI,
   fetchAllCategoryAPI,
-  fetchAllCustomerAPI
+  fetchAllCustomerAPI,
+  fetchAllBookingAPI,
+  getTourByIdAPI,
 } from "~/apis";
 
+// tk tour
 function StatisticAdmin() {
-  const bookingData = [
-    { tour: "Tour A", bookings: 150 },
-    { tour: "Tour B", bookings: 300 },
-  ];
+  const [categoryData, setCategoryData] = useState([]);
+
+  const getWeekNumber = (date) => {
+    const startOfYear = new Date(date.getFullYear(), 0, 1);
+    const days = Math.floor((date - startOfYear) / (24 * 60 * 60 * 1000));
+    return Math.ceil((days + startOfYear.getDay() + 1) / 7);
+  };
+
+  // Nhóm và tính tổng
+  const groupByPeriod = (bookings, period) => {
+    return bookings.reduce((acc, booking) => {
+      const date = new Date(booking.time);
+      let key;
+      if (period === "month") {
+        key = `${date.getFullYear()}-${date.getMonth() + 1}`; // YYYY-MM
+      } else if (period === "week") {
+        key = `${date.getFullYear()}-W${getWeekNumber(date)}`; // YYYY-WW
+      } else if (period === "year") {
+        key = `${date.getFullYear()}`; // YYYY
+      }
+
+      // Cộng tổng
+      acc[key] = (acc[key] || 0) + booking.totalPrice;
+      return acc;
+    }, {});
+  };
+
+  const [countUserCate, setCountUserCate] = useState([]);
+  const [countUser, setCountUser] = useState(0);
+  const [countTour, setCountTour] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalPriceByMonth, setTotalPriceByMonth] = useState(0);
+  const [totalPriceByYear, setTotalPriceByYear] = useState(0);
+  const [totalPriceByWeek, setTotalPriceByWeek] = useState(0);
+  const [data, setData] = useState([]);
+
+  const [staticCate, setStaticCate] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetchAllCustomerAPI();
+        console.log('check result ', result.length)
+        const totalBooking = await fetchAllBookingAPI();
+
+        const DsBookings = totalBooking.bookings;
+        const Tour = await fetchAllTourAPI();
+        // console.log('check result ', Tour.length)
+        
+
+        const totalByMonth = groupByPeriod(totalBooking.bookings, "month");
+        const totalByWeek = groupByPeriod(totalBooking.bookings, "week");
+        const totalByYear = groupByPeriod(totalBooking.bookings, "year");
+
+        const totalPrice = totalBooking.bookings.reduce(
+          (acc, booking) => acc + booking.totalPrice,
+          0
+        );
+        setTotalPrice(totalPrice);
+        setCountTour(totalBooking.total || 0);
+        setCountUser(result.length || 0);
+
+        setTotalPriceByMonth(totalByMonth);
+        setTotalPriceByYear(totalByYear);
+        setTotalPriceByWeek(totalByWeek);
+
+        const dataTour = Tour.tours || [];
+        if (!Array.isArray(dataTour)) {
+          console.error("dataTour is not an array:", dataTour);
+          return;
+        }
+
+        // Tính toán categoryCounts
+        const categoryCounts = dataTour.reduce((acc, tour) => {
+          const categoryName = tour.categoryName;
+
+          if (!categoryName) {
+            console.warn(`Tour object missing categoryName:`, tour);
+            return acc;
+          }
+
+          acc[categoryName] = (acc[categoryName] || 0) + 1;
+          return acc;
+        }, {});
+
+        // Chuyển categoryCounts thành categoryData
+        const newCategoryData = Object.entries(categoryCounts).map(
+          ([type, count]) => ({
+            type,
+            count,
+          })
+        );
+
+        async function categorizeBookings(Bookings) {
+          const categoryCounts = {}; // Object để lưu số lượng
+
+          for (const booking of Bookings) {
+            const tourId = booking.tourSchedule.tourId; // Lấy tourId từ booking
+            const myTour = await getTourByIdAPI(tourId); // Gọi API lấy thông tin tour
+            const categoryName = myTour.categoryName; // Lấy tên danh mục (categoryName)
+
+            // Tăng số lượng cho danh mục tương ứng
+            if (categoryCounts[categoryName]) {
+              categoryCounts[categoryName]++;
+            } else {
+              categoryCounts[categoryName] = 1;
+            }
+          }
+
+          return setCountUserCate(categoryCounts);
+        }
+
+        categorizeBookings(DsBookings);
+
+        // console.log (totalByMonth)
+        // setData(totalPriceByMonth)
+        const defaultData = Object.entries(totalByMonth).map(
+          ([period, revenue]) => ({
+            period,
+            revenue,
+          })
+        );
+
+        setData(defaultData);
+
+        // Cập nhật state
+        setCategoryData(newCategoryData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // console.log ('tk tour ', countUserCate)
+
+  const handleChange = (value) => {
+    let sortedData = [];
+    if (value === "month") {
+      sortedData = Object.entries(totalPriceByMonth)
+        .map(([period, revenue]) => ({ period, revenue }))
+        .sort((a, b) => new Date(a.period) - new Date(b.period)); // Sắp xếp theo ngày
+    } else if (value === "week") {
+      sortedData = Object.entries(totalPriceByWeek)
+        .map(([period, revenue]) => ({ period, revenue }))
+        .sort(
+          (a, b) =>
+            new Date(a.period.split("-W")[0]) -
+            new Date(b.period.split("-W")[0])
+        ); // Sắp xếp theo tuần
+    } else if (value === "year") {
+      sortedData = Object.entries(totalPriceByYear)
+        .map(([period, revenue]) => ({ period, revenue }))
+        .sort((a, b) => a.period - b.period); // Sắp xếp theo năm
+    }
+    setData(sortedData);
+  };
+
+  const revenueConfig = {
+    data: data,
+    xField: "period",
+    yField: "revenue",
+    label: { position: "middle" },
+    point: { size: 5, shape: "diamond" },
+  };
+
+  // const bookingData = Object.entries(countUserCate).map(([period, revenue]) => ({
+  //   period,
+  //   revenue,
+  // }));
+
+  const bookingData = Object.entries(countUserCate).map(([tour, bookings]) => ({
+    tour,
+    bookings,
+  }));
+
+  // console.log('checkbokdata', bookingData)
+  // const bookingData = [
+  //   { tour: "Tour A", bookings: 150 },
+  //   { tour: "Tour B", bookings: 300 },
+  // ];
 
   const bookingConfig = {
     data: bookingData,
@@ -20,11 +200,6 @@ function StatisticAdmin() {
     label: { position: "middle" },
     color: "#cf1322",
   };
-
-  const categoryData = [
-    { type: "Adventure", count: 40 },
-    { type: "Relaxation", count: 60 },
-  ];
 
   const categoryConfig = {
     data: categoryData,
@@ -37,112 +212,37 @@ function StatisticAdmin() {
     },
   };
 
-  const monthlyRevenue = [
-    { period: "Jan", revenue: 3000 },
-    { period: "Feb", revenue: 4000 },
-    { period: "Mar", revenue: 4000 },
-    { period: "Apr", revenue: 4000 },
-    { period: "May", revenue: 4000 },
-    { period: "Jun", revenue: 4000 },
-    { period: "Aug", revenue: 4000 },
-    { period: "Sep", revenue: 4000 },
+  // const monthlyRevenue = [
+  //   { period: "Jan", revenue: 3000 },
+  //   { period: "Feb", revenue: 4000 },
+  //   { period: "Mar", revenue: 4000 },
+  //   { period: "Apr", revenue: 4000 },
+  //   { period: "May", revenue: 4000 },
+  //   { period: "Jun", revenue: 4000 },
+  //   { period: "Aug", revenue: 4000 },
+  //   { period: "Sep", revenue: 4000 },
+  // ];
 
-  ];
+  // const yearlyRevenue = [
+  //   { period: "2021", revenue: 50000 },
+  //   { period: "2022", revenue: 60000 },
+  //   { period: "2023", revenue: 60000 },
+  //   { period: "2024", revenue: 60000 },
+  // ];
 
-  const weeklyRevenue = [
-    { period: "Week 1", revenue: 1000 },
-    { period: "Week 2", revenue: 1500 },
-    { period: "Week 3", revenue: 1500 },
-    { period: "Week 4", revenue: 1500 },
+  // console.log('this is week',weeklyRevenue);
 
-  ];
-
-  const yearlyRevenue = [
-    { period: "2021", revenue: 50000 },
-    { period: "2022", revenue: 60000 },
-    { period: "2023", revenue: 60000 },
-    { period: "2024", revenue: 60000 },
-
-  ];
-
-  const [data, setData] = useState(monthlyRevenue);
-
-  const revenueConfig = {
-    data: data,
-    xField: "period",
-    yField: "revenue",
-    label: { position: "middle" },
-    point: { size: 5, shape: "diamond" },
-  };
-
-  const handleChange = (value) => {
-    if (value === "month") {
-      setData(monthlyRevenue);
-    } else if (value === "week") {
-      setData(weeklyRevenue);
-    } else if (value === "year") {
-      setData(yearlyRevenue);
-    }
-  }
-
-
-    const [countUserCate, setCountUserCate] = useState([]);
-    const [countUser, setCountUser] = useState(0);
-    const [countTour, setCountTour] = useState(0);
-
-
-    useEffect(() => {
-      const fetchData = async () => {
-        const result = await fetchAllCustomerAPI();
-        const Tour = await fetchAllTourAPI();
-        // console.log (Tour)
-        setCountTour(Tour.total);
-        setCountUser (result.total)
-        // Giả sử fetchAllCategoriesAPI trả về danh sách các danh mục
-        const response  = await fetchAllCategoryAPI();
-        const counts = [];
-        // console.log("API Response:", categories);
-        const categories = response.categories;
-        // Duyệt qua tất cả các danh mục
-        // for (const category of categories) {
-        //   let userCount = 0;
-        //   console.log("Category:", categories); 
-        //   // Duyệt qua tất cả các tour của danh mục
-        //   for (const tour of category.tours) {
-        //     console.log("  Tour:", tour);
-        //     // Duyệt qua tất cả các lịch trình (schedules) của tour
-        //     for (const schedule of tour.tourSchedules) {
-        //       // Duyệt qua tất cả các bookings của schedule
-        //       for (const booking of schedule.bookings) {
-        //         // Tính tổng số booking details
-        //         userCount += booking.bookingDetails.length;
-        //       }
-        //     }
-        //   }
-        //   // Lưu kết quả cho danh mục này
-        //   counts.push({
-        //     category: category.name,
-        //     UserNumber: userCount,
-        //   });
-        // }
-        // onsole.log("Counts by category:", counts);
-        // setCountUserCate(counts);
-      };
-  
-      fetchData();
-    }, []);
-
+  // console.log(categoryData);
+  // console.log(totalPrice);
 
   return (
-
-
     <Card title="Thống Kê" padding="1.25rem 1.25rem 0">
       <Row gutter={16}>
         <Col span={8}>
           <Card bordered={false}>
             <Statistic
               title="Doanh Thu"
-              value={112800}
+              value={totalPrice}
               precision={2}
               valueStyle={{ color: "#3f8600" }}
               suffix="VND"

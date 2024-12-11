@@ -21,16 +21,19 @@ import {
 
 import { message, modal } from "~/components/EscapeAntd";
 
-
 import {
   UserOutlined,
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { getCustomerByIdAPI,
+import {
+  getCustomerByIdAPI,
   updateCustomerAPI,
- } from "~/apis";
+  getAccountByIdAPI,
+  getCustomerByEmailAPI,
+
+} from "~/apis";
 import { useForm } from "antd/es/form/Form";
 
 const { RangePicker } = DatePicker;
@@ -70,59 +73,87 @@ const tailFormItemLayout = {
   },
 };
 
-
-
 const DetailsProfileUser = () => {
-  const [form] = Form.useForm(
-    
-  );
-  const user = {
-    address: " ",
-    birthday: "",
-    email: "",
-    id: 0,
-    name: "fffffffffffff",
-    phoneNumber: "",
-    sex: 0,
-  };
-  const [User, setUser] = useState();
+  const [form] = Form.useForm();
+
+  // const user = {
+  //   address: " ",
+  //   birthday: "",
+  //   email: "",
+  //   id: 0,
+  //   name: "fffffffffffff",
+  //   phoneNumber: "",
+  //   sex: 0,
+  // };
+  const [User, setUser] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await getCustomerByIdAPI("20");
-      // console.log(result);
+      // const result = await getCustomerByIdAPI("1");
+      // const Account = await getAccountByIdAPI("1");
+
+      // console.log('acc',Account);
+
+      const customer = await getCustomerByEmailAPI ('abc@gmail.com')
+      console.log('cus',customer);
       const formattedUser = {
-        ...result,
-        birthday: new Date(result.birthday).toISOString().split('T')[0] // Định dạng lại ngày
+        id : customer.id,
+        name : customer.name, 
+        sex : customer.sex ,
+        address: customer.address,
+        phone : customer.phoneNumber,
+        
+        email : customer.email,
+        // birthday: new Date(customer.birthday).toISOString().split('T')[0] // Định dạng lại ngày
       };
+      // const formattedUser = {
+      //   name: Account.userName,
+      //   email: Account.email,
+      //   phoneNumber: Account.phoneNumber,
+      // };
+      console.log ('check',formattedUser.phone )
       setUser(formattedUser);
-      form.setFieldsValue(formattedUser)
-      // setName(result.name)
+      form.setFieldsValue(formattedUser);
     };
     fetchData();
-    // console.log("check ben details", User);
-  }, []);
-  console.log("check ben details", User);
-  console.log("Form", form.getFieldsValue());
+  }, [form]);
 
+    console.log("User", User.phone);
 
+  const handleSubmit = async (values) => {
+    try {
+      const payload = {
+        name: values.name,
+        sex: values.sex,
+        address: values.address,
+      };
 
-  const handleSubmit = async (values ) => {
-    if(form.getFieldsValue())
-    {
-      await updateCustomerAPI(User.id , values)
-      message.success("Thành công", 3);
+      // const payload = {
+      //   ...User, // Dữ liệu cũ trong User
+      //   ...values, // Dữ liệu mới từ form (userName, phoneNumber, etc.)
+      // };
+  
+      console.log("Payload to update:", payload);
+      console.log("id", User.id);
+
+      await updateCustomerAPI(User.id, values);
+      message.success("Cập nhật thông tin thành công!", 3);
+      setUser((prevUser) => ({
+        ...prevUser,
+        ...values,
+      }));
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      message.error("Có lỗi xảy ra khi cập nhật. Vui lòng thử lại.");
     }
-  }
+  };
 
   return (
-    
     <Form
       {...formItemLayout}
       form={form}
       name="InformationUser"
       labelAlign="left"
-     
       size="large"
       style={{
         maxWidth: "100%",
@@ -135,13 +166,12 @@ const DetailsProfileUser = () => {
         justifyContent: "center",
         background: "white",
       }}
-
       onFinish={handleSubmit}
       scrollToFirstError
     >
       <Form.Item
         name="name"
-        label="Name"
+        label="name"
         rules={[
           {
             type: "string",
@@ -154,29 +184,12 @@ const DetailsProfileUser = () => {
         ]}
       >
         <Input
-          disabled
-         />
-      </Form.Item>
-
-      <Form.Item
-        name="birthday"
-        label="Birthday"
-        rules={[
-          {
-            required: true,
-            message: "Please select your birth date!",
-          },
-        ]}
-      >
-        {/* <DatePicker
-        
-        value={new Date("2003-11-01")} 
-        style={{ width: "100%" }} /> */}
-        <Input
-        type="date"
+        // disabled
         />
       </Form.Item>
-      <Form.Item name="address" label="Địa Chỉ">
+
+            
+       <Form.Item name="address" label="Địa Chỉ">
         <Input />
       </Form.Item>
 
@@ -194,14 +207,11 @@ const DetailsProfileUser = () => {
           },
         ]}
       >
-        <Input 
-          disabled
-        
-        />
+        <Input disabled />
       </Form.Item>
 
       <Form.Item
-        name="phoneNumber"
+        name="phone"
         label="Phone Number"
         rules={[
           {
@@ -210,12 +220,15 @@ const DetailsProfileUser = () => {
           },
         ]}
       >
-        <Input style={{ width: "100%" }} />
+        <Input
+          disabled
+          style={{ width: "100%" }}
+        />
       </Form.Item>
 
       <Form.Item
         name="sex"
-        label="Gender"
+        label="sex"
         rules={[
           {
             required: true,
@@ -225,9 +238,9 @@ const DetailsProfileUser = () => {
       >
         <Select placeholder="Select your gender">
           
-          <Option value={1}>Male</Option>
-          <Option value={2}>Female</Option>
-          <Option value={0}>Other</Option>
+          <Option value={0}>Male</Option>
+          <Option value={1}>Female</Option>
+          <Option value={2}>Other</Option>
         </Select>
       </Form.Item>
 
