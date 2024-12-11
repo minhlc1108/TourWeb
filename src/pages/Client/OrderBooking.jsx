@@ -129,11 +129,11 @@ function OrderBooking() {
           setTourSchedule(data);
         });
         setIsSubmitting(false);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsSubmitting(false);
         form.resetFields();
-      })
-      ;
+      });
   };
 
   return (
@@ -150,7 +150,10 @@ function OrderBooking() {
           <Spin size="large" />
         </div>
       ) : (
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Space
+          direction="vertical"
+          style={{ width: "100%", marginTop: "20px" }}
+        >
           <Button
             type="primary"
             icon={<LeftOutlined />}

@@ -26,7 +26,7 @@ const { Title } = Typography;
 function PaymentBooking() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState(null);
-  const[isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   let { id } = useParams();
   let dataSource = useRef([]);
 
@@ -81,12 +81,14 @@ function PaymentBooking() {
           description: `Thanh toán cho hóa đơn ${booking.id}`,
           fullName: booking.customer?.name,
           amount: booking.totalPrice,
-        }).then((data) => {
-          console.log(data);
-          window.location = data;
-        }).finally(() => {
-          setIsSubmitting(false);
-        });
+        })
+          .then((data) => {
+            console.log(data);
+            window.location = data;
+          })
+          .finally(() => {
+            setIsSubmitting(false);
+          });
       });
     }
   };
@@ -105,7 +107,10 @@ function PaymentBooking() {
           <Spin size="large" />
         </div>
       ) : (
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Space
+          direction="vertical"
+          style={{ width: "100%", marginTop: "20px" }}
+        >
           <Button
             type="primary"
             icon={<LeftOutlined />}
@@ -415,9 +420,9 @@ function PaymentBooking() {
                     </Col>
                     <Col span={12}>
                       Ngày khởi hành:{" "}
-                      {moment(
-                        booking?.tourSchedule?.departureDate
-                      ).format("DD/MM/YYYY")}
+                      {moment(booking?.tourSchedule?.departureDate).format(
+                        "DD/MM/YYYY"
+                      )}
                     </Col>
                     <Col span={12}>
                       Ngày về:{" "}
