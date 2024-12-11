@@ -15,7 +15,7 @@ dayjs.extend(isSameOrBefore);
 export default function TourDetail() {
     const { id } = useParams();
     const [data, setData] = useState();
-    const [showDetailTour, setShowDetailTour] = useState(false)
+    const [detailTour, setDetailTour] = useState(null)
     const [checkTour, setCheckTour] = useState(false)
     const calendarRef = useRef(null);
     const onPanelChange = (value, mode) => {
@@ -38,25 +38,37 @@ export default function TourDetail() {
     const [moneyByDay, setMoneyByDay] = useState({});
 
     useEffect(() => {
-        if (data?.departure && data?.schedules[0]?.priceAdult) {
-            const formattedDate = dayjs(data?.departure).format('YYYY-MM-DD');
+        if (data?.schedules?.length > 0) {
+            const updatedMoneyByDay = data.schedules.reduce((acc, schedule) => {
+                const formattedDate = dayjs(schedule.departureDate).format('YYYY-MM-DD');
+                acc[formattedDate] = schedule.priceAdult;
+                return acc;
+            }, {});
+
             setMoneyByDay(prevState => ({
                 ...prevState,
-                [formattedDate]: data?.schedules[0]?.priceAdult
+                ...updatedMoneyByDay,
             }));
         }
     }, [data]);
-    if (checkTour) {
-        return <NotFound />;
-    }
+
     const dateCellRender = (value) => {
         const dateStr = value.format('YYYY-MM-DD');
         const money = moneyByDay[dateStr];
-    
+        const handleClick = () => {
+            if (!money) return;
+            const selectedSchedule = data.schedules.find(
+                (schedule) => dayjs(schedule.departureDate).format('YYYY-MM-DD') === dateStr
+            );
+            if (selectedSchedule) {
+                setDetailTour(selectedSchedule);
+            }
+        };
+
         return (
             <button
                 className={`absolute top-0 right-0 left-0 bottom-0 ${money ? 'cursor-pointer' : 'cursor-default bg-slate-100 opacity-50'}`}
-                onClick={() => money && setShowDetailTour(true)}
+                onClick={handleClick}
                 disabled={!money}
             >
                 {money && (
@@ -67,9 +79,12 @@ export default function TourDetail() {
             </button>
         );
     };
-    
 
 
+
+    if (checkTour) {
+        return <NotFound />;
+    }
     return (
         <div className="py-8">
             <div className="max-w-[1600px] mx-auto gap-8 grid grid-cols-7 max-lg:flex flex-col">
@@ -109,29 +124,29 @@ export default function TourDetail() {
                         <h3 className="py-[20px] font-bold text-2xl">Lịch trình & Giá</h3>
                         <div ref={calendarRef}>
                             {
-                                showDetailTour ?
+                                detailTour ?
                                     <div className="w-full shadow-lg h-[400px] rounded-lg bg-white">
                                         <div className="flex items-center justify-between pr-[30px]">
-                                            <button className="py-[20px] px-[10px] flex items-center gap-2" onClick={() => setShowDetailTour(false)}>
+                                            <button className="py-[20px] px-[10px] flex items-center gap-2" onClick={() => setDetailTour(null)}>
                                                 <ArrowLeft className="mx-auto" />
                                                 <span className="font-bold text-base">Quay lại</span>
                                             </button>
                                             <div>
-                                                <h2 className="font-bold text-red-600 text-2xl">{dayjs(data?.departure).format('DD/MM/YYYY')}</h2>
+                                                <h2 className="font-bold text-red-600 text-2xl">{dayjs(detailTour?.departureDate).format('DD/MM/YYYY')}</h2>
                                             </div>
                                         </div>
                                         <div className="w-full">
                                             <h3 className="text-center text-blue-800 text-xl font-semibold">Phương tiện di chuyển</h3>
                                             <div className="flex items-center w-full justify-center gap-[10px] py-[20px] max-md:flex-col">
                                                 <div className="flex items-center">
-                                                    <span className="font-bold text-base pr-2">Ngày khởi hành</span> <span> - {dayjs(data?.departure).format('DD/MM/YYYY')}</span>
+                                                    <span className="font-bold text-base pr-2">Ngày khởi hành</span> <span> - {dayjs(detailTour?.departureDate).format('DD/MM/YYYY')}</span>
                                                 </div>
                                                 <div>
                                                     <span><ArrowRight className="w-[200px]" /></span>
                                                 </div>
                                                 <div>
                                                     <span className="font-bold text-base pr-2">Ngày kết thúc</span>
-                                                    <span> - {dayjs(data?.departure).add(data?.duration, 'day').format('DD/MM/YYYY')}</span>
+                                                    <span> - {dayjs(detailTour?.returnDate).format('DD/MM/YYYY')}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -141,19 +156,19 @@ export default function TourDetail() {
                                                 <div className="flex items-center w-[300px] justify-between border-r-2 px-[30px] border-gray-400 h-full">
                                                     <span className="font-bold text-base pr-2">Người lớn:</span>
                                                     <span className="text-red-600 font-bold">
-                                                        {data?.schedules[0]?.priceAdult && new Intl.NumberFormat('vi-VN', {
+                                                        {detailTour?.priceAdult && new Intl.NumberFormat('vi-VN', {
                                                             style: 'currency',
                                                             currency: 'VND',
-                                                        }).format(data?.schedules[0]?.priceAdult)}
+                                                        }).format(detailTour?.priceAdult)}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center w-[300px] justify-between px-[30px] h-full">
                                                     <span className="font-bold text-base pr-2">Trẻ em:</span>
                                                     <span className="text-red-600 font-bold">
-                                                        {data?.schedules[0]?.priceChild && new Intl.NumberFormat('vi-VN', {
+                                                        {detailTour?.priceChild && new Intl.NumberFormat('vi-VN', {
                                                             style: 'currency',
                                                             currency: 'VND',
-                                                        }).format(data?.schedules[0]?.priceChild)}
+                                                        }).format(detailTour?.priceChild)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -191,7 +206,7 @@ export default function TourDetail() {
                                 </div>
                             </div>
                             {
-                                showDetailTour ?
+                                detailTour ?
                                     <button className="w-full bg-red-600 text-white text-xl h-[50px] mt-[20px] rounded-lg">
                                         Đặt Tour
                                     </button>
