@@ -1,29 +1,57 @@
 import axios from "axios";
 import { API_ROOT } from "~/utils/constants";
 import { message } from "~/components/EscapeAntd";
+import { signOut } from "~/store/authSlice";
+
+let _store;
+export const injectStore = (store) => {
+  _store = store;
+};
+
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken"); // Hoặc từ Redux store
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    // Handle request errors
+    return Promise.reject(error);
+  }
+);
 
 axios.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
+    if (error.response && error.response.status === 401) {
+      // Clear the token in Redux and redirect to login
+      _store.dispatch(signOut());
+    }
+    if (error.response && error.response.status === 403) {
+      // Clear the token in Redux and redirect to login
+      message.error("Bạn không có quyền thực hiện!");
+    }
+
     const data = error.response.data;
+
+    if (data.statusCode === 410 ){
+      _store.dispatch(signOut());
+      message.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
+    }
+
     if (data?.message && typeof data?.message === "string") {
       message.error(data.message);
     } else if (data?.status) {
       message.error(data.title + ` - Status code: ${data.status}`);
     }
+
     return Promise.reject(error);
   }
 );
-
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token"); // Hoặc từ Redux store
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 
 //Account
 export const fetchAllAccountsAPI = async () => {
@@ -39,10 +67,7 @@ export const deleteAccountAPI = async (id) => {
 export const updateAccountStatusAPI = async (id, status) => {
   const response = await axios.put(
     `${API_ROOT}/account/updateStatus/${id}`,
-    status,
-    {
-      headers: { "Content-Type": "application/json" },
-    }
+    status
   );
   return response.data;
 };
@@ -50,10 +75,7 @@ export const updateAccountStatusAPI = async (id, status) => {
 export const updateAccountAPI = async (id, accountData) => {
   const response = await axios.put(
     `${API_ROOT}/account/update/${id}`,
-    accountData,
-    {
-      headers: { "Content-Type": "application/json" },
-    }
+    accountData
   );
   return response.data;
 };
@@ -63,13 +85,10 @@ export const fetchAccountDetailsAPI = async (id) => {
   return response.data;
 };
 export const loginAPI = async (username, password) => {
-  const response = await axios.post(
-    `${API_ROOT}/account/login`,
-    { username, password },
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const response = await axios.post(`${API_ROOT}/account/login`, {
+    username,
+    password,
+  });
   return response.data;
 };
 

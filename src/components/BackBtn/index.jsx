@@ -10,7 +10,7 @@ export const BackBtn = ({...others }) => {
     <Tooltip title="Navigate to previous page">
       <Button
         icon={ <LeftOutlined /> }
-        onClick={() => navigate('')}
+        onClick={() => navigate('/')}
         {...others}
       >
         {'Trở lại trang chủ'}

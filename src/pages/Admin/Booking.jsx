@@ -39,6 +39,7 @@ const { RangePicker } = DatePicker;
 function Booking() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTexts, setSearchTexts] = useState({});
   const [pagination, setPagination] = useState({
     current: 1,
@@ -284,13 +285,18 @@ function Booking() {
       promotionId: discount.current ? discount.current.id : null,
       paymentMethod: "cash",
     };
-
+    setIsSubmitting(true);
     await createBookingAPI(payload)
       .then(() => {
         message.success("Thêm booking thành công");
+        setCode("");
+        setParticipants([]);
+        setTourSchedule(null);
+
         setVisible(false);
       })
-      .catch(() => message.error("Lỗi khi tạo booking"));
+      .catch(() => message.error("Lỗi khi tạo booking"))
+      .finally(() => setIsSubmitting(false));
 
     // }
     // const params = {
@@ -904,7 +910,7 @@ function Booking() {
                   {formatCurrencyVND(sumPrice.current)}
                 </span>{" "}
               </div>
-              <Button type="primary" onClick={handleCreateBooking}>
+              <Button type="primary" onClick={handleCreateBooking} loading={isSubmitting}>
                 Xác nhận
               </Button>
             </div>

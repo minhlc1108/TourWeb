@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import {
   createBrowserRouter,
   Link,
-  Navigate,
   useLocation,
 } from "react-router-dom";
 import LayourClient from "~/layouts/app/LayoutClient";
@@ -34,6 +33,8 @@ import Login from "~/pages/Login/LoginComponent";
 import Register from "~/pages/Login/RegisterComponent";
 import ForgotPassword from "~/pages/Login/ForgotPasswordComponent";
 import PaymentBooking from "~/pages/Client/PaymentBooking";
+import Forbidden from "~/pages/Error/Forbidden";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -49,15 +50,7 @@ export const ScrollToTop = () => {
   return null; // This component doesn't render anything
 };
 
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = true;
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
 
 const PageWrapper = ({ children }) => {
   return (
@@ -135,11 +128,9 @@ const routes = createBrowserRouter([
   {
     path: "",
     element: (
-      <ProtectedRoute>
-        <PageWrapper>
-          <UserLayout />
-        </PageWrapper>
-      </ProtectedRoute>
+      <PageWrapper>
+        <UserLayout />
+      </PageWrapper>
     ),
     children: [
       {
@@ -161,7 +152,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "tour/:id",
-        element: <TourDetail/>
+        element: <TourDetail />,
       },
       {
         path: "order-booking/:id",
@@ -242,13 +233,11 @@ const routes = createBrowserRouter([
   {
     path: "User",
     element: (
-      <ProtectedRoute>
-        <PageWrapper>
-          <LayourClient>
-            <ProfileUser />,
-          </LayourClient>
-        </PageWrapper>
-      </ProtectedRoute>
+      <PageWrapper>
+        <LayourClient>
+          <ProfileUser />,
+        </LayourClient>
+      </PageWrapper>
     ),
     children: [
       {
@@ -265,6 +254,10 @@ const routes = createBrowserRouter([
         element: <ListBooking />,
       },
     ],
+  },
+  {
+    path: "403",
+    element: <Forbidden />,
   },
   {
     path: "*",
