@@ -92,7 +92,7 @@ const Search = ({data}) => {
               onChange={(value) => {
                 setSearchParams((prevData) => ({
                   ...prevData,
-                  departureStart: value,
+                  departureEnd: value,
                 }));
               }}
               style={{ fontSize: "16px", height: "40px" }}

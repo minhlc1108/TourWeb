@@ -52,9 +52,13 @@ function StatisticAdmin() {
     const fetchData = async () => {
       try {
         const result = await fetchAllCustomerAPI();
+        console.log('check result ', result.length)
         const totalBooking = await fetchAllBookingAPI();
+
         const DsBookings = totalBooking.bookings;
         const Tour = await fetchAllTourAPI();
+        // console.log('check result ', Tour.length)
+        
 
         const totalByMonth = groupByPeriod(totalBooking.bookings, "month");
         const totalByWeek = groupByPeriod(totalBooking.bookings, "week");
@@ -65,8 +69,8 @@ function StatisticAdmin() {
           0
         );
         setTotalPrice(totalPrice);
-        setCountTour(Tour.total || 0);
-        setCountUser(result.total || 0);
+        setCountTour(totalBooking.total || 0);
+        setCountUser(result.length || 0);
 
         setTotalPriceByMonth(totalByMonth);
         setTotalPriceByYear(totalByYear);

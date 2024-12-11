@@ -26,6 +26,10 @@ export const deleteAccountAPI = async (id) => {
     const response = await axios.delete(`${API_ROOT}/account/delete/${id}`);
     return response.data;
 };
+export const getAccountByIdAPI = async (id) => {
+  const response = await axios.get(`${API_ROOT}/account/${id}`);
+  return response.data;
+};
 
 export const updateAccountStatusAPI = async (id, status) => {
     const response = await axios.put(`${API_ROOT}/account/updateStatus/${id}`, status, {
@@ -40,6 +44,8 @@ export const updateAccountAPI = async (id, accountData) => {
     });
     return response.data;
 };
+
+
 
 export const fetchAccountDetailsAPI = async (id) => {
     const response = await axios.get(`${API_ROOT}/account/${id}`);
@@ -200,16 +206,19 @@ export const deleteTourScheduleAPI = async (id) => {
 }
 //Tour customer 
 export const fetchAllCustomerAPI = async (params) => {
-  const response = await axios.get(`${API_ROOT}/Customer`, { params });
+  const response = await axios.get(`${API_ROOT}/Customer/listCustomer`, { params });
   return response.data;
 }
-
+export const getCustomerByEmailAPI =  async (email) => {
+  const response = await axios.get(`${API_ROOT}/Customer/email/${email}`);
+  return response.data;
+}
 export const getCustomerByIdAPI =  async (id) => {
   const response = await axios.get(`${API_ROOT}/Customer/${id}`);
   return response.data;
 } 
 export const updateCustomerAPI = async (id, values) => {
-  const response = await axios.put(`${API_ROOT}/Customer/${id}`, values);
+  const response = await axios.put(`${API_ROOT}/Customer/update/${id}`, values);
   return response.data;
 };
 
@@ -218,6 +227,12 @@ export const fetchAllBookingAPI = async (params) => {
   const response = await axios.get(`${API_ROOT}/booking`, { params });
   return response.data;
 }
+
+export const deleteBookingAPI = async (id) => {
+  const response = await axios.delete(`${API_ROOT}/booking/${id}`);
+  return response.data;
+}
+
 
 
 

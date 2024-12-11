@@ -12,7 +12,9 @@ const onPanelChange = (value, mode) => {
 };
 const { Search } = Input;
 
-import { fetchAllTourAPI } from "~/apis";
+import { fetchAllTourAPI,
+  fetchAllCategoryAPI
+ } from "~/apis";
 
 const formItemLayout = {
   labelCol: {
@@ -49,6 +51,8 @@ const TourPackage = ({ dataInput }) => {
   const [form] = Form.useForm();
   const location = useLocation();
 
+ 
+
   const searchParams = location.state || {
     budget: "",
     departureStart: "",
@@ -81,7 +85,9 @@ const TourPackage = ({ dataInput }) => {
   
     return `${day}/${month}/${year}`; // Định dạng DD/MM/YYYY
   }
-
+  const [opCate, setOpCate] = useState([])
+  const [opDeparture,setOpDeparture] = useState([])
+  const [opDestination,setOpDestination] = useState([])
   const [tourData, setTourData] = useState([]);
   const [dataHaveFilter, setDataHaveFilter] = useState(tourData);
   useEffect(() => {
@@ -89,6 +95,54 @@ const TourPackage = ({ dataInput }) => {
       try {
         const response = await fetchAllTourAPI();
         const dataTour = response.tours; // Dữ liệu fetch được
+        const cate = await fetchAllCategoryAPI();
+        const categoryNames = cate.categories.map((category) => category.name);
+
+
+        const uniqueDepartures = [
+          ...new Set(
+            dataTour.map((tour) => tour.departure.trim().toLowerCase()) // Loại bỏ khoảng trắng và chuẩn hóa chữ thường
+          ),
+        ];
+
+        const uniqueDestination = [
+          ...new Set(
+            dataTour.map((tour) => tour.destination.trim().toLowerCase()) // Loại bỏ khoảng trắng và chuẩn hóa chữ thường
+          ),
+        ];
+        
+          
+        const departureOptions = [
+          { value: "", label: "Tất cả" }, // Thêm option mặc định
+          ...uniqueDepartures.map((departure) => ({
+            value: departure.charAt(0).toUpperCase() + departure.slice(1), // Viết hoa ký tự đầu
+            label: departure.charAt(0).toUpperCase() + departure.slice(1),
+          })),
+        ];
+        const CateOptions = [
+          { value: "", label: "Tất cả" }, // Thêm option mặc định
+          ...categoryNames.map((cate) => ({
+            value: cate.charAt(0).toUpperCase() + cate.slice(1), // Viết hoa ký tự đầu
+            label: cate.charAt(0).toUpperCase() + cate.slice(1),
+          })),
+        ];
+        
+       
+
+        const destinationOptions = [
+          { value: "", label: "Tất cả" }, // Thêm option mặc định
+          ...uniqueDestination.map((destination) => ({
+            value: destination.charAt(0).toUpperCase() + destination.slice(1), // Viết hoa ký tự đầu
+            label: destination.charAt(0).toUpperCase() + destination.slice(1),
+          })),
+        ];
+        
+        // console.log(departureOptions);
+        setOpCate(CateOptions)
+        setOpDestination (destinationOptions)
+        setOpDeparture(departureOptions)
+        // console.log(opDeparture)
+
         const processedData = dataTour.map((tour) => {
           // Lấy dữ liệu từ schedule đầu tiên (nếu có)
           const schedule = tour.tourSchedules[0] || {};
@@ -119,7 +173,7 @@ const TourPackage = ({ dataInput }) => {
         setDatafilter(searchParams);
 
         // setDatafilter(processedData);
-        console.log("proces ", processedData); // Kiểm tra dữ liệu sau xử lý
+        // console.log("proces ", processedData); // Kiểm tra dữ liệu sau xử lý
       } catch (error) {
         console.error("Error fetching tours:", error);
       }
@@ -154,14 +208,21 @@ const TourPackage = ({ dataInput }) => {
       const matchesDepartureStart = datafilter.departureStart
         ? tour.departureStart.includes(datafilter.departureStart)
         : true;
+            console.log ('cehck diem bd',tour.departureStart)
+
       const matchesDepartureEnd = datafilter.departureEnd
         ? tour.departureEnd.includes(datafilter.departureEnd)
         : true;
+            console.log ( matchesDepartureEnd)
+            // console.log ('check dk departend',tour.departureEnd)
+            // console.log ('check dk departend',datafilter.departureEnd)
+
+
       const matchesDepartureDate = datafilter.departureDate
         ? tour.date === formatDate(datafilter.departureDate)
         : true;
-        console.log('1', tour.date)
-        console.log('2', datafilter.departureDate)
+        // console.log('1', tour.date)
+        // console.log('2', datafilter.departureDate)
 
        
       const matchesCategory = datafilter.category
@@ -183,6 +244,7 @@ const TourPackage = ({ dataInput }) => {
     // console.log ('checkdatahvefilter', dataHaveFilter)
     // console.log("datafilter", datafilter); // Hoặc setFilteredData(filtered) nếu bạn muốn lưu kết quả lọc
   }, [datafilter]);
+  console.log ('checkdatahvefilter', dataHaveFilter)
 
   return (
     <Flex vertical gutter={[5, 0]} style={{ paddingTop: "2%" }}>
@@ -288,24 +350,7 @@ const TourPackage = ({ dataInput }) => {
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
-                options={[
-                  {
-                    value: "",
-                    label: "Tất cả",
-                  },
-                  {
-                    value: "TP.HCM",
-                    label: "Hồ Chí Minh",
-                  },
-                  {
-                    value: "Hà Nội",
-                    label: "Hà Nội",
-                  },
-                  {
-                    value: "Đà nẵng",
-                    label: "Đà nẵng",
-                  },
-                ]}
+                options={opDeparture}
               />
             </Form.Item>
 
@@ -328,36 +373,7 @@ const TourPackage = ({ dataInput }) => {
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
-                options={[
-                  {
-                    value: "",
-                    label: "Tất cả",
-                  },
-                  {
-                    value: "Cần thơ",
-                    label: "Cần thơ",
-                  },
-                  {
-                    value: "Hà Nội",
-                    label: "Hà Nội",
-                  },
-                  {
-                    value: "Phú Quốc",
-                    label: "Phú Quốc",
-                  },
-                  {
-                    value: "Nha Trang",
-                    label: "Nha Trang",
-                  },
-                  {
-                    value: "Đà Nẵng",
-                    label: "Đà Nẵng",
-                  },
-                  {
-                    value: "Hồ Chí Minh",
-                    label: "Hồ Chí Minh",
-                  },
-                ]}
+                options={opDestination}
               />
             </Form.Item>
 
@@ -397,40 +413,7 @@ const TourPackage = ({ dataInput }) => {
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
-                options={[
-                  {
-                    value: "",
-                    label: "Tất cả",
-                  },
-                  {
-                    value: "Du lịch biển",
-                    label: "Du lịch biển",
-                  },
-                  {
-                    value: "Du lịch khám phá",
-                    label: "Du lịch khám phá",
-                  },
-                  {
-                    value: "Du lịch nghỉ dưỡng",
-                    label: "Du lịch nghỉ dưỡng",
-                  },
-                  {
-                    value: "Du lịch văn hóa",
-                    label: "Du lịch văn hóa",
-                  },
-                  {
-                    value: "Du lịch sinh thái",
-                    label: "Du lịch sinh thái",
-                  },
-                  {
-                    value: "Du lịch mạo hiểm",
-                    label: "Du lịch mạo hiểm",
-                  },
-                  {
-                    value: "Du lịch lãng mạn",
-                    label: "Du lịch lãng mạn",
-                  },
-                ]}
+                options={opCate}
               />
             </Form.Item>
           </Form>

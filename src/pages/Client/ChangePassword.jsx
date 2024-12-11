@@ -2,7 +2,10 @@ import {React, useState , useEffect} from "react";
 import { Form, Input, Button } from "antd";
 import {
   getCustomerByIdAPI,
-  updateCustomerAPI
+  updateCustomerAPI,
+  updateAccountAPI,
+  getAccountByIdAPI,
+
 }from "~/apis";
 import { message, modal } from "~/components/EscapeAntd";
 
@@ -44,13 +47,16 @@ const ChangePassword = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await getCustomerByIdAPI("20");
+      const Account = await getAccountByIdAPI("1");
+      const customer = await getCustomerByEmailAPI (Account.email)
+
+
       // console.log(result);
-      const formattedUser = {
-        ...result,
-        birthday: new Date(result.birthday).toISOString().split('T')[0] // Định dạng lại ngày
-      };
-      setUser(formattedUser);
+      // const formattedUser = {
+      //   ...result,
+      //   birthday: new Date(result.birthday).toISOString().split('T')[0] // Định dạng lại ngày
+      // };
+      setUser(customer);
       // form.setFieldsValue(formattedUser)
     };
     fetchData();
@@ -62,28 +68,25 @@ const ChangePassword = () => {
 
 
   const handlePassword = async () => {
-    if (form.getFieldValue())
-    {
-    
-
-      if (form.getFieldValue("password") === User.password )
-      {
-        
+    try {
+      await form.validateFields(); // Xác nhận tất cả các trường hợp lệ
+      if (form.getFieldValue("password") === User.password) {
         const formattedUser = {
           ...User,
-          password: form.getFieldValue("newpassword")
+          password: form.getFieldValue("newpassword"),
         };
-        // console.log("fomat",formattedUser)
-
-        await updateCustomerAPI(User.id , formattedUser)
-        message.success("Thành công", 3);
+        console.log ( 'fomart used',formattedUser)
+        await updateAccountAPI(User.id, formattedUser);
+        message.success("Thay đổi mật khẩu thành công!", 3);
+        form.resetFields(); 
+      } else {
+        message.error("Mật khẩu cũ không chính xác!");
       }
-      else {
-        message.error("Password không chính xác");
-      }
+    } catch (error) {
+      message.error("Có lỗi xảy ra. Vui lòng thử lại.");
     }
-    
   };
+  
 
   return (
     <Form

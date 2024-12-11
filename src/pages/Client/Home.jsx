@@ -143,24 +143,31 @@ const Home = () => {
   };
   const [dataTour , setDataTour] = useState()
   const [dataCate, setDataCate] = useState();
-  const [currentData,setCurrentData] = useState(1)
+  // const [currentData,setCurrentData] = useState(1)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const tour = await fetchAllTourAPI()
         const Cate = await fetchAllCategoryAPI();
-        const result = await fetchAllBookingAPI();
-        const categoryNames = (Cate?.categories || []).map(
-          (category) => category.name
-        );
+      console.log('tour ', tour)
+
+        const categoryNames = Cate.categories.map((category) => category.name);
+
+        // const result = await fetchAllBookingAPI();
+        // const categoryNames = (Cate?.categories || []).map(
+        //   (category) => category.name
+        // );
+        // const categoryNames = (Cate?.categories || []).map((category) => category.name);
 
         const toursData = (tour?.tours || []).map(t => ({
           id: t.id,
           name: t.name,
           image: t.images[0]?.url, // Lấy ảnh đầu tiên của mỗi tour (nếu có)
         }));
+
+        console.log('dattour',toursData)
         setDataTour(toursData)
-        setCurrentData(result)
+        // setCurrentData(result)
         setDataCate(categoryNames);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -222,15 +229,15 @@ const Home = () => {
       <Flex
       justify="center"
       style={{
-        backgroundColor: "#f0f0f0" ,
-        paddingBottom:'2%',
+        paddingTop:'2%',
         width:'80%',
         margin: "0px auto"
       }}
    
       >
       <Button
-      
+      style={{
+      }}
       size="large">
     <Link to={"/tourClient"}>Xem tất cả </Link>
      </Button>
