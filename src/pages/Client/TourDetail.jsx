@@ -136,7 +136,7 @@ export default function TourDetail() {
                                             </div>
                                         </div>
                                         <div className="w-full">
-                                            <h3 className="text-center text-blue-800 text-xl font-semibold">Phương tiện di chuyển</h3>
+                                            <h3 className="text-center text-blue-800 text-xl font-semibold">Thời gian</h3>
                                             <div className="flex items-center w-full justify-center gap-[10px] py-[20px] max-md:flex-col">
                                                 <div className="flex items-center">
                                                     <span className="font-bold text-base pr-2">Ngày khởi hành</span> <span> - {dayjs(detailTour?.departureDate).format('DD/MM/YYYY')}</span>
