@@ -26,8 +26,8 @@ const formItemLayout = {
 const Search = ({data}) => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  console.log ( 'check datee cate',data)
 
+    // console.log ( 'checkdata',data)
   const [searchParams, setSearchParams] = useState({
     search: "",
     budget: "",
@@ -57,7 +57,14 @@ const Search = ({data}) => {
   : [];
 
 
-  // console.log ('hi' , destinationOptions )
+  const CateOptions = Array.isArray(data)
+  ? data.map((data) => ({
+      value: data,
+      label: data,
+    }))
+  : [];
+
+  console.log ('hi' , CateOptions )
 
   return (
     <Row gutter={[26, 16]} justify="start" style={{ paddingTop: "2%" }}>
@@ -92,7 +99,7 @@ const Search = ({data}) => {
               onChange={(value) => {
                 setSearchParams((prevData) => ({
                   ...prevData,
-                  departureEnd: value,
+                  category: value,
                 }));
               }}
               style={{ fontSize: "16px", height: "40px" }}
@@ -101,7 +108,7 @@ const Search = ({data}) => {
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={[{ value: "", label: "Tất cả" }, ...destinationOptions]}
+              options={[{ value: "", label: "Tất cả" }, ...CateOptions]}
             />
           </Form.Item>
           <Divider type="vertical"

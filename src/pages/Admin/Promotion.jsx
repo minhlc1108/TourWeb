@@ -100,6 +100,7 @@ function Promotion() {
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", sorter: true },
+    { title: "Code", dataIndex: "code", key: "code", sorter: true },
     { title: "Tên khuyến mãi", dataIndex: "name", key: "name", sorter: true, ...getColumnSearchProps("name") },
     { title: "Ngày bắt đầu", dataIndex: "startDate", key: "startDate", sorter: true },
     { title: "Ngày kết thúc", dataIndex: "endDate", key: "endDate", sorter: true },
@@ -123,6 +124,7 @@ function Promotion() {
       setItemSelected(record);
 
       form.setFieldsValue({
+        code: record.code,
         name: record.name,
         dateRange: [
           record.startDate ? moment(record.startDate, "YYYY-MM-DD") : null,
