@@ -25,17 +25,25 @@ function StatisticAdmin() {
       const date = new Date(booking.time);
       let key;
       if (period === "month") {
-        key = `${date.getFullYear()}-${date.getMonth() + 1}`; // YYYY-MM
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`; // YYYY-MM
       } else if (period === "week") {
         key = `${date.getFullYear()}-W${getWeekNumber(date)}`; // YYYY-WW
       } else if (period === "year") {
         key = `${date.getFullYear()}`; // YYYY
       }
-
+  
       // Cộng tổng
       acc[key] = (acc[key] || 0) + booking.totalPrice;
       return acc;
     }, {});
+  };
+  const sortGroupedData = (groupedData) => {
+    return Object.entries(groupedData)
+      .sort(([keyA], [keyB]) => new Date(keyA) - new Date(keyB)) // Sắp xếp key theo thời gian
+      .reduce((acc, [key, value]) => {
+        acc[key] = value; // Chuyển lại thành object
+        return acc;
+      }, {});
   };
 
   const [countUserCate, setCountUserCate] = useState([]);
@@ -72,9 +80,12 @@ function StatisticAdmin() {
         setCountTour(totalBooking.total || 0);
         setCountUser(result.length || 0);
 
-        setTotalPriceByMonth(totalByMonth);
-        setTotalPriceByYear(totalByYear);
-        setTotalPriceByWeek(totalByWeek);
+
+        console.log('mounth', sortGroupedData(totalByMonth),'month')
+        
+        setTotalPriceByMonth(sortGroupedData(totalByMonth,"month"));
+        setTotalPriceByYear(sortGroupedData(totalByYear,"year"));
+        setTotalPriceByWeek(sortGroupedData(totalByWeek,"week"));
 
         const dataTour = Tour.tours || [];
         if (!Array.isArray(dataTour)) {
@@ -152,19 +163,19 @@ function StatisticAdmin() {
     if (value === "month") {
       sortedData = Object.entries(totalPriceByMonth)
         .map(([period, revenue]) => ({ period, revenue }))
-        .sort((a, b) => new Date(a.period) - new Date(b.period)); // Sắp xếp theo ngày
+        // .sort((a, b) => new Date(a.period) - new Date(b.period)); // Sắp xếp theo ngày
     } else if (value === "week") {
       sortedData = Object.entries(totalPriceByWeek)
         .map(([period, revenue]) => ({ period, revenue }))
-        .sort(
-          (a, b) =>
-            new Date(a.period.split("-W")[0]) -
-            new Date(b.period.split("-W")[0])
-        ); // Sắp xếp theo tuần
+        // .sort(
+        //   (a, b) =>
+        //     new Date(a.period.split("-W")[0]) -
+        //     new Date(b.period.split("-W")[0])
+        // ); // Sắp xếp theo tuần
     } else if (value === "year") {
       sortedData = Object.entries(totalPriceByYear)
         .map(([period, revenue]) => ({ period, revenue }))
-        .sort((a, b) => a.period - b.period); // Sắp xếp theo năm
+        // .sort((a, b) => a.period - b.period); // Sắp xếp theo năm
     }
     setData(sortedData);
   };
