@@ -20,16 +20,18 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CustomInputNumber } from "~/components/CustomInputNumber";
 import CashImage from "~/assets/cash-icon.svg";
-import MoMoImage from "~/assets/momo.png";
+// import MoMoImage from "~/assets/momo.png";
 import VNPayImage from "~/assets/vnpay.png";
 import {
   createBookingAPI,
   fetchTourScheduleByIdAPI,
+  getCustomerByEmailAPI,
   getPromotionByCodeAPI,
 } from "~/apis";
 import moment from "moment";
 import { formatCurrencyVND } from "~/utils/format";
 import { message } from "~/components/EscapeAntd";
+import { useSelector } from "react-redux";
 const { Title } = Typography;
 function OrderBooking() {
   const navigate = useNavigate();
@@ -38,6 +40,9 @@ function OrderBooking() {
   const [tourSchedule, setTourSchedule] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isApply, setIsApply] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const customer = useRef(null);
+  
   let discount = useRef(null);
   const [form] = Form.useForm();
   let { id } = useParams();
@@ -54,6 +59,18 @@ function OrderBooking() {
             });
           } else if (data.remain < adultCount + childCount) {
             message.error(`Tour hiện tại chỉ còn ${data.remain} chỗ!`);
+          }
+
+          if(user) {
+            getCustomerByEmailAPI(user.email).then((data) => {
+              form.setFieldsValue({
+                name: data.name,
+                phone: data.phoneNumber,
+                email: data.email,
+                address: data.address,
+              });
+              customer.current = data;
+            })
           }
         })
         .catch((error) => {
@@ -99,6 +116,7 @@ function OrderBooking() {
     setIsSubmitting(true);
     await createBookingAPI({
       customers,
+      customerId: customer.current ? customer.current.id : null,
       tourScheduleId: tourSchedule.id,
       name: values.name,
       phone: values.phone,
@@ -240,7 +258,9 @@ function OrderBooking() {
                           },
                         ]}
                       >
-                        <Input type="email" />
+                        <Input type="email" 
+                        disabled={user ? true : false}
+                         />
                       </Form.Item>
                     </Col>
                     <Col span={12}>

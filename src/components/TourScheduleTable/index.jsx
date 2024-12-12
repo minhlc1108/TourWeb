@@ -284,7 +284,7 @@ function TourScheduleTable({ dataTable, tourId }) {
   const handleTourScheduleSubmit = async (values) => {
     const formattedValues = {
       ...values,
-      departureDate: values.departureDate.format("YYYY-MM-DD"),
+      departureDate: values.departureDate.toISOString(),
       tourId: tourId,
     };
 
@@ -381,6 +381,7 @@ function TourScheduleTable({ dataTable, tourId }) {
             ]}
           >
             <DatePicker
+              showTime
               disabledDate={disablePastDates}
               disabled={itemSelected ? true : false}
             />
