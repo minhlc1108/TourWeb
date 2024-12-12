@@ -35,6 +35,7 @@ import {
 
 } from "~/apis";
 import { useForm } from "antd/es/form/Form";
+import { useSelector } from "react-redux";
 
 const { RangePicker } = DatePicker;
 
@@ -86,7 +87,7 @@ const DetailsProfileUser = () => {
   //   sex: 0,
   // };
   const [User, setUser] = useState({});
-
+  const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchData = async () => {
       // const result = await getCustomerByIdAPI("1");
@@ -94,7 +95,7 @@ const DetailsProfileUser = () => {
 
       // console.log('acc',Account);
 
-      const customer = await getCustomerByEmailAPI ('abc@gmail.com')
+      const customer = await getCustomerByEmailAPI (user.email);
       console.log('cus',customer);
       const formattedUser = {
         id : customer.id,

@@ -24,8 +24,6 @@ import OrderBooking from "~/pages/Client/OrderBooking";
 import ProfileUser from "~/pages/Client/ProfileUser";
 import TourClient from "~/pages/Client/TourClient";
 import TourDetail from "~/pages/Client/TourDetail";
-import TourDetailsClient from "~/pages/Client/TourDetailsClient";
-
 import NotFound from "~/pages/Error/NotFound";
 import CreateAccount from "~/pages/Admin/CreateAccount";
 import EditAccount from "~/pages/Admin/EditAccount";
@@ -145,10 +143,6 @@ const routes = createBrowserRouter([
       {
         path: "tourClient",
         element: <TourClient />,
-      },
-      {
-        path: "tourDetailsClient",
-        element: <TourDetailsClient />,
       },
       {
         path: "tour/:id",
