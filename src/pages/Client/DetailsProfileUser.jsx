@@ -99,7 +99,7 @@ const DetailsProfileUser = () => {
 
       const customer = await getCustomerByEmailAPI (user.email)
 
-      // console.log('cus',customer);
+      console.log('cus',customer);
 
       // const formattedUser = {
       //   username : customer.username,
@@ -138,7 +138,7 @@ const DetailsProfileUser = () => {
         username: User.username,
         password : User.password,
         email : User.password,
-        phoneNumber: User.phoneNumber,
+        phoneNumber: values.phoneNumber,
         role: User.role
       }
 
@@ -149,9 +149,11 @@ const DetailsProfileUser = () => {
   
       console.log("Payload to update:", payload);
       console.log("id", User.id);
+      console.log("Payload to payloadAccount:", payloadAccount);
+
 
       await updateCustomerAPI(User.id, values);
-      await updateAccountAPI ()
+      await updateAccountAPI (User.IdAccount , payloadAccount)
       message.success("Cập nhật thông tin thành công!", 3);
       setUser((prevUser) => ({
         ...prevUser,
@@ -159,7 +161,6 @@ const DetailsProfileUser = () => {
       }));
     } catch (error) {
       console.error("Error updating customer:", error);
-      message.error("Có lỗi xảy ra khi cập nhật. Vui lòng thử lại.");
     }
   };
 
