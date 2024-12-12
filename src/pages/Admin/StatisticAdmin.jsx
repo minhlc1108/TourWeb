@@ -52,22 +52,22 @@ function StatisticAdmin() {
     const fetchData = async () => {
       try {
         const result = await fetchAllCustomerAPI();
-        console.log('check result ', result.length)
+        // console.log('check result ', result.length)
         const totalBooking = await fetchAllBookingAPI();
 
         const DsBookings = totalBooking.bookings;
+        console.log("checkdsb", DsBookings);
         const Tour = await fetchAllTourAPI();
         // console.log('check result ', Tour.length)
-        
 
-        const totalByMonth = groupByPeriod(totalBooking.bookings, "month");
-        const totalByWeek = groupByPeriod(totalBooking.bookings, "week");
-        const totalByYear = groupByPeriod(totalBooking.bookings, "year");
+        const totalByMonth = groupByPeriod(totalBooking.bookings.filter((booking) => booking.status === 1) , "month");
+        const totalByWeek = groupByPeriod(totalBooking.bookings.filter((booking) => booking.status === 1) , "week");
+        const totalByYear = groupByPeriod(totalBooking.bookings.filter((booking) => booking.status === 1) , "year");
 
-        const totalPrice = totalBooking.bookings.reduce(
-          (acc, booking) => acc + booking.totalPrice,
-          0
-        );
+        const totalPrice = totalBooking.bookings
+          .filter((booking) => booking.status === 1) // Lọc chỉ các booking có status = 1
+          .reduce((acc, booking) => acc + booking.totalPrice, 0);
+
         setTotalPrice(totalPrice);
         setCountTour(totalBooking.total || 0);
         setCountUser(result.length || 0);
