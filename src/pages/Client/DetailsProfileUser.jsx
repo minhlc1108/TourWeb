@@ -32,6 +32,8 @@ import {
   updateCustomerAPI,
   getAccountByIdAPI,
   getCustomerByEmailAPI,
+  updateAccountAPI,
+
 
 } from "~/apis";
 import { useForm } from "antd/es/form/Form";
@@ -95,30 +97,33 @@ const DetailsProfileUser = () => {
       // console.log('acc',Account);
 
       const customer = await getCustomerByEmailAPI ('abc@gmail.com')
-      console.log('cus',customer);
-      const formattedUser = {
-        id : customer.id,
-        name : customer.name, 
-        sex : customer.sex ,
-        address: customer.address,
-        phone : customer.phoneNumber,
+
+      // console.log('cus',customer);
+
+      // const formattedUser = {
+      //   username : customer.username,
+      //   id : customer.id,
+      //   name : customer.name, 
+      //   sex : customer.sex ,
+      //   address: customer.address,
+      //   phone : customer.phoneNumber,
         
-        email : customer.email,
-        // birthday: new Date(customer.birthday).toISOString().split('T')[0] // Định dạng lại ngày
-      };
+      //   email : customer.email,
+      //   // birthday: new Date(customer.birthday).toISOString().split('T')[0] // Định dạng lại ngày
+      // };
       // const formattedUser = {
       //   name: Account.userName,
       //   email: Account.email,
       //   phoneNumber: Account.phoneNumber,
       // };
-      console.log ('check',formattedUser.phone )
-      setUser(formattedUser);
-      form.setFieldsValue(formattedUser);
+      // console.log ('check',formattedUser.phone )
+      setUser(customer);
+      form.setFieldsValue(customer);
     };
     fetchData();
   }, [form]);
 
-    console.log("User", User.phone);
+    console.log("User", User);
 
   const handleSubmit = async (values) => {
     try {
@@ -127,6 +132,14 @@ const DetailsProfileUser = () => {
         sex: values.sex,
         address: values.address,
       };
+
+      const payloadAccount = {
+        username: User.username,
+        password : User.password,
+        email : User.password,
+        phoneNumber: User.phoneNumber,
+        role: User.role
+      }
 
       // const payload = {
       //   ...User, // Dữ liệu cũ trong User
@@ -137,6 +150,7 @@ const DetailsProfileUser = () => {
       console.log("id", User.id);
 
       await updateCustomerAPI(User.id, values);
+      await updateAccountAPI ()
       message.success("Cập nhật thông tin thành công!", 3);
       setUser((prevUser) => ({
         ...prevUser,
@@ -207,7 +221,9 @@ const DetailsProfileUser = () => {
           },
         ]}
       >
-        <Input disabled />
+        <Input 
+        disabled 
+        />
       </Form.Item>
 
       <Form.Item
@@ -221,7 +237,7 @@ const DetailsProfileUser = () => {
         ]}
       >
         <Input
-          disabled
+          // disabled
           style={{ width: "100%" }}
         />
       </Form.Item>
