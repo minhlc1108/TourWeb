@@ -27,6 +27,7 @@ const CardTourVertical = ({ ...props }) => {
           style={{ height: "200px", objectFit: "cover" }}
         />
       }
+<<<<<<< HEAD
     >
       <Meta title={props.title} style={{}} />
       <div style={{ padding: "0" }}>
@@ -62,6 +63,29 @@ const CardTourVertical = ({ ...props }) => {
               Đặt Ngay
             </Button>
           </Link>
+=======
+    
+    }
+    />
+      <div style={{ padding: '0' ,
+        
+      }}>
+        <p>< CreditCardOutlined/> <strong> {props.tourCode} </strong></p>
+        <p> <EnvironmentOutlined/> Điểm xuất phát:<strong> {props.departureStart} </strong></p>
+        <p><CalendarOutlined /> Điểm đến:<strong>{props.departureEnd} </strong> </p>
+        <Flex
+        justify='space-between'
+        align='center'
+        >
+        <Text >
+          <strong  style={{
+            fontSize:'18px'
+          }}>
+          Giá :
+          </strong>
+          
+          <strong><Text type="danger" > {props.price} VND </Text>  </strong> </Text> <Button danger size={3} >Đặt Ngay</Button>
+>>>>>>> 52db80ae1017c119df5457c550113ddf86f498ee
         </Flex>
       </div>
     </Card>
