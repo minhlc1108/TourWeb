@@ -171,7 +171,7 @@ const DetailsProfileUser = () => {
     >
       <Form.Item
         name="name"
-        label="name"
+        label="Họ và Tên"
         rules={[
           {
             type: "string",
@@ -212,7 +212,7 @@ const DetailsProfileUser = () => {
 
       <Form.Item
         name="phone"
-        label="Phone Number"
+        label="Số điện thoại "
         rules={[
           {
             required: true,
@@ -228,7 +228,7 @@ const DetailsProfileUser = () => {
 
       <Form.Item
         name="sex"
-        label="sex"
+        label="Giới tính"
         rules={[
           {
             required: true,
