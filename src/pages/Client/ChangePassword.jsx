@@ -5,9 +5,11 @@ import {
   updateCustomerAPI,
   updateAccountAPI,
   getAccountByIdAPI,
+  getCustomerByEmailAPI,
 
 }from "~/apis";
 import { message, modal } from "~/components/EscapeAntd";
+import { useSelector } from "react-redux";
 
 const formItemLayout = {
   labelCol: {
@@ -44,11 +46,11 @@ const ChangePassword = () => {
   const [form] = Form.useForm();
 
   const [User, setUser] = useState();
-
+  const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     const fetchData = async () => {
-      const Account = await getAccountByIdAPI("1");
-      const customer = await getCustomerByEmailAPI (Account.email)
+      // const Account = await getAccountByIdAPI("1");
+      const customer = await getCustomerByEmailAPI(user.email)
 
 
       // console.log(result);

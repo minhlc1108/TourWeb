@@ -250,7 +250,7 @@ export default function TourDetail() {
                   }).format(
                     detailTour
                       ? detailTour.priceAdult
-                      : data?.schedules[0]?.priceAdult
+                      : data?.schedules[0] ?  data?.schedules[0].priceAdult : 0
                   )}
                 </span>
                 /Người

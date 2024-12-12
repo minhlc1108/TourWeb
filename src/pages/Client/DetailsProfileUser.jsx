@@ -97,7 +97,7 @@ const DetailsProfileUser = () => {
 
       // console.log('acc',Account);
 
-      const customer = await getCustomerByEmailAPI ('abc@gmail.com')
+      const customer = await getCustomerByEmailAPI (user.email)
 
       // console.log('cus',customer);
 
@@ -228,7 +228,7 @@ const DetailsProfileUser = () => {
       </Form.Item>
 
       <Form.Item
-        name="phone"
+        name="phoneNumber"
         label="Số điện thoại "
         rules={[
           {
@@ -253,11 +253,10 @@ const DetailsProfileUser = () => {
           },
         ]}
       >
-        <Select placeholder="Select your gender">
+        <Select placeholder="Chọn giới tính">
           
-          <Option value={0}>Male</Option>
-          <Option value={1}>Female</Option>
-          <Option value={2}>Other</Option>
+          <Option value={1}>Nam</Option>
+          <Option value={0}>Nữ</Option>
         </Select>
       </Form.Item>
 
