@@ -39,7 +39,7 @@ const CardTourVertical = ({...props}) => {
       }}>
         <p>< CreditCardOutlined/> <strong> {props.tourCode} </strong></p>
         <p> <EnvironmentOutlined/> Điểm xuất phát:<strong> {props.departureStart} </strong></p>
-        <p><CalendarOutlined /> Ngày khỏi hành:<strong>{props.departureEnd} </strong> </p>
+        <p><CalendarOutlined /> Điểm đến:<strong>{props.departureEnd} </strong> </p>
         <Flex
         justify='space-between'
         align='center'
