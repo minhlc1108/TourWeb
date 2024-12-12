@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import {
   createBrowserRouter,
   Link,
-  Navigate,
   useLocation,
 } from "react-router-dom";
 import LayourClient from "~/layouts/app/LayoutClient";
@@ -17,7 +16,6 @@ import EditTour from "~/pages/Admin/EditTour";
 import Promotion from "~/pages/Admin/Promotion";
 import Statistic from "~/pages/Admin/StatisticAdmin";
 import Tour from "~/pages/Admin/Tour";
-import Transport from "~/pages/Admin/Transport";
 import ChangePassword from "~/pages/Client/ChangePassword";
 import DetailsProfileUser from "~/pages/Client/DetailsProfileUser";
 import Home from "~/pages/Client/Home";
@@ -25,6 +23,7 @@ import ListBooking from "~/pages/Client/ListBooking";
 import OrderBooking from "~/pages/Client/OrderBooking";
 import ProfileUser from "~/pages/Client/ProfileUser";
 import TourClient from "~/pages/Client/TourClient";
+import TourDetail from "~/pages/Client/TourDetail";
 import TourDetailsClient from "~/pages/Client/TourDetailsClient";
 
 import NotFound from "~/pages/Error/NotFound";
@@ -33,6 +32,9 @@ import EditAccount from "~/pages/Admin/EditAccount";
 import Login from "~/pages/Login/LoginComponent";
 import Register from "~/pages/Login/RegisterComponent";
 import ForgotPassword from "~/pages/Login/ForgotPasswordComponent";
+import PaymentBooking from "~/pages/Client/PaymentBooking";
+import Forbidden from "~/pages/Error/Forbidden";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -48,15 +50,7 @@ export const ScrollToTop = () => {
   return null; // This component doesn't render anything
 };
 
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = true;
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
 
 const PageWrapper = ({ children }) => {
   return (
@@ -108,10 +102,6 @@ const routes = createBrowserRouter([
         element: <Category />,
       },
       {
-        path: "transport",
-        element: <Transport />,
-      },
-      {
         path: "booking",
         element: <Booking />,
       },
@@ -138,11 +128,9 @@ const routes = createBrowserRouter([
   {
     path: "",
     element: (
-      <ProtectedRoute>
-        <PageWrapper>
-          <UserLayout />
-        </PageWrapper>
-      </ProtectedRoute>
+      <PageWrapper>
+        <UserLayout />
+      </PageWrapper>
     ),
     children: [
       {
@@ -163,8 +151,16 @@ const routes = createBrowserRouter([
         element: <TourDetailsClient />,
       },
       {
+        path: "tour/:id",
+        element: <TourDetail />,
+      },
+      {
         path: "order-booking/:id",
         element: <OrderBooking />,
+      },
+      {
+        path: "payment-booking/:id",
+        element: <PaymentBooking />,
       },
       {
         path: "login",
@@ -237,13 +233,11 @@ const routes = createBrowserRouter([
   {
     path: "User",
     element: (
-      <ProtectedRoute>
-        <PageWrapper>
-          <LayourClient>
-            <ProfileUser />,
-          </LayourClient>
-        </PageWrapper>
-      </ProtectedRoute>
+      <PageWrapper>
+        <LayourClient>
+          <ProfileUser />,
+        </LayourClient>
+      </PageWrapper>
     ),
     children: [
       {
@@ -260,6 +254,10 @@ const routes = createBrowserRouter([
         element: <ListBooking />,
       },
     ],
+  },
+  {
+    path: "403",
+    element: <Forbidden />,
   },
   {
     path: "*",

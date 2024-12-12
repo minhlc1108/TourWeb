@@ -64,21 +64,17 @@ export const AppLayout = ({ children }) => {
     // },
     {
       key: "user-logout-link",
-      label: "logout",
+      label: "Thoát khỏi trang quản trị",
       icon: <LogoutOutlined />,
       danger: true,
       onClick: () => {
-        message.open({
-          type: "loading",
-          content: "signing you out"
-        })
+        navigate("/")
         // setTimeout(() => {
         //   navigate(PATH_LANDING.root)
         // }, 1000)
       }
     }
   ]
-
   // useEffect(() => {
   //   setCollapsed(isMobile)
   // }, [isMobile])

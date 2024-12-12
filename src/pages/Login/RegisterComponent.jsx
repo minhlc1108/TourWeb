@@ -177,8 +177,8 @@ const RegisterComponent = ({ onRegisterSuccess }) => {
           rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
         >
           <Select placeholder="Chọn giới tính">
-            <Option value="0">Nam</Option>
-            <Option value="1">Nữ</Option>
+            <Option value="1">Nam</Option>
+            <Option value="0">Nữ</Option>
           </Select>
         </Form.Item>
 

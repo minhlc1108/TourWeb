@@ -1,53 +1,30 @@
-﻿import axios from 'axios';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Spin } from 'antd';
-import { useNavigate, Link } from 'react-router-dom';
+﻿import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input } from 'antd';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useState } from 'react';
+import { message } from '~/components/EscapeAntd';
 import { loginAPI } from '~/apis';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { signIn } from "~/store/authSlice";  // Import action login
 const LoginComponent = () => {
     const navigate = useNavigate();
-    const [messageApi, contextHolder] = message.useMessage();
     const [loading, setLoading] = useState(false); 
+    const user = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
+
     const handleLogin = async (values) => {
-        const { username, password } = values;
-        setLoading(true);
         try {
-            const response = await loginAPI(username, password);
-
-            if (response) {
-                console.log("Dữ liệu phản hồi:", response);
-
-                if (response.token) {
-                    localStorage.setItem('authToken', response.token);
-                }
-
-                if (response.isAdmin) {
-                    message.success('Đăng nhập thành công! Bạn là quản trị viên.');
-                    navigate('/admin');
-                } else {
-                    message.success('Đăng nhập thành công!');
-                    navigate('/client');
-                }
-            } else {
-                message.error('Không nhận được dữ liệu từ máy chủ!');
+            setLoading(true);  // Bắt đầu quá trình đăng nhập
+            const response = await dispatch(signIn(values));  // Gọi action login
+            if (response.type === "auth/login/fulfilled") {
+              // Nếu đăng nhập thành công, chuyển hướng đến trang khác
+              navigate("/");  // Thay "/dashboard" bằng route bạn muốn
             }
-        } catch (error) {
-            if (error.response) {
-                const errorMessage = error.response.data || 'Có lỗi xảy ra!';
-                if (error.response.status === 401) {
-                    message.error(errorMessage);
-                } else if (error.response.status === 400) {
-                    message.error('Tài khoản không hợp lệ!');
-                } else {
-                    message.error('Có lỗi xảy ra! Vui lòng thử lại sau.');
-                }
-            } else {
-                message.error('Không thể kết nối đến máy chủ!');
-            }
-        } finally {
-            setLoading(false);
-        }
+          } catch (error) {
+            message.error("Đăng nhập không thành công!");
+          } finally {
+            setLoading(false);  // Kết thúc quá trình đăng nhập
+          }
     };
 
 
@@ -60,9 +37,13 @@ const LoginComponent = () => {
         message.warning('Vui lòng kiểm tra lại thông tin đăng nhập!');
     };
 
+    if(user){
+        return <Navigate to={"/"}></Navigate>
+    }
+
     return (
         <>
-            {contextHolder}
+        
             <Form
                 name="login"
                 initialValues={{
