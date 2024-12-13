@@ -1,52 +1,182 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Pagination, Flex } from "antd";
-import { Button, Result } from 'antd';
+import {
+  Card,
+  Row,
+  Col,
+  Pagination,
+  Flex,
+  Table,
+  Tag,
+  Space,
+  message,
+} from "antd";
+import { Button, Result } from "antd";
 import InforCardHorizone from "~/layouts/app/InforCardHorizone";
-import { getCustomerByIdAPI ,
+import {
+  getCustomerByIdAPI,
   updateCustomerAPI,
   getAccountByIdAPI,
   getCustomerByEmailAPI,
-
+  updateBookingStatusAPI,
 } from "~/apis";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { use } from "react";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import { modal } from "~/components/EscapeAntd";
 
 const ListBooking = () => {
-  const [User, setUser] = useState([]); // Khởi tạo mảng rỗng
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 3; // Số lượng mục trên mỗi trang
-
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    count: 0,
+  });
+  const user = useSelector((state) => state.auth.user);
+  const [sorter, setSorter] = useState({ field: "", order: "ascend" });
+  const navigate = useNavigate();
   useEffect(() => {
-    const fetchData = async () => {
-      // const result = await getCustomerByIdAPI("1");
-      const customer = await getCustomerByEmailAPI ('abc@gmail.com')
-      const tours = customer.bookings
-      .map((booking) => {
-        const tour = booking.tourSchedule?.tour;
+    if (user) {
+      setIsLoading(true);
+      getCustomerByEmailAPI(user.email)
+        .then((data) => {
+          setData(data?.bookings.map((item) => ({ ...item, key: item.id })));
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      navigate("/login");
+    }
+  }, [navigate, user]);
 
-        if (!tour) return null;
-        return {
-          id: booking.id,
-          title: tour.name,
-          description: `Điểm đến: ${tour.destination}`,
-          time: `${tour.duration} ngày`,
-          price: `Tổng tiền: ${booking.totalPrice} VND`, // Lấy từ booking thay vì tour
-          images: tour.tourImages, // Sử dụng trường tourImages từ tour
-        };
-      })
-      .filter(Boolean); // Loại bỏ null
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      sorter: true,
+    },
+    {
+      title: "ID Người đặt",
+      dataIndex: "customerId",
+      key: "customerId",
+      sorter: true,
+    },
+    {
+      title: "Số lượng người lớn",
+      dataIndex: "adultCount",
+      key: "adultCount",
+      sorter: true,
+    },
+    {
+      title: "Số lượng trẻ em",
+      dataIndex: "childCount",
+      key: "childCount",
+      sorter: true,
+    },
+    {
+      title: "Tổng giá",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      sorter: true,
+      render: (text) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(text),
+    },
+    {
+      title: "Giá giảm",
+      dataIndex: "priceDiscount",
+      key: "priceDiscount",
+      sorter: true,
+      render: (text) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(text),
+    },
+    {
+      title: "Mã khuyến mãi",
+      dataIndex: "promotionId",
+      key: "promotionId",
+      render: (promotionId) => (promotionId ? promotionId : "Không áp dụng"),
+    },
+    {
+      title: "Thời gian đặt",
+      dataIndex: "time",
+      key: "time",
+      sorter: true,
+      render: (time) => new Date(time)?.toLocaleString(),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (status, record) => {
+        switch (status) {
+          case 0:
+            return <Tag color="gold">Chưa thanh toán</Tag>;
+          case 1:
+            return <Tag color="green">Đã thanh toán</Tag>;
+          case 2:
+            return <Tag color="red">Đã bị hủy</Tag>;
+        }
+      },
+    },
+    {
+      title: "Hành động",
+      dataIndex: "",
+      key: "x",
+      render: (record) => {
+        return (
+          <Space>
+            {record.status !== 2 &&
+              moment(record.tourSchedule?.departureDate).isAfter(
+                moment.now()
+              ) && (
+                <Button
+                  onClick={async () => {
+                    await modal.confirm({
+                      title: "Hủy booking",
+                      content: "Bạn có muốn hủy booking này?",
+                      onOk: async () => {
+                        await updateBookingStatusAPI({
+                          id: record.id,
+                          status: 2,
+                        });
+                        message.success("Hủy booking thành công!");
+                        setData((prevData) =>
+                          prevData.map((item) =>
+                            item?.id === record?.id
+                              ? {
+                                  ...item,
+                                  status: 2,
+                                }
+                              : item
+                          )
+                        );
+                      },
+                    });
+                  }}
+                >
+                  Hủy
+                </Button>
+              )}
+            <Button>
+              <Link to={`/payment-booking/${record.id}`}>Xem chi tiết</Link>
+            </Button>
+          </Space>
+        );
+      },
+    },
+  ];
 
-    setUser(tours);
-    };
-
-    fetchData();
-  }, []);
-
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentData = User.slice(startIndex, endIndex);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const handleTableChange = (newPagination, filters, newSorter) => {
+    setPagination(newPagination);
+    setSorter({ field: newSorter.field, order: newSorter.order });
   };
 
   return (
@@ -56,47 +186,13 @@ const ListBooking = () => {
         height: "100vh",
       }}
     >
-      <Row gutter={[16, 16]}
-        style={{
-          display:"flex",
-         justifyContent: currentData.length === 0 ? 'center' : 'normal' 
-
-          }
-        }
-      >
-        {currentData.length > 0 ? (
-          currentData.map((item) => (
-            <Col span={24} key={item.id}>
-              <InforCardHorizone
-                id = {item.id}
-                title={item.title}
-                description={item.description}
-                image={item.images?.[0]?.url}
-                price = {item.price}
-                time = {item.time}
-              />
-            </Col>
-          ))
-        ) : (
-          <Result
-            status="500"
-            title="500"
-            subTitle="Sorry, something went wrong."
-            extra={<Button type="primary">Back Home</Button>}
-          />
-        )}
-      </Row>
-      <Pagination
-        current={currentPage}
-        pageSize={pageSize}
-        total={User.length}
-        onChange={handlePageChange}
-        style={{
-          marginTop: "16px",
-          display: "flex",
-          justifyContent: "center",
-          textAlign: "center",
-        }}
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={pagination}
+        onChange={handleTableChange}
+        loading={isLoading}
+        scroll={{ x: 800 }}
       />
     </Card>
   );

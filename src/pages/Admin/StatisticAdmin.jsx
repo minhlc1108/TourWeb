@@ -25,17 +25,25 @@ function StatisticAdmin() {
       const date = new Date(booking.time);
       let key;
       if (period === "month") {
-        key = `${date.getFullYear()}-${date.getMonth() + 1}`; // YYYY-MM
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`; // YYYY-MM
       } else if (period === "week") {
         key = `${date.getFullYear()}-W${getWeekNumber(date)}`; // YYYY-WW
       } else if (period === "year") {
         key = `${date.getFullYear()}`; // YYYY
       }
-
+  
       // Cộng tổng
       acc[key] = (acc[key] || 0) + booking.totalPrice;
       return acc;
     }, {});
+  };
+  const sortGroupedData = (groupedData) => {
+    return Object.entries(groupedData)
+      .sort(([keyA], [keyB]) => new Date(keyA) - new Date(keyB)) // Sắp xếp key theo thời gian
+      .reduce((acc, [key, value]) => {
+        acc[key] = value; // Chuyển lại thành object
+        return acc;
+      }, {});
   };
 
   const [countUserCate, setCountUserCate] = useState([]);
@@ -52,29 +60,32 @@ function StatisticAdmin() {
     const fetchData = async () => {
       try {
         const result = await fetchAllCustomerAPI();
-        console.log('check result ', result.length)
-        const totalBooking = await fetchAllBookingAPI();
+        // console.log('check result ', result.length)
+        const totalBooking = await fetchAllBookingAPI({pageSize: 100});
 
         const DsBookings = totalBooking.bookings;
+        console.log("checkdsb", DsBookings);
         const Tour = await fetchAllTourAPI();
         // console.log('check result ', Tour.length)
-        
 
-        const totalByMonth = groupByPeriod(totalBooking.bookings, "month");
-        const totalByWeek = groupByPeriod(totalBooking.bookings, "week");
-        const totalByYear = groupByPeriod(totalBooking.bookings, "year");
+        const totalByMonth = groupByPeriod(totalBooking.bookings.filter((booking) => booking.status === 1) , "month");
+        const totalByWeek = groupByPeriod(totalBooking.bookings.filter((booking) => booking.status === 1) , "week");
+        const totalByYear = groupByPeriod(totalBooking.bookings.filter((booking) => booking.status === 1) , "year");
 
-        const totalPrice = totalBooking.bookings.reduce(
-          (acc, booking) => acc + booking.totalPrice,
-          0
-        );
+        const totalPrice = totalBooking.bookings
+          .filter((booking) => booking.status === 1) // Lọc chỉ các booking có status = 1
+          .reduce((acc, booking) => acc + booking.totalPrice, 0);
+
         setTotalPrice(totalPrice);
         setCountTour(totalBooking.total || 0);
         setCountUser(result.length || 0);
 
-        setTotalPriceByMonth(totalByMonth);
-        setTotalPriceByYear(totalByYear);
-        setTotalPriceByWeek(totalByWeek);
+
+        console.log('mounth', sortGroupedData(totalByMonth),'month')
+        
+        setTotalPriceByMonth(sortGroupedData(totalByMonth,"month"));
+        setTotalPriceByYear(sortGroupedData(totalByYear,"year"));
+        setTotalPriceByWeek(sortGroupedData(totalByWeek,"week"));
 
         const dataTour = Tour.tours || [];
         if (!Array.isArray(dataTour)) {
@@ -152,19 +163,19 @@ function StatisticAdmin() {
     if (value === "month") {
       sortedData = Object.entries(totalPriceByMonth)
         .map(([period, revenue]) => ({ period, revenue }))
-        .sort((a, b) => new Date(a.period) - new Date(b.period)); // Sắp xếp theo ngày
+        // .sort((a, b) => new Date(a.period) - new Date(b.period)); // Sắp xếp theo ngày
     } else if (value === "week") {
       sortedData = Object.entries(totalPriceByWeek)
         .map(([period, revenue]) => ({ period, revenue }))
-        .sort(
-          (a, b) =>
-            new Date(a.period.split("-W")[0]) -
-            new Date(b.period.split("-W")[0])
-        ); // Sắp xếp theo tuần
+        // .sort(
+        //   (a, b) =>
+        //     new Date(a.period.split("-W")[0]) -
+        //     new Date(b.period.split("-W")[0])
+        // ); // Sắp xếp theo tuần
     } else if (value === "year") {
       sortedData = Object.entries(totalPriceByYear)
         .map(([period, revenue]) => ({ period, revenue }))
-        .sort((a, b) => a.period - b.period); // Sắp xếp theo năm
+        // .sort((a, b) => a.period - b.period); // Sắp xếp theo năm
     }
     setData(sortedData);
   };
@@ -250,7 +261,7 @@ function StatisticAdmin() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card bordered={false}>
+          <Card bordered={false}> 
             <Statistic
               title="Người Dùng"
               value={countUser}

@@ -10,7 +10,11 @@ import {
   Typography,
 } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogoutOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  LogoutOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "~/store/authSlice";
 
@@ -31,7 +35,6 @@ const items = [
   getItem(<Link to={"/home"}>Contact</Link>, "Contact"),
 ];
 
-
 const TopNav = ({ ...others }) => {
   const nodeRef = useRef(null);
   const { pathname } = useLocation();
@@ -51,7 +54,10 @@ const TopNav = ({ ...others }) => {
     {
       key: "user-profile-link",
       label: "Thông tin cá nhân",
-      icon: <UserOutlined />
+      icon: <UserOutlined />,
+      onClick: () => {
+        navigate("/User/ThongTinCaNhan");
+      },
     },
     user?.isAdmin && {
       key: "user-settings-link",
@@ -59,7 +65,7 @@ const TopNav = ({ ...others }) => {
       icon: <SettingOutlined />,
       onClick: () => {
         navigate("/admin");
-      }
+      },
     },
     {
       key: "user-logout-link",
