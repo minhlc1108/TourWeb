@@ -1,47 +1,21 @@
 import React, { useState, useEffect } from "react";
 import {
-  AutoComplete,
   Button,
-  Cascader,
-  Checkbox,
-  Col,
-  Flex,
   Form,
   Input,
-  InputNumber,
-  Row,
   Select,
-  Anchor,
-  Typography,
-  Avatar,
-  Menu,
-  Space,
-  DatePicker,
 } from "antd";
 
 import { message, modal } from "~/components/EscapeAntd";
 
 import {
-  UserOutlined,
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import {
-  getCustomerByIdAPI,
   updateCustomerAPI,
-  getAccountByIdAPI,
   getCustomerByEmailAPI,
   updateAccountAPI,
 
 
 } from "~/apis";
-import { useForm } from "antd/es/form/Form";
 import { useSelector } from "react-redux";
-
-const { RangePicker } = DatePicker;
-
-const { Text, Link } = Typography;
 
 const { Option } = Select;
 
@@ -135,11 +109,11 @@ const DetailsProfileUser = () => {
       };
 
       const payloadAccount = {
-        username: User.username,
+        username: user.username,
         password : User.password,
-        email : User.password,
+        email : user.email,
         phoneNumber: values.phoneNumber,
-        role: User.role
+        role: user.isAdmin ? "Admin" : "User",
       }
 
       // const payload = {
@@ -153,7 +127,6 @@ const DetailsProfileUser = () => {
 
 
       await updateCustomerAPI(User.id, values);
-      await updateAccountAPI (User.IdAccount , payloadAccount)
       message.success("Cập nhật thông tin thành công!", 3);
       setUser((prevUser) => ({
         ...prevUser,
@@ -255,7 +228,6 @@ const DetailsProfileUser = () => {
         ]}
       >
         <Select placeholder="Chọn giới tính">
-          
           <Option value={1}>Nam</Option>
           <Option value={0}>Nữ</Option>
         </Select>

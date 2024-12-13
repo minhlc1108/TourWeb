@@ -10,7 +10,6 @@ const TourDetailsClient = ({ data }) => {
   // Xác định dữ liệu hiển thị cho trang hiện tại
   const startIndex = (currentPage - 1) * pageSize;
   const currentData = data.slice(startIndex, startIndex + pageSize);
-console.log(data)
   return (
    
     <div style={{

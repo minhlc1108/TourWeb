@@ -61,7 +61,7 @@ function StatisticAdmin() {
       try {
         const result = await fetchAllCustomerAPI();
         // console.log('check result ', result.length)
-        const totalBooking = await fetchAllBookingAPI();
+        const totalBooking = await fetchAllBookingAPI({pageSize: 100});
 
         const DsBookings = totalBooking.bookings;
         console.log("checkdsb", DsBookings);
